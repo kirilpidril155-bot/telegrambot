@@ -8,7 +8,7 @@
 <style>
   :root{--accent:#0088cc;--bg:#f5f5f5;--card:#fff;--muted:#666}
   *{box-sizing:border-box}
-  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);padding-bottom:80px;-webkit-font-smoothing:antialiased}
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);padding-bottom:80px}
   .container{padding:16px;max-width:980px;margin:0 auto}
   h1,h2{margin:6px 0 12px}
   /* Pages */
@@ -26,32 +26,22 @@
   .category-head{display:flex;justify-content:space-between;align-items:center;padding:8px 6px;cursor:pointer}
   .category-body{display:none;padding:8px 6px}
   .item-row{display:flex;align-items:center;gap:12px;padding:8px;border-radius:8px}
-  .thumb{width:64px;height:64px;border-radius:8px;object-fit:cover;background:#eee;border:1px solid rgba(0,0,0,0.03)}
-  .item-meta{flex:1}
-  .item-title{font-weight:700}
-  .selector{display:flex;align-items:center;gap:8px}
-  .step-btn{width:36px;height:36px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-weight:800;cursor:pointer}
-  .qty-display{min-width:48px;text-align:center;font-weight:800}
-  .add-btn{background:var(--accent);color:#fff;border:0;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;transition:transform .18s ease, box-shadow .18s ease}
-  .add-btn:active{transform:translateY(1px)}
-  .add-btn.in-cart{background:#2ea44f}
-  /* pulse animation when adding */
-  .pulse {
-    animation: pulseAnim .55s ease forwards;
-  }
-  @keyframes pulseAnim {
-    0% { transform: scale(1); box-shadow: none; }
-    30% { transform: scale(1.06); box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
-    100% { transform: scale(1); box-shadow: none; }
-  }
+  .thumb{width:64px;height:64px;border-radius:8px;object-fit:cover;background:#eee;border:1px solid rgba(0,0,0,0.03);flex-shrink:0}
+  .item-meta{flex:1;min-width:0}
+  .item-title{font-weight:700;word-break:break-word}
+  .selector{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .step-btn{width:36px;height:36px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;flex-shrink:0}
+  .qty-display{min-width:48px;text-align:center;font-weight:800;flex-shrink:0}
+  .add-btn{background:var(--accent);color:#fff;border:0;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;flex-shrink:0;white-space:nowrap}
+  .in-cart{background:#2ea44f}
   /* Cart inline */
   .cart-float{position:fixed;left:12px;right:12px;bottom:72px;background:var(--card);padding:10px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,0.12);z-index:200}
   .cart-float.hidden{display:none}
   /* Cart page */
   .cart-list{margin:8px 0}
   .cart-item{display:flex;gap:12px;align-items:center;background:var(--card);padding:10px;border-radius:8px;margin-bottom:8px}
-  .cart-item .meta{flex:1}
-  .cart-actions{display:flex;gap:8px;margin-top:10px}
+  .cart-item .meta{flex:1;min-width:0}
+  .cart-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
   .btn{padding:10px 12px;border-radius:8px;border:0;cursor:pointer;font-weight:700}
   .btn.primary{background:var(--accent);color:#fff}
   .btn.danger{background:#e74c3c;color:#fff}
@@ -66,14 +56,34 @@
   .bottom-nav{position:fixed;left:0;right:0;bottom:0;height:60px;background:#fff;border-top:1px solid #eee;display:flex;align-items:center;justify-content:space-around;z-index:300}
   .nav-item{flex:1;text-align:center;padding-top:6px;cursor:pointer;color:var(--muted)}
   .nav-item.active{color:var(--accent);font-weight:700}
-  @media(min-width:700){.grid{grid-template-columns:repeat(3,1fr)}}
-  /* Small-screen tweaks */
-  @media(max-width:420px){
-    .thumb{width:56px;height:56px}
-    .step-btn{width:32px;height:32px}
-    .qty-display{min-width:40px}
-    .add-btn{padding:6px 10px}
+  
+  /* Mobile optimizations */
+  @media (max-width: 480px) {
+    .item-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .thumb {
+      align-self: center;
+    }
+    .selector {
+      width: 100%;
+      justify-content: space-between;
+    }
+    .add-btn {
+      flex-grow: 1;
+      text-align: center;
+    }
+    .cart-actions {
+      flex-direction: column;
+    }
+    .cart-actions .btn {
+      width: 100%;
+    }
   }
+  
+  @media(min-width:700){.grid{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
 <body>
@@ -176,7 +186,7 @@
 </div>
 
 <script>
-/* ===== DATA (из твоего Python, не менял) ===== */
+/* ===== DATA (from your Python) ===== */
 const submenus = {
   "Товар 1": ["1.🍍Цвет🍍","2.🍒Цвет🍒","3.💮Цвет💮","4.🍃Цвет🍃","5.♥️Цвет♥️","6.🐘Цвет🐘","7.🍫Цвет🍫","8.🧁Цвет🧁"],
   "Товар 2": ["1.🥥Цвет🥥","2.🧊Цвет🧊","3.❄️Цвет❄️"],
@@ -272,6 +282,7 @@ function findPriceKey(color){
   for (const k of Object.keys(custom_quantity_prices)){
     if (normalizeKey(k) === norm) return k;
   }
+  // fallback try add dot after first digit
   const m = color.match(/^(\d)(.*)/);
   if (m){
     const try1 = m[1]+'.'+m[2];
@@ -307,7 +318,7 @@ function openPage(id){
   document.getElementById(id).classList.add('active');
   // when moving to products, ensure categories present
   if (id==='page-products'){ renderCategories() }
-  if (id==='page-cart'){ renderCart(); window.scrollTo({top:0,behavior:'smooth'}); }
+  if (id==='page-cart'){ renderCart() }
 }
 
 /* ===== City selection ===== */
@@ -368,19 +379,18 @@ function renderCategories(){
       }
       minus.onclick = (ev)=>{ ev.stopPropagation(); idx = Math.max(0, idx-1); updateDisplay(); };
       plus.onclick = (ev)=>{ ev.stopPropagation(); idx = Math.min(grads.length-1, idx+1); updateDisplay(); };
-      // add to cart onclick with pulse animation
+      // add to cart onclick
       addBtn.onclick = (ev)=>{
         ev.stopPropagation();
         const q = grads[idx];
         const pKey = priceKey;
         const price = pKey ? custom_quantity_prices[pKey][q] : 0;
         addToCart({product:prod, color:color, qty:q, priceGBP:price});
-        // visual feedback: pulse + change to ✅
-        addBtn.classList.add('pulse');
+        // visual feedback: change button to ✅ В корзине for 1.5s
         const oldText = addBtn.textContent;
         addBtn.textContent = '✅ В корзине';
         addBtn.classList.add('in-cart');
-        setTimeout(()=>{ addBtn.classList.remove('pulse'); addBtn.textContent = oldText; addBtn.classList.remove('in-cart'); }, 1400);
+        setTimeout(()=>{ addBtn.textContent = oldText; addBtn.classList.remove('in-cart'); }, 1500);
       };
       // assemble
       sel.appendChild(minus); sel.appendChild(qtyDisplay); sel.appendChild(plus); sel.appendChild(priceSpan); sel.appendChild(addBtn);
@@ -491,16 +501,18 @@ function copyWallet(){
 }
 
 function payConfirm(){
-  // placeholder: мы не отправляем данные — поведение как согласовано
+  // placeholder: we do NOT send data yet. just show alert and close modal.
   alert('Оплата — пока заглушка. Адрес можно скопировать и использовать в кошельке.');
   closePayModal();
 }
 
 /* ===== Init & small helpers ===== */
 document.addEventListener('DOMContentLoaded', ()=>{
-  // init telegram webapp if available
-  try{ window.Telegram?.WebApp?.ready(); }catch(e){}
+  // init nav state
+  window.Telegram?.WebApp?.ready();
+  // default: show home page (already)
   refreshCartFloat();
+  // place nav handlers
   document.querySelectorAll('.nav-item').forEach(n=>n.onclick = (e)=>{ navTo(e) });
 });
 
