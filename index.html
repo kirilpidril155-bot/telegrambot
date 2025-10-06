@@ -1,479 +1,498 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>Мини-приложение с корзиной</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
-      padding-bottom: 60px; /* место под меню */
-    }
-
-    .page {
-      display: none;
-      padding: 20px;
-    }
-
-    .page.active {
-      display: block;
-    }
-
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      background-color: #fff;
-      border-top: 1px solid #ddd;
-      display: flex;
-      justify-content: space-around;
-      height: 60px;
-      z-index: 999;
-    }
-
-    .nav-item {
-      flex-grow: 1;
-      text-align: center;
-      padding-top: 5px;
-      font-size: 12px;
-      color: #555;
-      cursor: pointer;
-    }
-
-    .nav-item.active {
-      color: #0088cc;
-      font-weight: bold;
-    }
-
-    .nav-item img {
-      width: 24px;
-      height: 24px;
-      margin-bottom: 4px;
-    }
-
-    /* Стили страниц */
-    .balance {
-      font-size: 24px;
-      margin: 10px 0;
-    }
-
-    /* Товары */
-    #categories {
-      margin-top: 10px;
-    }
-
-    .category {
-      margin-bottom: 15px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    }
-
-    .category-title {
-      padding: 12px 16px;
-      font-weight: bold;
-      font-size: 16px;
-      cursor: pointer;
-      user-select: none;
-      border-bottom: 1px solid #ddd;
-    }
-
-    .groups {
-      padding-left: 20px;
-    }
-
-    .group {
-      display: flex;
-      align-items: center;
-      padding: 10px 16px;
-      border-bottom: 1px solid #eee;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .group-img {
-      width: 36px;
-      height: 36px;
-      border-radius: 6px;
-      object-fit: cover;
-      background-color: #ddd;
-    }
-
-    .group-name {
-      flex-grow: 1;
-      font-weight: 500;
-      min-width: 150px;
-    }
-
-    .quantity-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .qty-btn {
-      width: 28px;
-      height: 28px;
-      background-color: #0088cc;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 20px;
-      line-height: 20px;
-      cursor: pointer;
-      user-select: none;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 0;
-    }
-
-    .qty-display {
-      min-width: 24px;
-      text-align: center;
-      font-weight: 600;
-      user-select: none;
-    }
-
-    .btn-add {
-      background-color: #00aa00;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      padding: 6px 12px;
-      cursor: pointer;
-      font-weight: 600;
-      user-select: none;
-      transition: background-color 0.2s ease;
-      white-space: nowrap;
-    }
-
-    .btn-add:hover {
-      background-color: #008800;
-    }
-
-    /* Корзина */
-    #cart-list {
-      background: white;
-      border-radius: 8px;
-      padding: 10px;
-      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
-    }
-
-    .cart-item {
-      display: flex;
-      align-items: center;
-      border-bottom: 1px solid #eee;
-      padding: 8px 0;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .cart-item:last-child {
-      border-bottom: none;
-    }
-
-    .cart-item-img {
-      width: 40px;
-      height: 40px;
-      border-radius: 6px;
-      object-fit: cover;
-      background-color: #ddd;
-    }
-
-    .cart-item-name {
-      flex-grow: 1;
-      font-weight: 600;
-      min-width: 150px;
-    }
-
-    .cart-item-qty {
-      font-weight: 600;
-      min-width: 40px;
-      text-align: right;
-    }
-
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mini App — Магазин</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root{--accent:#0088cc;--bg:#f5f5f5;--card:#fff;--muted:#666}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);padding-bottom:80px}
+  .container{padding:16px;max-width:980px;margin:0 auto}
+  h1,h2{margin:6px 0 12px}
+  /* Pages */
+  .page{display:none}
+  .page.active{display:block}
+  /* City list */
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .city-card{background:var(--card);padding:14px;border-radius:10px;text-align:center;font-weight:700;color:#fff;background:var(--accent);cursor:pointer;border:0}
+  /* Header */
+  .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .current-city{font-weight:700;color:var(--accent)}
+  .change-city{background:#eee;border:0;padding:6px 10px;border-radius:8px;cursor:pointer}
+  /* Categories */
+  .category{background:var(--card);border-radius:10px;padding:8px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+  .category-head{display:flex;justify-content:space-between;align-items:center;padding:8px 6px;cursor:pointer}
+  .category-body{display:none;padding:8px 6px}
+  .item-row{display:flex;align-items:center;gap:12px;padding:8px;border-radius:8px}
+  .thumb{width:64px;height:64px;border-radius:8px;object-fit:cover;background:#eee;border:1px solid rgba(0,0,0,0.03)}
+  .item-meta{flex:1}
+  .item-title{font-weight:700}
+  .selector{display:flex;align-items:center;gap:8px}
+  .step-btn{width:36px;height:36px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-weight:800;cursor:pointer}
+  .qty-display{min-width:48px;text-align:center;font-weight:800}
+  .add-btn{background:var(--accent);color:#fff;border:0;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700}
+  .in-cart{background:#2ea44f}
+  /* Cart inline */
+  .cart-float{position:fixed;left:12px;right:12px;bottom:72px;background:var(--card);padding:10px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,0.12);z-index:200}
+  .cart-float.hidden{display:none}
+  /* Cart page */
+  .cart-list{margin:8px 0}
+  .cart-item{display:flex;gap:12px;align-items:center;background:var(--card);padding:10px;border-radius:8px;margin-bottom:8px}
+  .cart-item .meta{flex:1}
+  .cart-actions{display:flex;gap:8px;margin-top:10px}
+  .btn{padding:10px 12px;border-radius:8px;border:0;cursor:pointer;font-weight:700}
+  .btn.primary{background:var(--accent);color:#fff}
+  .btn.danger{background:#e74c3c;color:#fff}
+  .small{font-size:13px;color:var(--muted)}
+  /* Modal */
+  .modal-back{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:400}
+  .modal{background:var(--card);padding:16px;border-radius:12px;width:92%;max-width:420px}
+  .currency-list{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+  .currency-card{padding:8px 10px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);cursor:pointer}
+  .copy-btn{background:#eee;border:0;padding:8px;border-radius:8px;cursor:pointer;margin-top:8px}
+  /* Bottom nav */
+  .bottom-nav{position:fixed;left:0;right:0;bottom:0;height:60px;background:#fff;border-top:1px solid #eee;display:flex;align-items:center;justify-content:space-around;z-index:300}
+  .nav-item{flex:1;text-align:center;padding-top:6px;cursor:pointer;color:var(--muted)}
+  .nav-item.active{color:var(--accent);font-weight:700}
+  @media(min-width:700){.grid{grid-template-columns:repeat(3,1fr)}}
+</style>
 </head>
 <body>
+<div class="container">
 
-  <!-- Главная -->
-  <div id="home" class="page active">
-    <h2>Главная</h2>
-    <p>Добро пожаловать в мини-приложение!</p>
-    <div class="balance">Баланс: <span id="balance">0 ₽</span></div>
+  <!-- PAGE: HOME (choose city) -->
+  <div id="page-home" class="page active">
+    <h2>Выберите город доставки</h2>
+    <div class="grid" id="cityGrid"></div>
   </div>
 
-  <!-- Товары -->
-  <div id="products" class="page">
-    <h2>Товары</h2>
-    <div id="categories">
+  <!-- PAGE: PRODUCTS -->
+  <div id="page-products" class="page">
+    <div class="header">
+      <div>
+        <div class="current-city" id="selectedCityText">🏙 Город: —</div>
+        <div class="small" id="instruction">Выберите товар и вариант</div>
+      </div>
+      <button class="change-city" onclick="goToHome()">🏙 Изменить город</button>
+    </div>
 
-      <!-- Подгруппа 1 -->
-      <div class="category">
-        <div class="category-title" onclick="toggleGroup('group1')">Подгруппа 1 ▼</div>
-        <div class="groups" id="group1" style="display:none;">
+    <div id="categoriesContainer"></div>
+  </div>
 
-          <div class="group" data-group="Группа 1.1">
-            <img src="https://img.icons8.com/color/48/000000/t-shirt.png" alt="Группа 1.1" class="group-img" />
-            <span class="group-name">Группа 1.1</span>
-            <div class="quantity-controls">
-              <button class="qty-btn" onclick="changeQuantity(event, -1)">−</button>
-              <span class="qty-display">1</span>
-              <button class="qty-btn" onclick="changeQuantity(event, 1)">+</button>
-            </div>
-            <button class="btn-add" onclick="addToCart(event)">Добавить в корзину</button>
-          </div>
+  <!-- PAGE: CART -->
+  <div id="page-cart" class="page">
+    <div class="header">
+      <div>
+        <div style="font-weight:800">Корзина</div>
+        <div class="small" id="cartCity">Город доставки: —</div>
+      </div>
+    </div>
 
-          <div class="group" data-group="Группа 1.2">
-            <img src="https://img.icons8.com/color/48/000000/jeans.png" alt="Группа 1.2" class="group-img" />
-            <span class="group-name">Группа 1.2</span>
-            <div class="quantity-controls">
-              <button class="qty-btn" onclick="changeQuantity(event, -1)">−</button>
-              <span class="qty-display">1</span>
-              <button class="qty-btn" onclick="changeQuantity(event, 1)">+</button>
-            </div>
-            <button class="btn-add" onclick="addToCart(event)">Добавить в корзину</button>
-          </div>
+    <div id="cartList" class="cart-list"></div>
 
-          <div class="group" data-group="Группа 1.3">
-            <img src="https://img.icons8.com/color/48/000000/shoes.png" alt="Группа 1.3" class="group-img" />
-            <span class="group-name">Группа 1.3</span>
-            <div class="quantity-controls">
-              <button class="qty-btn" onclick="changeQuantity(event, -1)">−</button>
-              <span class="qty-display">1</span>
-              <button class="qty-btn" onclick="changeQuantity(event, 1)">+</button>
-            </div>
-            <button class="btn-add" onclick="addToCart(event)">Добавить в корзину</button>
-          </div>
+    <div style="margin-top:10px">
+      <div style="font-weight:800">Итого: <span id="totalGBP">0</span> £</div>
+      <div class="small" id="totalConverted"> </div>
+      <div class="cart-actions">
+        <button class="btn danger" onclick="clearCart()">Очистить корзину</button>
+        <button class="btn primary" onclick="openPayModal()">Оплатить</button>
+      </div>
+    </div>
+  </div>
 
-        </div>
+  <!-- PAGE: CURRENCY INFO (kept for nav completeness) -->
+  <div id="page-currency" class="page">
+    <h2>Валюта / Информация</h2>
+    <p class="small">Курсы и кошельки используются при оплате (расчёт по фиксированным коэффициентам).</p>
+  </div>
+
+</div>
+
+<!-- Floating cart preview -->
+<div id="cartFloat" class="cart-float hidden">
+  <div>
+    <div style="font-weight:800">В корзине: <span id="cartCount">0</span> шт</div>
+    <div class="small">Сумма: <span id="cartSum">0</span> £</div>
+  </div>
+  <div>
+    <button class="btn" onclick="openPage('page-cart')">Открыть</button>
+  </div>
+</div>
+
+<!-- Modal for payment -->
+<div id="payModal" style="display:none">
+  <div class="modal-back" id="modalBack">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:800">Оплата</div>
+        <button onclick="closePayModal()" style="background:none;border:0;font-size:18px;cursor:pointer">✕</button>
       </div>
 
-      <!-- Подгруппа 2 -->
-      <div class="category">
-        <div class="category-title" onclick="toggleGroup('group2')">Подгруппа 2 ▼</div>
-        <div class="groups" id="group2" style="display:none;">
-
-          <div class="group" data-group="Группа 2.1">
-            <img src="https://img.icons8.com/color/48/000000/laptop.png" alt="Группа 2.1" class="group-img" />
-            <span class="group-name">Группа 2.1</span>
-            <div class="quantity-controls">
-              <button class="qty-btn" onclick="changeQuantity(event, -1)">−</button>
-              <span class="qty-display">1</span>
-              <button class="qty-btn" onclick="changeQuantity(event, 1)">+</button>
-            </div>
-            <button class="btn-add" onclick="addToCart(event)">Добавить в корзину</button>
-          </div>
-
-          <div class="group" data-group="Группа 2.2">
-            <img src="https://img.icons8.com/color/48/000000/smartphone.png" alt="Группа 2.2" class="group-img" />
-            <span class="group-name">Группа 2.2</span>
-            <div class="quantity-controls">
-              <button class="qty-btn" onclick="changeQuantity(event, -1)">−</button>
-              <span class="qty-display">1</span>
-              <button class="qty-btn" onclick="changeQuantity(event, 1)">+</button>
-            </div>
-            <button class="btn-add" onclick="addToCart(event)">Добавить в корзину</button>
-          </div>
-
-          <div class="group" data-group="Группа 2.3">
-            <img src="https://img.icons8.com/color/48/000000/headphones.png" alt="Группа 2.3" class="group-img" />
-            <span class="group-name">Группа 2.3</span>
-            <div class="quantity-controls">
-              <button class="qty-btn" onclick="changeQuantity(event, -1)">−</button>
-              <span class="qty-display">1</span>
-              <button class="qty-btn" onclick="changeQuantity(event, 1)">+</button>
-            </div>
-            <button class="btn-add" onclick="addToCart(event)">Добавить в корзину</button>
-          </div>
-
-        </div>
+      <div style="margin-top:10px">
+        <div class="small">Выберите валюту для оплаты</div>
+        <div class="currency-list" id="currencyList"></div>
       </div>
 
-      <!-- Подгруппы 3-6 (по тому же шаблону) -->
-      <!-- Для краткости добавлю только Подгруппу 3 -->
-
-      <div class="category">
-        <div class="category-title" onclick="toggleGroup('group3')">Подгруппа 3 ▼</div>
-        <div class="groups" id="group3" style="display:none;">
-
-          <div class="group" data-group="Группа 3.1">
-            <img src="https://img.icons8.com/color/48/000000/watch.png" alt="Группа 3.1" class="group-img" />
-            <span class="group-name">Группа 3.1</span>
-            <div class="quantity-controls">
-              <button class="qty-btn" onclick="changeQuantity(event, -1)">−</button>
-              <span class="qty-display">1</span>
-              <button class="qty-btn" onclick="changeQuantity(event, 1)">+</button>
-            </div>
-            <button class="btn-add" onclick="addToCart(event)">Добавить в корзину</button>
-          </div>
-
-          <div class="group" data-group="Группа 3.2">
-            <img src="https://img.icons8.com/color/48/000000/camera.png" alt="Группа 3.2" class="group-img" />
-            <span class="group-name">Группа 3.2</span>
-            <div class="quantity-controls">
-              <button class="qty-btn" onclick="changeQuantity(event, -1)">−</button>
-              <span class="qty-display">1</span>
-              <button class="qty-btn" onclick="changeQuantity(event, 1)">+</button>
-            </div>
-            <button class="btn-add" onclick="addToCart(event)">Добавить в корзину</button>
-          </div>
-
-          <div class="group" data-group="Группа 3.3">
-            <img src="https://img.icons8.com/color/48/000000/printer.png" alt="Группа 3.3" class="group-img" />
-            <span class="group-name">Группа 3.3</span>
-            <div class="quantity-controls">
-              <button class="qty-btn" onclick="changeQuantity(event, -1)">−</button>
-              <span class="qty-display">1</span>
-              <button class="qty-btn" onclick="changeQuantity(event, 1)">+</button>
-            </div>
-            <button class="btn-add" onclick="addToCart(event)">Добавить в корзину</button>
-          </div>
-
+      <div id="payDetails" style="margin-top:10px;display:none">
+        <div style="font-weight:800" id="paySummary"></div>
+        <div class="small" style="margin-top:6px">Адрес для перевода:</div>
+        <div style="word-break:break-all;margin-top:6px;background:#f7f7f7;padding:8px;border-radius:8px" id="walletAddr"></div>
+        <button class="copy-btn" onclick="copyWallet()">Копировать адрес</button>
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <button class="btn primary" onclick="payConfirm()">Я оплатил (пока заглушка)</button>
+          <button class="btn" onclick="closePayModal()">Закрыть</button>
         </div>
       </div>
 
     </div>
   </div>
+</div>
 
-  <!-- Волюта -->
-  <div id="currency" class="page">
-    <h2>Волюта</h2>
-    <p>Здесь будет информация о волюте (бонусах и т.п.)</p>
-  </div>
+<!-- Bottom nav -->
+<div class="bottom-nav">
+  <div class="nav-item active" data-page="page-home" onclick="navTo(event)">Главная</div>
+  <div class="nav-item" data-page="page-products" onclick="navTo(event)">Товары</div>
+  <div class="nav-item" data-page="page-currency" onclick="navTo(event)">Валюта</div>
+  <div class="nav-item" data-page="page-cart" onclick="navTo(event)">Корзина</div>
+</div>
 
-  <!-- Корзина -->
-  <div id="cart" class="page">
-    <h2>Корзина</h2>
-    <div id="cart-list">
-      <p>Корзина пуста</p>
-    </div>
-  </div>
+<script>
+/* ===== DATA (from your Python) ===== */
+const submenus = {
+  "Товар 1": ["1.🍍Цвет🍍","2.🍒Цвет🍒","3.💮Цвет💮","4.🍃Цвет🍃","5.♥️Цвет♥️","6.🐘Цвет🐘","7.🍫Цвет🍫","8.🧁Цвет🧁"],
+  "Товар 2": ["1.🥥Цвет🥥","2.🧊Цвет🧊","3.❄️Цвет❄️"],
+  "Товар 3": ["1.💊Цвет💊","2.🍄Цвет🍄","3.👽Цвет👽"],
+  "Товар 4": ["1.🌈Цвет🌈","2.🥭Цвет🥭","3.🔥Цвет🔥"],
+  "Товар 5": ["1.🍏Цвет🍏","2.🍓Цвет🍓","3.🌴Цвет🌴","4.🍓Цвет🍓","5.🍋Цвет🍋","6.🍇Цвет🍇","7.💜Цвет💜"],
+  "Товар 6": ["1.🍫Цвет🍫","2.🎁Цвет🎁","3.🎁🎁Цвет🎁🎁"]
+};
 
-  <!-- Нижняя навигация -->
-  <div class="bottom-nav">
-    <div class="nav-item active" data-page="home" onclick="switchPage(event)">
-      <img src="https://img.icons8.com/ios-filled/50/0088cc/home.png" alt="Главная" />
-      <div>Главная</div>
-    </div>
-    <div class="nav-item" data-page="products" onclick="switchPage(event)">
-      <img src="https://img.icons8.com/ios-filled/50/555555/shopping-bag.png" alt="Товары" />
-      <div>Товары</div>
-    </div>
-    <div class="nav-item" data-page="currency" onclick="switchPage(event)">
-      <img src="https://img.icons8.com/ios-filled/50/555555/coin-in-hand.png" alt="Волюта" />
-      <div>Волюта</div>
-    </div>
-    <div class="nav-item" data-page="cart" onclick="switchPage(event)">
-      <img src="https://img.icons8.com/ios-filled/50/555555/shopping-cart.png" alt="Корзина" />
-      <div>Корзина</div>
-    </div>
-  </div>
+const custom_quantity_prices = {
+  "1.🍍Цвет🍍": {3.5:40,7:70,14:130},
+  "2.🍒Цвет🍒": {3.5:40,7:70,14:130},
+  "3.💮Цвет💮": {3.5:40,7:70,14:130},
+  "4.🍃Цвет🍃": {3.5:80,7:150,14:270,28:450},
+  "5.♥️Цвет♥️": {3.5:40,7:70,14:130},
+  "6.🐘Цвет🐘": {3.5:40,7:70,14:130},
+  "7.🍫Цвет🍫": {3.5:40,7:80,14:120},
+  "8.🧁Цвет🧁": {1:70,2:120,3:160},
+  "1.🥥Цвет🥥": {1:70,2:120,3:160},
+  "2.🧊Цвет🧊": {1:17,2:30,4:55,6:90},
+  "3.❄️Цвет❄️": {1:25,2:45,3:60,4:80},
+  "1.💊Цвет💊": {1:10,2:20,3:25,6:45,12:80},
+  "2.🍄Цвет🍄": {3.5:40,7:70,14:130},
+  "3.👽Цвет👽": {2.5:320,5:500,7.5:650},
+  "1.🌈Цвет🌈": {5:30,10:55,15:100,25:170},
+  "2.🥭Цвет🥭": {5:30,10:55,15:100,25:170},
+  "3.🔥цвет🔥": {1:35,2:60,4:100},
+  "🍏Цвет🍏": {5:120},
+  "🍓цвет🍓": {5:120},
+  "🌴Цвет🌴": {5:120},
+  "🍓Цвет🍓": {2:80},
+  "🍋Цвет🍋": {2:80},
+  "🍇Цвет🍇": {2:80},
+  "💜Цвет💜": {2:80},
+  "🍫Цвет🍫": {14:90},
+  "🎁Цвет🎁": {21:150},
+  "🎁🎁Цвет🎁🎁": {19:170}
+};
 
-  <script>
-    // Переключение страниц
-    function switchPage(event) {
-      const selectedPage = event.currentTarget.getAttribute('data-page');
-      document.querySelectorAll('.page').forEach(page => {
-        page.classList.remove('active');
-      });
-      document.getElementById(selectedPage).classList.add('active');
+const category_images = {
+  "Товар 1":[
+    "https://i.postimg.cc/TYSLvKht/IMG-20251001-143808-938.jpg",
+    "https://i.postimg.cc/xTqJZvjh/IMG-20251001-143810-989.jpg",
+    "https://i.postimg.cc/wTPyY13G/IMG-20251001-143813-440.jpg"
+  ],
+  "Товар 2":[
+    "https://i.postimg.cc/44YHLvxL/IMG-20251001-143824-749.jpg",
+    "https://i.postimg.cc/bY4DKGZ6/IMG-20251001-143827-144.jpg",
+    "https://i.postimg.cc/nVNj6sXS/IMG-20251001-143828-170.jpg"
+  ],
+  "Товар 3":[
+    "https://i.postimg.cc/DfRJtWSx/IMG-20251001-143830-106.jpg",
+    "https://i.postimg.cc/Y2TGJ4vy/IMG-20251001-143832-634.jpg",
+    "https://i.postimg.cc/c1PgVKKZ/IMG-20251001-143834-526.jpg"
+  ],
+  "Товар 4":[
+    "https://i.postimg.cc/KvLkFZLy/IMG-20251001-143835-844.jpg",
+    "https://i.postimg.cc/8PWJD1WS/IMG-20251001-143837-819.jpg",
+    "https://i.postimg.cc/9XsRv44X/IMG-20251001-143840-097.jpg"
+  ],
+  "Товар 5":[
+    "https://i.postimg.cc/7YqXJQVD/IMG-20251001-133953-876.jpg",
+    "https://i.postimg.cc/T3w9CLFk/IMG-20251001-133909-190.jpg"
+  ],
+  "Товар 6":[
+    "https://i.postimg.cc/yx8PtDWJ/fwgwtwtgwrg.jpg",
+    "https://i.postimg.cc/dVY7VzmX/image.png",
+    "https://i.postimg.cc/bwJT3DWm/234324.png"
+  ]
+};
 
-      document.querySelectorAll('.nav-item').forEach(nav => {
-        nav.classList.remove('active');
-      });
-      event.currentTarget.classList.add('active');
-    }
+const currencies = {
+  "BNB":0.0014,
+  "ETH":0.0003,
+  "USDT":1.34,
+  "SOL":0.0067,
+  "USDC":1.34
+};
 
-    // Сворачивание/разворачивание подгрупп
-    function toggleGroup(groupId) {
-      const group = document.getElementById(groupId);
-      if (!group) return;
-      group.style.display = (group.style.display === 'none') ? 'block' : 'none';
-    }
+const wallet_addresses = {
+  "BNB":"0xF879a1050307C2E7272CF57A9a6AF6088A307d4B",
+  "ETH":"0xF879a1050307C2E7272CF57A9a6AF6088A307d4B",
+  "USDT":"0xF879a1050307C2E7272CF57A9a6AF6088A307d4B",
+  "SOL":"9JfQ2UhDnBXkGSMceVjWEjAnfkGXFjQMkGmRkwZkBKK8",
+  "USDC":"0xF879a1050307C2E7272CF57A9a6AF6088A307d4B"
+};
 
-    // Изменение количества товаров
-    function changeQuantity(event, delta) {
-      event.stopPropagation();
-      const group = event.currentTarget.closest('.group');
-      const qtyDisplay = group.querySelector('.qty-display');
-      let currentQty = parseInt(qtyDisplay.textContent);
-      currentQty += delta;
-      if (currentQty < 1) currentQty = 1;
-      if (currentQty > 50) currentQty = 50;
-      qtyDisplay.textContent = currentQty;
-    }
+/* ===== Utilities ===== */
+function normalizeKey(s){ return String(s||'').toLowerCase().replace(/[\s\._]/g,'').normalize('NFKD'); }
+function findPriceKey(color){
+  if (custom_quantity_prices[color]) return color;
+  const norm = normalizeKey(color);
+  for (const k of Object.keys(custom_quantity_prices)){
+    if (normalizeKey(k) === norm) return k;
+  }
+  // fallback try add dot after first digit
+  const m = color.match(/^(\d)(.*)/);
+  if (m){
+    const try1 = m[1]+'.'+m[2];
+    if (custom_quantity_prices[try1]) return try1;
+  }
+  return null;
+}
 
-    // Корзина: структура и функции
-    const cart = [];
+/* ===== App state ===== */
+let selectedCity = null;
+let cart = []; // items: {product, color, qty, priceGBP, count}
+const cityList = ["Москва","Санкт-Петербург","Казань","Екатеринбург","Новосибирск","Нижний Новгород","Ростов-на-Дону","Краснодар","Самара","Челябинск"];
 
-    // Добавить товар в корзину
-    function addToCart(event) {
-      event.stopPropagation();
-      const groupElem = event.currentTarget.closest('.group');
-      const groupName = groupElem.getAttribute('data-group');
-      const qty = parseInt(groupElem.querySelector('.qty-display').textContent);
-      const imgSrc = groupElem.querySelector('img.group-img').src;
+/* ===== Build city grid ===== */
+const cityGrid = document.getElementById('cityGrid');
+cityList.forEach(c=>{
+  const b = document.createElement('button');
+  b.className='city-card';
+  b.textContent = c;
+  b.onclick = ()=>selectCity(c);
+  cityGrid.appendChild(b);
+});
 
-      // Проверяем, есть ли уже этот товар в корзине
-      const existingItem = cart.find(item => item.name === groupName);
-      if (existingItem) {
-        existingItem.qty += qty;
-        if (existingItem.qty > 50) existingItem.qty = 50;
+/* ===== Navigation helpers ===== */
+function navTo(e){
+  const page = e.currentTarget.dataset.page;
+  openPage(page);
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  e.currentTarget.classList.add('active');
+}
+function openPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  // when moving to products, ensure categories present
+  if (id==='page-products'){ renderCategories() }
+  if (id==='page-cart'){ renderCart() }
+}
+
+/* ===== City selection ===== */
+function selectCity(city){
+  selectedCity = city;
+  document.getElementById('selectedCityText').textContent = '🏙 Город: ' + city;
+  document.getElementById('cartCity').textContent = 'Город доставки: ' + city;
+  openPage('page-products');
+  // update nav active
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelector('.nav-item[data-page="page-products"]').classList.add('active');
+  // show categories
+  renderCategories();
+}
+
+function goToHome(){ openPage('page-home'); document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); document.querySelector('.nav-item[data-page="page-home"]').classList.add('active'); }
+
+/* ===== Build categories UI ===== */
+function renderCategories(){
+  const container = document.getElementById('categoriesContainer');
+  container.innerHTML = '';
+  Object.keys(submenus).forEach(prod=>{
+    const cat = document.createElement('div'); cat.className='category';
+    const head = document.createElement('div'); head.className='category-head';
+    head.innerHTML = `<div style="font-weight:800">${prod}</div><div class="small">▾</div>`;
+    const body = document.createElement('div'); body.className='category-body';
+    // populate color rows
+    submenus[prod].forEach(color=>{
+      const row = document.createElement('div'); row.className='item-row';
+      // choose image: first image of category if exists
+      const img = document.createElement('img'); img.className='thumb'; img.src = (category_images[prod] && category_images[prod][0]) || '';
+      const meta = document.createElement('div'); meta.className='item-meta';
+      meta.innerHTML = `<div class="item-title">${color}</div><div class="small">Выберите количество и добавьте в корзину</div>`;
+      // Create selector for gradations
+      const sel = document.createElement('div'); sel.className='selector';
+      // Determine gradations:
+      const priceKey = findPriceKey(color);
+      let grads = [];
+      if (priceKey) {
+        grads = Object.keys(custom_quantity_prices[priceKey]).map(x => parseFloat(x)).sort((a,b)=>a-b);
       } else {
-        cart.push({ name: groupName, qty, imgSrc });
+        // fallback simple: [1]
+        grads = [1];
       }
-
-      alert(`Добавлено в корзину: ${groupName} (кол-во: ${qty})`);
-      renderCart();
-    }
-
-    // Отобразить корзину
-    function renderCart() {
-      const cartList = document.getElementById('cart-list');
-      cartList.innerHTML = '';
-
-      if (cart.length === 0) {
-        cartList.innerHTML = '<p>Корзина пуста</p>';
-        return;
+      let idx = 0;
+      const minus = document.createElement('button'); minus.className='step-btn'; minus.textContent='−';
+      const plus = document.createElement('button'); plus.className='step-btn'; plus.textContent='+';
+      const qtyDisplay = document.createElement('div'); qtyDisplay.className='qty-display'; qtyDisplay.textContent = grads[idx] + (String(grads[idx]).indexOf('.')>-1 ? ' g' : ' g');
+      const priceSpan = document.createElement('div'); priceSpan.className='small'; priceSpan.style.marginLeft='8px';
+      const addBtn = document.createElement('button'); addBtn.className='add-btn'; addBtn.textContent='Добавить в корзину';
+      // update price function
+      function updateDisplay(){
+        const q = grads[idx];
+        qtyDisplay.textContent = (Number.isInteger(q) ? q : q) + ' g';
+        const pKey = priceKey;
+        const price = pKey ? custom_quantity_prices[pKey][q] : 0;
+        priceSpan.textContent = price + ' £';
       }
+      minus.onclick = (ev)=>{ ev.stopPropagation(); idx = Math.max(0, idx-1); updateDisplay(); };
+      plus.onclick = (ev)=>{ ev.stopPropagation(); idx = Math.min(grads.length-1, idx+1); updateDisplay(); };
+      // add to cart onclick
+      addBtn.onclick = (ev)=>{
+        ev.stopPropagation();
+        const q = grads[idx];
+        const pKey = priceKey;
+        const price = pKey ? custom_quantity_prices[pKey][q] : 0;
+        addToCart({product:prod, color:color, qty:q, priceGBP:price});
+        // visual feedback: change button to ✅ В корзине for 1.5s
+        const oldText = addBtn.textContent;
+        addBtn.textContent = '✅ В корзине';
+        addBtn.classList.add('in-cart');
+        setTimeout(()=>{ addBtn.textContent = oldText; addBtn.classList.remove('in-cart'); }, 1500);
+      };
+      // assemble
+      sel.appendChild(minus); sel.appendChild(qtyDisplay); sel.appendChild(plus); sel.appendChild(priceSpan); sel.appendChild(addBtn);
+      updateDisplay();
+      row.appendChild(img); row.appendChild(meta); row.appendChild(sel);
+      body.appendChild(row);
+    });
+    head.onclick = ()=>{ const open = body.style.display==='block'; document.querySelectorAll('.category-body').forEach(b=>b.style.display='none'); body.style.display = open? 'none' : 'block'; };
+    cat.appendChild(head); cat.appendChild(body); container.appendChild(cat);
+  });
+}
 
-      cart.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'cart-item';
+/* ===== Cart logic ===== */
+function addToCart(item){
+  // item: {product,color,qty,priceGBP}
+  const idx = cart.findIndex(it => it.product===item.product && it.color===item.color && it.qty===item.qty && it.priceGBP===item.priceGBP);
+  if (idx>=0){ cart[idx].count += 1; } else { item.count = 1; cart.push(item); }
+  refreshCartFloat();
+}
 
-        const img = document.createElement('img');
-        img.src = item.imgSrc;
-        img.alt = item.name;
-        img.className = 'cart-item-img';
+function refreshCartFloat(){
+  const count = cart.reduce((s,i)=>s+i.count,0);
+  const sum = cart.reduce((s,i)=>s + i.priceGBP * i.count, 0);
+  document.getElementById('cartCount').textContent = count;
+  document.getElementById('cartSum').textContent = sum.toFixed(2);
+  const cf = document.getElementById('cartFloat');
+  cf.classList.toggle('hidden', count===0);
+}
 
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = item.name;
-        nameSpan.className = 'cart-item-name';
+function renderCart(){
+  const list = document.getElementById('cartList');
+  list.innerHTML = '';
+  if (!selectedCity){
+    document.getElementById('cartCity').textContent = 'Город доставки: —';
+  } else {
+    document.getElementById('cartCity').textContent = 'Город доставки: ' + selectedCity;
+  }
+  if (cart.length===0) { list.innerHTML = '<div class="small">Корзина пуста</div>'; document.getElementById('totalGBP').textContent = '0.00'; document.getElementById('totalConverted').textContent = ''; return; }
+  cart.forEach((it, idx)=>{
+    const el = document.createElement('div'); el.className='cart-item';
+    const img = document.createElement('img'); img.className='thumb'; img.src = (category_images[it.product] && category_images[it.product][0]) || '';
+    const meta = document.createElement('div'); meta.className='meta';
+    meta.innerHTML = `<div style="font-weight:800">${it.product}</div><div class="small">${it.color} • ${it.qty} g</div><div class="small">Цена: ${it.priceGBP} £ • Кол-во: ${it.count}</div>`;
+    const controls = document.createElement('div');
+    controls.innerHTML = `<div style="text-align:right;font-weight:800">${(it.priceGBP*it.count).toFixed(2)} £</div>
+      <div style="margin-top:8px;display:flex;gap:6px;align-items:center;justify-content:flex-end">
+        <button class="step-btn" onclick="decCartItem(${idx})">−</button>
+        <div style="min-width:24px;text-align:center">${it.count}</div>
+        <button class="step-btn" onclick="incCartItem(${idx})">+</button>
+        <button class="step-btn" style="background:#cc3333" onclick="removeCartItem(${idx})">✕</button>
+      </div>`;
+    el.appendChild(img); el.appendChild(meta); el.appendChild(controls);
+    list.appendChild(el);
+  });
+  const total = cart.reduce((s,i)=>s + i.priceGBP * i.count,0);
+  document.getElementById('totalGBP').textContent = total.toFixed(2);
+  document.getElementById('totalConverted').textContent = ''; // updated in modal when currency chosen
+}
 
-        const qtySpan = document.createElement('span');
-        qtySpan.textContent = `× ${item.qty}`;
-        qtySpan.className = 'cart-item-qty';
+function incCartItem(i){ cart[i].count += 1; renderCart(); refreshCartFloat(); }
+function decCartItem(i){ cart[i].count = Math.max(1, cart[i].count - 1); renderCart(); refreshCartFloat(); }
+function removeCartItem(i){ cart.splice(i,1); renderCart(); refreshCartFloat(); }
+function clearCart(){ cart = []; renderCart(); refreshCartFloat(); }
 
-        div.appendChild(img);
-        div.appendChild(nameSpan);
-        div.appendChild(qtySpan);
+/* ===== Payment modal logic (show wallet after currency chosen) ===== */
+const currencyListEl = document.getElementById('currencyList');
+const payModalEl = document.getElementById('payModal');
+const payDetailsEl = document.getElementById('payDetails');
+const paySummaryEl = document.getElementById('paySummary');
+const walletAddrEl = document.getElementById('walletAddr');
 
-        cartList.appendChild(div);
-      });
-    }
+function openPayModal(){
+  if (cart.length===0){ alert('Корзина пуста'); return; }
+  // build currency buttons
+  currencyListEl.innerHTML = '';
+  Object.keys(currencies).forEach(c=>{
+    const cc = document.createElement('div'); cc.className='currency-card'; cc.textContent = c;
+    cc.onclick = ()=>selectCurrency(c);
+    currencyListEl.appendChild(cc);
+  });
+  payDetailsEl.style.display = 'none';
+  payModalEl.style.display = 'block';
+}
 
-    // Инициализация WebApp
-    window.Telegram.WebApp.ready();
+function closePayModal(){ payModalEl.style.display = 'none'; }
 
-  </script>
+function selectCurrency(cur){
+  // compute totals
+  const rate = currencies[cur] || 1;
+  const totalGBP = cart.reduce((s,i)=>s + i.priceGBP * i.count,0);
+  const converted = totalGBP * rate;
+  const wallet = wallet_addresses[cur] || 'No address set';
+  paySummaryEl.textContent = `${converted.toFixed(6)} ${cur}  —  (${totalGBP.toFixed(2)} £)`;
+  walletAddrEl.textContent = wallet;
+  payDetailsEl.style.display = 'block';
+  // store current selection
+  payDetailsEl.dataset.cur = cur;
+  payDetailsEl.dataset.wallet = wallet;
+  payDetailsEl.dataset.converted = converted.toFixed(8);
+  // scroll into view
+  payDetailsEl.scrollIntoView({behavior:'smooth'});
+}
 
+function copyWallet(){
+  const addr = walletAddrEl.textContent;
+  if (!addr) return;
+  navigator.clipboard?.writeText(addr).then(()=>{ alert('Адрес скопирован в буфер') }).catch(()=>{ alert('Не удалось скопировать, скопируйте вручную') });
+}
+
+function payConfirm(){
+  // placeholder: we do NOT send data yet. just show alert and close modal.
+  alert('Оплата — пока заглушка. Адрес можно скопировать и использовать в кошельке.');
+  closePayModal();
+}
+
+/* ===== Init & small helpers ===== */
+document.addEventListener('DOMContentLoaded', ()=>{
+  // init nav state
+  window.Telegram?.WebApp?.ready();
+  // default: show home page (already)
+  refreshCartFloat();
+  // place nav handlers
+  document.querySelectorAll('.nav-item').forEach(n=>n.onclick = (e)=>{ navTo(e) });
+});
+
+/* For debug: expose some functions */
+window.renderCategories = renderCategories;
+window.selectCity = selectCity;
+window.openPage = openPage;
+</script>
 </body>
 </html>
