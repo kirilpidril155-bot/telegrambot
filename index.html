@@ -26,7 +26,7 @@
   .category-head{display:flex;justify-content:space-between;align-items:center;padding:8px 6px;cursor:pointer}
   .category-body{display:none;padding:8px 6px}
   .item-row{display:flex;align-items:center;gap:12px;padding:8px;border-radius:8px}
-  .thumb{width:64px;height:64px;border-radius:8px;object-fit:cover;background:#eee;border:1px solid rgba(0,0,0,0.03);flex-shrink:0}
+  .thumb{width:80px;height:80px;border-radius:8px;object-fit:cover;background:#eee;border:1px solid rgba(0,0,0,0.03);flex-shrink:0}
   .item-meta{flex:1;min-width:0}
   .item-title{font-weight:700;word-break:break-word}
   .selector{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -62,9 +62,11 @@
     .item-row {
       flex-direction: column;
       align-items: flex-start;
-      gap: 8px;
+      gap: 12px;
     }
     .thumb {
+      width: 100%;
+      height: 120px;
       align-self: center;
     }
     .selector {
@@ -80,6 +82,28 @@
     }
     .cart-actions .btn {
       width: 100%;
+    }
+    .cart-item {
+      flex-direction: column;
+      text-align: center;
+    }
+    .cart-item .thumb {
+      width: 100px;
+      height: 100px;
+    }
+  }
+
+  @media (min-width: 481px) and (max-width: 768px) {
+    .thumb {
+      width: 90px;
+      height: 90px;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .thumb {
+      width: 100px;
+      height: 100px;
     }
   }
   
@@ -129,12 +153,6 @@
     </div>
   </div>
 
-  <!-- PAGE: CURRENCY INFO (kept for nav completeness) -->
-  <div id="page-currency" class="page">
-    <h2>Валюта / Информация</h2>
-    <p class="small">Курсы и кошельки используются при оплате (расчёт по фиксированным коэффициентам).</p>
-  </div>
-
 </div>
 
 <!-- Floating cart preview -->
@@ -181,7 +199,6 @@
 <div class="bottom-nav">
   <div class="nav-item active" data-page="page-home" onclick="navTo(event)">Главная</div>
   <div class="nav-item" data-page="page-products" onclick="navTo(event)">Товары</div>
-  <div class="nav-item" data-page="page-currency" onclick="navTo(event)">Валюта</div>
   <div class="nav-item" data-page="page-cart" onclick="navTo(event)">Корзина</div>
 </div>
 
@@ -350,6 +367,7 @@ function renderCategories(){
       const row = document.createElement('div'); row.className='item-row';
       // choose image: first image of category if exists
       const img = document.createElement('img'); img.className='thumb'; img.src = (category_images[prod] && category_images[prod][0]) || '';
+      img.onerror = function() { this.style.display = 'none'; };
       const meta = document.createElement('div'); meta.className='item-meta';
       meta.innerHTML = `<div class="item-title">${color}</div><div class="small">Выберите количество и добавьте в корзину</div>`;
       // Create selector for gradations
@@ -432,6 +450,7 @@ function renderCart(){
   cart.forEach((it, idx)=>{
     const el = document.createElement('div'); el.className='cart-item';
     const img = document.createElement('img'); img.className='thumb'; img.src = (category_images[it.product] && category_images[it.product][0]) || '';
+    img.onerror = function() { this.style.display = 'none'; };
     const meta = document.createElement('div'); meta.className='meta';
     meta.innerHTML = `<div style="font-weight:800">${it.product}</div><div class="small">${it.color} • ${it.qty} g</div><div class="small">Цена: ${it.priceGBP} £ • Кол-во: ${it.count}</div>`;
     const controls = document.createElement('div');
