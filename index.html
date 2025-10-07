@@ -55,7 +55,7 @@
   .copy-btn{background:#eee;border:0;padding:8px;border-radius:8px;cursor:pointer;margin-top:8px;transition: all 0.2s ease;}
   /* Bottom nav */
   .bottom-nav{position:fixed;left:0;right:0;bottom:0;height:60px;background:#fff;border-top:1px solid #eee;display:flex;align-items:center;justify-content:space-around;z-index:300}
-  .nav-item{flex:1;text-align:center;padding-top:6px;cursor:pointer;color:var(--muted);transition: all 0.3s ease;}
+  .nav-item{flex:1;text-align:center;padding-top:6px;cursor:pointer;color:var(--muted);transition: all 0.3s ease;position: relative;overflow: hidden;}
   .nav-item.active{color:var(--accent);font-weight:700}
   
   /* Animations */
@@ -106,6 +106,15 @@
     position: absolute;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.6);
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    pointer-events: none;
+  }
+
+  .nav-ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(0, 136, 204, 0.2);
     transform: scale(0);
     animation: ripple 0.6s linear;
     pointer-events: none;
@@ -303,9 +312,9 @@
 
 <!-- Bottom nav -->
 <div class="bottom-nav">
-  <div class="nav-item active" data-page="page-home" onclick="navTo(event)">Главная</div>
-  <div class="nav-item" data-page="page-products" onclick="navTo(event)">Товары</div>
-  <div class="nav-item" data-page="page-cart" onclick="navTo(event)">Корзина</div>
+  <div class="nav-item active" data-page="page-home" onclick="navTo(this, event)">Главная</div>
+  <div class="nav-item" data-page="page-products" onclick="navTo(this, event)">Товары</div>
+  <div class="nav-item" data-page="page-cart" onclick="navTo(this, event)">Корзина</div>
 </div>
 
 <script>
@@ -452,12 +461,34 @@ function createRipple(event) {
   button.appendChild(circle);
 }
 
+function createNavRipple(event) {
+  const button = event.currentTarget;
+  const circle = document.createElement("span");
+  const diameter = Math.max(button.clientWidth, button.clientHeight);
+  const radius = diameter / 2;
+
+  circle.style.width = circle.style.height = `${diameter}px`;
+  circle.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
+  circle.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
+  circle.classList.add("nav-ripple");
+
+  const ripple = button.getElementsByClassName("nav-ripple")[0];
+  if (ripple) {
+    ripple.remove();
+  }
+
+  button.appendChild(circle);
+}
+
 /* ===== Navigation helpers ===== */
-function navTo(e){
-  const page = e.currentTarget.dataset.page;
-  openPage(page);
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  e.currentTarget.classList.add('active');
+function navTo(element, event){
+  createNavRipple(event);
+  setTimeout(() => {
+    const page = element.dataset.page;
+    openPage(page);
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    element.classList.add('active');
+  }, 200);
 }
 
 function openPage(id){
@@ -534,7 +565,6 @@ function renderCategories(){
         btn.onclick = (ev) => {
           createRipple(ev);
           // Call original handler after ripple
-          const originalHandler = btn.onclick;
           setTimeout(() => {
             if (btn === addBtn) {
               const q = grads[idx];
@@ -874,15 +904,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
   window.Telegram?.WebApp?.ready();
   // default: show home page (already)
   refreshCartFloat();
-  // place nav handlers
-  document.querySelectorAll('.nav-item').forEach(n=>{
-    n.onclick = (e)=>{
-      createRipple(e);
-      setTimeout(() => navTo(e), 200);
-    }
-  });
   
-  // Add ripple to all buttons
+  // Add ripple to all buttons except nav items
   document.addEventListener('click', function(e) {
     if (e.target.matches('.btn, .step-btn, .add-btn, .city-card, .currency-card, .copy-btn, .change-city')) {
       createRipple(e);
