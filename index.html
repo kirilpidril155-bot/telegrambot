@@ -11,230 +11,64 @@
   body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);padding-bottom:80px}
   .container{padding:16px;max-width:980px;margin:0 auto}
   h1,h2{margin:6px 0 12px}
-  /* Pages */
-  .page{display:none;animation: fadeIn 0.4s ease;}
+  .page{display:none}
   .page.active{display:block}
-  /* City list */
   .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-  .city-card{background:var(--card);padding:14px;border-radius:10px;text-align:center;font-weight:700;color:#fff;background:var(--accent);cursor:pointer;border:0;transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);}
-  /* Header */
+  .city-card{background:var(--card);padding:14px;border-radius:10px;text-align:center;font-weight:700;color:#fff;background:var(--accent);cursor:pointer;border:0}
   .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
   .current-city{font-weight:700;color:var(--accent)}
-  .change-city{background:#eee;border:0;padding:6px 10px;border-radius:8px;cursor:pointer;transition: all 0.2s ease;}
-  /* Categories */
+  .change-city{background:#eee;border:0;padding:6px 10px;border-radius:8px;cursor:pointer}
   .category{background:var(--card);border-radius:10px;padding:8px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
   .category-head{display:flex;justify-content:space-between;align-items:center;padding:8px 6px;cursor:pointer}
-  .category-body{display:none;padding:8px 6px;transition: all 0.4s ease;max-height: 0;overflow: hidden;}
-  .category-body.open{max-height: 5000px;animation: expand 0.5s ease;}
-  .item-row{display:flex;align-items:center;gap:12px;padding:8px;border-radius:8px;animation: slideIn 0.5s ease;}
-  .thumb{width:80px;height:80px;border-radius:8px;object-fit:cover;background:#eee;border:1px solid rgba(0,0,0,0.03);flex-shrink:0;transition: all 0.3s ease;}
+  .category-body{display:none;padding:8px 6px}
+  .item-row{display:flex;align-items:center;gap:12px;padding:8px;border-radius:8px}
+  .thumb{width:80px;height:80px;border-radius:8px;object-fit:cover;background:#eee;border:1px solid rgba(0,0,0,0.03);flex-shrink:0}
   .item-meta{flex:1;min-width:0}
   .item-title{font-weight:700;word-break:break-word}
   .selector{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .step-btn{width:36px;height:36px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;flex-shrink:0;transition: all 0.2s ease;position: relative;overflow: hidden;}
-  .qty-display{min-width:48px;text-align:center;font-weight:800;flex-shrink:0;transition: all 0.3s ease;}
-  .add-btn{background:var(--accent);color:#fff;border:0;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;flex-shrink:0;white-space:nowrap;transition: all 0.3s ease;position: relative;overflow: hidden;}
+  .step-btn{width:36px;height:36px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;flex-shrink:0}
+  .qty-display{min-width:48px;text-align:center;font-weight:800;flex-shrink:0}
+  .add-btn{background:var(--accent);color:#fff;border:0;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;flex-shrink:0;white-space:nowrap}
   .in-cart{background:#2ea44f}
-  /* Cart inline */
-  .cart-float{position:fixed;left:12px;right:12px;bottom:72px;background:var(--card);padding:10px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,0.12);z-index:200;transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);}
+  .cart-float{position:fixed;left:12px;right:12px;bottom:72px;background:var(--card);padding:10px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,0.12);z-index:200}
   .cart-float.hidden{display:none}
-  /* Cart page */
   .cart-list{margin:8px 0}
-  .cart-item{display:flex;gap:12px;align-items:center;background:var(--card);padding:10px;border-radius:8px;margin-bottom:8px;animation: slideIn 0.4s ease;}
+  .cart-item{display:flex;gap:12px;align-items:center;background:var(--card);padding:10px;border-radius:8px;margin-bottom:8px}
   .cart-item .meta{flex:1;min-width:0}
   .cart-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-  .btn{padding:10px 12px;border-radius:8px;border:0;cursor:pointer;font-weight:700;transition: all 0.3s ease;position: relative;overflow: hidden;}
+  .btn{padding:10px 12px;border-radius:8px;border:0;cursor:pointer;font-weight:700}
   .btn.primary{background:var(--accent);color:#fff}
   .btn.danger{background:#e74c3c;color:#fff}
   .small{font-size:13px;color:var(--muted)}
-  /* Modal */
-  .modal-back{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:400;animation: fadeIn 0.3s ease;}
-  .modal{background:var(--card);padding:16px;border-radius:12px;width:92%;max-width:420px;animation: modalSlideIn 0.3s ease;}
+  .modal-back{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:400}
+  .modal{background:var(--card);padding:16px;border-radius:12px;width:92%;max-width:420px}
   .currency-list{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
-  .currency-card{padding:8px 10px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);cursor:pointer;transition: all 0.2s ease;}
-  .copy-btn{background:#eee;border:0;padding:8px;border-radius:8px;cursor:pointer;margin-top:8px;transition: all 0.2s ease;}
-  /* Bottom nav */
+  .currency-card{padding:8px 10px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);cursor:pointer}
+  .copy-btn{background:#eee;border:0;padding:8px;border-radius:8px;cursor:pointer;margin-top:8px}
   .bottom-nav{position:fixed;left:0;right:0;bottom:0;height:60px;background:#fff;border-top:1px solid #eee;display:flex;align-items:center;justify-content:space-around;z-index:300}
-  .nav-item{flex:1;text-align:center;padding-top:6px;cursor:pointer;color:var(--muted);transition: all 0.3s ease;position: relative;overflow: hidden;}
+  .nav-item{flex:1;text-align:center;padding-top:6px;cursor:pointer;color:var(--muted)}
   .nav-item.active{color:var(--accent);font-weight:700}
   
-  /* Animations */
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  @keyframes expand {
-    from { max-height: 0; opacity: 0; }
-    to { max-height: 5000px; opacity: 1; }
-  }
-  
-  @keyframes modalSlideIn {
-    from { opacity: 0; transform: scale(0.8) translateY(-20px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-  }
-  
-  @keyframes addToCart {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); background-color: #2ecc71; }
-    100% { transform: scale(1); }
-  }
-  
-  @keyframes bounce {
-    0%, 20%, 60%, 100% { transform: scale(1); }
-    40% { transform: scale(1.3); }
-    80% { transform: scale(1.1); }
-  }
-  
-  @keyframes flyToCart {
-    0% { transform: scale(1) translate(0, 0); opacity: 1; }
-    100% { transform: scale(0.3) translate(100px, -50px); opacity: 0; }
-  }
-  
-  @keyframes ripple {
-    0% { transform: scale(0); opacity: 1; }
-    100% { transform: scale(4); opacity: 0; }
-  }
-  
-  /* Ripple effect */
-  .ripple {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.6);
-    transform: scale(0);
-    animation: ripple 0.6s linear;
-    pointer-events: none;
-  }
-
-  .nav-ripple {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(0, 136, 204, 0.2);
-    transform: scale(0);
-    animation: ripple 0.6s linear;
-    pointer-events: none;
-  }
-  
-  /* Flying icon */
-  .flying-icon {
-    position: fixed;
-    width: 20px;
-    height: 20px;
-    background: var(--accent);
-    border-radius: 50%;
-    animation: flyToCart 0.8s ease-in-out forwards;
-    z-index: 1000;
-    pointer-events: none;
-  }
-  
-  /* Loading states */
-  .btn.loading {
-    color: transparent;
-    pointer-events: none;
-  }
-  
-  .btn.loading::after {
-    content: "";
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    top: 50%;
-    left: 50%;
-    margin: -8px 0 0 -8px;
-    border: 2px solid #ffffff;
-    border-radius: 50%;
-    border-right-color: transparent;
-    animation: spin 0.8s linear infinite;
-  }
-  
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  
-  /* Mobile optimizations */
   @media (max-width: 480px) {
-    .item-row {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 12px;
-    }
-    .thumb {
-      width: 100%;
-      height: 120px;
-      align-self: center;
-    }
-    .selector {
-      width: 100%;
-      justify-content: space-between;
-    }
-    .add-btn {
-      flex-grow: 1;
-      text-align: center;
-    }
-    .cart-actions {
-      flex-direction: column;
-    }
-    .cart-actions .btn {
-      width: 100%;
-    }
-    .cart-item {
-      flex-direction: column;
-      text-align: center;
-    }
-    .cart-item .thumb {
-      width: 100px;
-      height: 100px;
-    }
+    .item-row {flex-direction: column; gap: 12px;}
+    .thumb {width: 100%; height: 120px; align-self: center;}
+    .selector {width: 100%; justify-content: space-between;}
+    .add-btn {flex-grow: 1; text-align: center;}
+    .cart-actions {flex-direction: column;}
+    .cart-actions .btn {width: 100%;}
+    .cart-item {flex-direction: column; text-align: center;}
+    .cart-item .thumb {width: 100px; height: 100px;}
   }
-
-  @media (min-width: 481px) and (max-width: 768px) {
-    .thumb {
-      width: 90px;
-      height: 90px;
-    }
-  }
-
-  @media (min-width: 769px) {
-    .thumb {
-      width: 100px;
-      height: 100px;
-    }
-  }
-  
-  /* Interactive states */
-  .city-card:active, .btn:active, .step-btn:active, .add-btn:active {
-    transform: scale(0.95);
-  }
-  
-  .city-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 136, 204, 0.3);
-  }
-  
-  .currency-card:hover, .copy-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
   @media(min-width:700){.grid{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
 <body>
 <div class="container">
-
-  <!-- PAGE: HOME (choose city) -->
   <div id="page-home" class="page active">
     <h2>Выберите город доставки</h2>
     <div class="grid" id="cityGrid"></div>
   </div>
 
-  <!-- PAGE: PRODUCTS -->
   <div id="page-products" class="page">
     <div class="header">
       <div>
@@ -243,11 +77,9 @@
       </div>
       <button class="change-city" onclick="goToHome()">🏙 Изменить город</button>
     </div>
-
     <div id="categoriesContainer"></div>
   </div>
 
-  <!-- PAGE: CART -->
   <div id="page-cart" class="page">
     <div class="header">
       <div>
@@ -255,9 +87,7 @@
         <div class="small" id="cartCity">Город доставки: —</div>
       </div>
     </div>
-
     <div id="cartList" class="cart-list"></div>
-
     <div style="margin-top:10px">
       <div style="font-weight:800">Итого: <span id="totalGBP">0</span> £</div>
       <div class="small" id="totalConverted"> </div>
@@ -267,10 +97,8 @@
       </div>
     </div>
   </div>
-
 </div>
 
-<!-- Floating cart preview -->
 <div id="cartFloat" class="cart-float hidden">
   <div>
     <div style="font-weight:800">В корзине: <span id="cartCount">0</span> шт</div>
@@ -281,20 +109,17 @@
   </div>
 </div>
 
-<!-- Modal for payment -->
 <div id="payModal" style="display:none">
   <div class="modal-back" id="modalBack">
-    <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div style="font-weight:800">Оплата</div>
         <button onclick="closePayModal()" style="background:none;border:0;font-size:18px;cursor:pointer">✕</button>
       </div>
-
       <div style="margin-top:10px">
         <div class="small">Выберите валюту для оплаты</div>
         <div class="currency-list" id="currencyList"></div>
       </div>
-
       <div id="payDetails" style="margin-top:10px;display:none">
         <div style="font-weight:800" id="paySummary"></div>
         <div class="small" style="margin-top:6px">Адрес для перевода:</div>
@@ -305,20 +130,18 @@
           <button class="btn" onclick="closePayModal()">Закрыть</button>
         </div>
       </div>
-
     </div>
   </div>
 </div>
 
-<!-- Bottom nav -->
 <div class="bottom-nav">
-  <div class="nav-item active" data-page="page-home" onclick="navTo(this, event)">Главная</div>
-  <div class="nav-item" data-page="page-products" onclick="navTo(this, event)">Товары</div>
-  <div class="nav-item" data-page="page-cart" onclick="navTo(this, event)">Корзина</div>
+  <div class="nav-item active" data-page="page-home" onclick="navTo(this)">Главная</div>
+  <div class="nav-item" data-page="page-products" onclick="navTo(this)">Товары</div>
+  <div class="nav-item" data-page="page-cart" onclick="navTo(this)">Корзина</div>
 </div>
 
 <script>
-/* ===== DATA (from your Python) ===== */
+// Данные
 const submenus = {
   "Товар 1": ["1.🍍Цвет🍍","2.🍒Цвет🍒","3.💮Цвет💮","4.🍃Цвет🍃","5.♥️Цвет♥️","6.🐘Цвет🐘","7.🍫Цвет🍫","8.🧁Цвет🧁"],
   "Товар 2": ["1.🥥Цвет🥥","2.🧊Цвет🧊","3.❄️Цвет❄️"],
@@ -329,201 +152,91 @@ const submenus = {
 };
 
 const custom_quantity_prices = {
-  "1.🍍Цвет🍍": {3.5:40,7:70,14:130},
-  "2.🍒Цвет🍒": {3.5:40,7:70,14:130},
-  "3.💮Цвет💮": {3.5:40,7:70,14:130},
-  "4.🍃Цвет🍃": {3.5:80,7:150,14:270,28:450},
-  "5.♥️Цвет♥️": {3.5:40,7:70,14:130},
-  "6.🐘Цвет🐘": {3.5:40,7:70,14:130},
-  "7.🍫Цвет🍫": {3.5:40,7:80,14:120},
-  "8.🧁Цвет🧁": {1:70,2:120,3:160},
-  "1.🥥Цвет🥥": {1:70,2:120,3:160},
-  "2.🧊Цвет🧊": {1:17,2:30,4:55,6:90},
-  "3.❄️Цвет❄️": {1:25,2:45,3:60,4:80},
-  "1.💊Цвет💊": {1:10,2:20,3:25,6:45,12:80},
-  "2.🍄Цвет🍄": {3.5:40,7:70,14:130},
-  "3.👽Цвет👽": {2.5:320,5:500,7.5:650},
-  "1.🌈Цвет🌈": {5:30,10:55,15:100,25:170},
-  "2.🥭Цвет🥭": {5:30,10:55,15:100,25:170},
-  "3.🔥цвет🔥": {1:35,2:60,4:100},
-  "🍏Цвет🍏": {5:120},
-  "🍓цвет🍓": {5:120},
-  "🌴Цвет🌴": {5:120},
-  "🍓Цвет🍓": {2:80},
-  "🍋Цвет🍋": {2:80},
-  "🍇Цвет🍇": {2:80},
-  "💜Цвет💜": {2:80},
-  "🍫Цвет🍫": {14:90},
-  "🎁Цвет🎁": {21:150},
-  "🎁🎁Цвет🎁🎁": {19:170}
+  "1.🍍Цвет🍍": {3.5:40,7:70,14:130}, "2.🍒Цвет🍒": {3.5:40,7:70,14:130},
+  "3.💮Цвет💮": {3.5:40,7:70,14:130}, "4.🍃Цвет🍃": {3.5:80,7:150,14:270,28:450},
+  "5.♥️Цвет♥️": {3.5:40,7:70,14:130}, "6.🐘Цвет🐘": {3.5:40,7:70,14:130},
+  "7.🍫Цвет🍫": {3.5:40,7:80,14:120}, "8.🧁Цвет🧁": {1:70,2:120,3:160},
+  "1.🥥Цвет🥥": {1:70,2:120,3:160}, "2.🧊Цвет🧊": {1:17,2:30,4:55,6:90},
+  "3.❄️Цвет❄️": {1:25,2:45,3:60,4:80}, "1.💊Цвет💊": {1:10,2:20,3:25,6:45,12:80},
+  "2.🍄Цвет🍄": {3.5:40,7:70,14:130}, "3.👽Цвет👽": {2.5:320,5:500,7.5:650},
+  "1.🌈Цвет🌈": {5:30,10:55,15:100,25:170}, "2.🥭Цвет🥭": {5:30,10:55,15:100,25:170},
+  "3.🔥цвет🔥": {1:35,2:60,4:100}, "🍏Цвет🍏": {5:120}, "🍓цвет🍓": {5:120},
+  "🌴Цвет🌴": {5:120}, "🍓Цвет🍓": {2:80}, "🍋Цвет🍋": {2:80}, "🍇Цвет🍇": {2:80},
+  "💜Цвет💜": {2:80}, "🍫Цвет🍫": {14:90}, "🎁Цвет🎁": {21:150}, "🎁🎁Цвет🎁🎁": {19:170}
 };
 
 const category_images = {
-  "Товар 1":[
-    "https://i.postimg.cc/TYSLvKht/IMG-20251001-143808-938.jpg",
-    "https://i.postimg.cc/xTqJZvjh/IMG-20251001-143810-989.jpg",
-    "https://i.postimg.cc/wTPyY13G/IMG-20251001-143813-440.jpg"
-  ],
-  "Товар 2":[
-    "https://i.postimg.cc/44YHLvxL/IMG-20251001-143824-749.jpg",
-    "https://i.postimg.cc/bY4DKGZ6/IMG-20251001-143827-144.jpg",
-    "https://i.postimg.cc/nVNj6sXS/IMG-20251001-143828-170.jpg"
-  ],
-  "Товар 3":[
-    "https://i.postimg.cc/DfRJtWSx/IMG-20251001-143830-106.jpg",
-    "https://i.postimg.cc/Y2TGJ4vy/IMG-20251001-143832-634.jpg",
-    "https://i.postimg.cc/c1PgVKKZ/IMG-20251001-143834-526.jpg"
-  ],
-  "Товар 4":[
-    "https://i.postimg.cc/KvLkFZLy/IMG-20251001-143835-844.jpg",
-    "https://i.postimg.cc/8PWJD1WS/IMG-20251001-143837-819.jpg",
-    "https://i.postimg.cc/9XsRv44X/IMG-20251001-143840-097.jpg"
-  ],
-  "Товар 5":[
-    "https://i.postimg.cc/7YqXJQVD/IMG-20251001-133953-876.jpg",
-    "https://i.postimg.cc/T3w9CLFk/IMG-20251001-133909-190.jpg"
-  ],
-  "Товар 6":[
-    "https://i.postimg.cc/yx8PtDWJ/fwgwtwtgwrg.jpg",
-    "https://i.postimg.cc/dVY7VzmX/image.png",
-    "https://i.postimg.cc/bwJT3DWm/234324.png"
-  ]
+  "Товар 1":["https://i.postimg.cc/TYSLvKht/IMG-20251001-143808-938.jpg","https://i.postimg.cc/xTqJZvjh/IMG-20251001-143810-989.jpg","https://i.postimg.cc/wTPyY13G/IMG-20251001-143813-440.jpg"],
+  "Товар 2":["https://i.postimg.cc/44YHLvxL/IMG-20251001-143824-749.jpg","https://i.postimg.cc/bY4DKGZ6/IMG-20251001-143827-144.jpg","https://i.postimg.cc/nVNj6sXS/IMG-20251001-143828-170.jpg"],
+  "Товар 3":["https://i.postimg.cc/DfRJtWSx/IMG-20251001-143830-106.jpg","https://i.postimg.cc/Y2TGJ4vy/IMG-20251001-143832-634.jpg","https://i.postimg.cc/c1PgVKKZ/IMG-20251001-143834-526.jpg"],
+  "Товар 4":["https://i.postimg.cc/KvLkFZLy/IMG-20251001-143835-844.jpg","https://i.postimg.cc/8PWJD1WS/IMG-20251001-143837-819.jpg","https://i.postimg.cc/9XsRv44X/IMG-20251001-143840-097.jpg"],
+  "Товар 5":["https://i.postimg.cc/7YqXJQVD/IMG-20251001-133953-876.jpg","https://i.postimg.cc/T3w9CLFk/IMG-20251001-133909-190.jpg"],
+  "Товар 6":["https://i.postimg.cc/yx8PtDWJ/fwgwtwtgwrg.jpg","https://i.postimg.cc/dVY7VzmX/image.png","https://i.postimg.cc/bwJT3DWm/234324.png"]
 };
 
-const currencies = {
-  "BNB":0.0014,
-  "ETH":0.0003,
-  "USDT":1.34,
-  "SOL":0.0067,
-  "USDC":1.34
-};
-
+const currencies = {"BNB":0.0014,"ETH":0.0003,"USDT":1.34,"SOL":0.0067,"USDC":1.34};
 const wallet_addresses = {
   "BNB":"0xF879a1050307C2E7272CF57A9a6AF6088A307d4B",
-  "ETH":"0xF879a1050307C2E7272CF57A9a6AF6088A307d4B",
+  "ETH":"0xF879a1050307C2E7272CF57A9a6AF6088A307d4B", 
   "USDT":"0xF879a1050307C2E7272CF57A9a6AF6088A307d4B",
   "SOL":"9JfQ2UhDnBXkGSMceVjWEjAnfkGXFjQMkGmRkwZkBKK8",
   "USDC":"0xF879a1050307C2E7272CF57A9a6AF6088A307d4B"
 };
 
-/* ===== Utilities ===== */
-function normalizeKey(s){ return String(s||'').toLowerCase().replace(/[\s\._]/g,'').normalize('NFKD'); }
-function findPriceKey(color){
-  if (custom_quantity_prices[color]) return color;
-  const norm = normalizeKey(color);
-  for (const k of Object.keys(custom_quantity_prices)){
-    if (normalizeKey(k) === norm) return k;
-  }
-  // fallback try add dot after first digit
-  const m = color.match(/^(\d)(.*)/);
-  if (m){
-    const try1 = m[1]+'.'+m[2];
-    if (custom_quantity_prices[try1]) return try1;
-  }
-  return null;
-}
-
-/* ===== App state ===== */
+// Состояние приложения
 let selectedCity = null;
-let cart = []; // items: {product, color, qty, priceGBP, count}
+let cart = [];
 const cityList = ["Москва","Санкт-Петербург","Казань","Екатеринбург","Новосибирск","Нижний Новгород","Ростов-на-Дону","Краснодар","Самара","Челябинск"];
 
-/* ===== Build city grid ===== */
+// Инициализация
 const cityGrid = document.getElementById('cityGrid');
 cityList.forEach(c=>{
   const b = document.createElement('button');
   b.className='city-card';
   b.textContent = c;
-  b.onclick = (e) => {
-    createRipple(e);
-    setTimeout(() => selectCity(c), 200);
-  };
+  b.onclick = ()=>selectCity(c);
   cityGrid.appendChild(b);
 });
 
-/* ===== Ripple Effect ===== */
-function createRipple(event) {
-  const button = event.currentTarget;
-  const circle = document.createElement("span");
-  const diameter = Math.max(button.clientWidth, button.clientHeight);
-  const radius = diameter / 2;
-
-  circle.style.width = circle.style.height = `${diameter}px`;
-  circle.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
-  circle.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
-  circle.classList.add("ripple");
-
-  const ripple = button.getElementsByClassName("ripple")[0];
-  if (ripple) {
-    ripple.remove();
-  }
-
-  button.appendChild(circle);
-}
-
-function createNavRipple(event) {
-  const button = event.currentTarget;
-  const circle = document.createElement("span");
-  const diameter = Math.max(button.clientWidth, button.clientHeight);
-  const radius = diameter / 2;
-
-  circle.style.width = circle.style.height = `${diameter}px`;
-  circle.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
-  circle.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
-  circle.classList.add("nav-ripple");
-
-  const ripple = button.getElementsByClassName("nav-ripple")[0];
-  if (ripple) {
-    ripple.remove();
-  }
-
-  button.appendChild(circle);
-}
-
-/* ===== Navigation helpers ===== */
-function navTo(element, event){
-  createNavRipple(event);
-  setTimeout(() => {
-    const page = element.dataset.page;
-    openPage(page);
-    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-    element.classList.add('active');
-  }, 200);
+// Навигация
+function navTo(element){
+  const page = element.dataset.page;
+  openPage(page);
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  element.classList.add('active');
 }
 
 function openPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  
-  // Скрывать плавающую корзину на странице корзины
   const cartFloat = document.getElementById('cartFloat');
   if (id === 'page-cart') {
     cartFloat.classList.add('hidden');
   } else if (cart.length > 0) {
     cartFloat.classList.remove('hidden');
   }
-  
-  // when moving to products, ensure categories present
-  if (id==='page-products'){ renderCategories() }
-  if (id==='page-cart'){ renderCart() }
+  if (id==='page-products') renderCategories();
+  if (id==='page-cart') renderCart();
 }
 
-/* ===== City selection ===== */
+// Города
 function selectCity(city){
   selectedCity = city;
   document.getElementById('selectedCityText').textContent = '🏙 Город: ' + city;
   document.getElementById('cartCity').textContent = 'Город доставки: ' + city;
   openPage('page-products');
-  // update nav active
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.querySelector('.nav-item[data-page="page-products"]').classList.add('active');
-  // show categories
   renderCategories();
 }
 
-function goToHome(){ openPage('page-home'); document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); document.querySelector('.nav-item[data-page="page-home"]').classList.add('active'); }
+function goToHome(){ 
+  openPage('page-home'); 
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); 
+  document.querySelector('.nav-item[data-page="page-home"]').classList.add('active'); 
+}
 
-/* ===== Build categories UI ===== */
+// Товары
 function renderCategories(){
   const container = document.getElementById('categoriesContainer');
   container.innerHTML = '';
@@ -532,59 +245,25 @@ function renderCategories(){
     const head = document.createElement('div'); head.className='category-head';
     head.innerHTML = `<div style="font-weight:800">${prod}</div><div class="small">▾</div>`;
     const body = document.createElement('div'); body.className='category-body';
-    // populate color rows
-    submenus[prod].forEach((color, index)=>{
+    
+    submenus[prod].forEach(color=>{
       const row = document.createElement('div'); row.className='item-row';
-      row.style.animationDelay = `${index * 0.1}s`;
-      
-      // choose image: first image of category if exists
       const img = document.createElement('img'); img.className='thumb'; img.src = (category_images[prod] && category_images[prod][0]) || '';
       img.onerror = function() { this.style.display = 'none'; };
       const meta = document.createElement('div'); meta.className='item-meta';
       meta.innerHTML = `<div class="item-title">${color}</div><div class="small">Выберите количество и добавьте в корзину</div>`;
-      // Create selector for gradations
       const sel = document.createElement('div'); sel.className='selector';
-      // Determine gradations:
+      
       const priceKey = findPriceKey(color);
-      let grads = [];
-      if (priceKey) {
-        grads = Object.keys(custom_quantity_prices[priceKey]).map(x => parseFloat(x)).sort((a,b)=>a-b);
-      } else {
-        // fallback simple: [1]
-        grads = [1];
-      }
+      let grads = priceKey ? Object.keys(custom_quantity_prices[priceKey]).map(x => parseFloat(x)).sort((a,b)=>a-b) : [1];
       let idx = 0;
+      
       const minus = document.createElement('button'); minus.className='step-btn'; minus.textContent='−';
       const plus = document.createElement('button'); plus.className='step-btn'; plus.textContent='+';
-      const qtyDisplay = document.createElement('div'); qtyDisplay.className='qty-display'; qtyDisplay.textContent = grads[idx] + (String(grads[idx]).indexOf('.')>-1 ? ' g' : ' g');
+      const qtyDisplay = document.createElement('div'); qtyDisplay.className='qty-display'; 
       const priceSpan = document.createElement('div'); priceSpan.className='small'; priceSpan.style.marginLeft='8px';
       const addBtn = document.createElement('button'); addBtn.className='add-btn'; addBtn.textContent='Добавить в корзину';
       
-      // Add ripple to buttons
-      [minus, plus, addBtn].forEach(btn => {
-        btn.onclick = (ev) => {
-          createRipple(ev);
-          // Call original handler after ripple
-          setTimeout(() => {
-            if (btn === addBtn) {
-              const q = grads[idx];
-              const pKey = priceKey;
-              const price = pKey ? custom_quantity_prices[pKey][q] : 0;
-              addToCart({product:prod, color:color, qty:q, priceGBP:price}, ev);
-            } else if (btn === plus) {
-              ev.stopPropagation();
-              idx = Math.min(grads.length-1, idx+1);
-              updateDisplay();
-            } else if (btn === minus) {
-              ev.stopPropagation();
-              idx = Math.max(0, idx-1);
-              updateDisplay();
-            }
-          }, 200);
-        };
-      });
-      
-      // update price function
       function updateDisplay(){
         const q = grads[idx];
         qtyDisplay.textContent = (Number.isInteger(q) ? q : q) + ' g';
@@ -593,100 +272,51 @@ function renderCategories(){
         priceSpan.textContent = price + ' £';
       }
       
-      // assemble
+      minus.onclick = (ev)=>{ ev.stopPropagation(); idx = Math.max(0, idx-1); updateDisplay(); };
+      plus.onclick = (ev)=>{ ev.stopPropagation(); idx = Math.min(grads.length-1, idx+1); updateDisplay(); };
+      
+      addBtn.onclick = (ev)=>{
+        ev.stopPropagation();
+        const q = grads[idx];
+        const pKey = priceKey;
+        const price = pKey ? custom_quantity_prices[pKey][q] : 0;
+        addToCart({product:prod, color:color, qty:q, priceGBP:price});
+        const oldText = addBtn.textContent;
+        addBtn.textContent = '✅ В корзине';
+        addBtn.classList.add('in-cart');
+        setTimeout(()=>{ addBtn.textContent = oldText; addBtn.classList.remove('in-cart'); }, 1500);
+      };
+      
       sel.appendChild(minus); sel.appendChild(qtyDisplay); sel.appendChild(plus); sel.appendChild(priceSpan); sel.appendChild(addBtn);
       updateDisplay();
       row.appendChild(img); row.appendChild(meta); row.appendChild(sel);
       body.appendChild(row);
     });
-    head.onclick = (e) => {
-      createRipple(e);
-      setTimeout(() => {
-        const open = body.style.display==='block';
-        document.querySelectorAll('.category-body').forEach(b=>{
-          b.style.display='none';
-          b.classList.remove('open');
-        });
-        if (!open) {
-          body.style.display = 'block';
-          setTimeout(() => body.classList.add('open'), 10);
-        }
-      }, 200);
+    
+    head.onclick = ()=>{ 
+      const open = body.style.display==='block'; 
+      document.querySelectorAll('.category-body').forEach(b=>b.style.display='none'); 
+      body.style.display = open? 'none' : 'block'; 
     };
     cat.appendChild(head); cat.appendChild(body); container.appendChild(cat);
   });
 }
 
-/* ===== Flying icon animation ===== */
-function createFlyingIcon(startX, startY) {
-  const icon = document.createElement('div');
-  icon.className = 'flying-icon';
-  icon.style.left = startX + 'px';
-  icon.style.top = startY + 'px';
-  document.body.appendChild(icon);
-  
-  setTimeout(() => {
-    icon.remove();
-  }, 800);
-}
-
-/* ===== Cart logic ===== */
-function addToCart(item, event){
-  // Flying icon animation
-  if (event) {
-    const rect = event.target.getBoundingClientRect();
-    const startX = rect.left + rect.width / 2;
-    const startY = rect.top + rect.height / 2;
-    createFlyingIcon(startX, startY);
-  }
-  
-  // Add to cart animation
-  event.target.style.animation = 'addToCart 0.6s ease';
-  setTimeout(() => {
-    event.target.style.animation = '';
-  }, 600);
-  
-  // item: {product,color,qty,priceGBP}
+// Корзина
+function addToCart(item){
   const idx = cart.findIndex(it => it.product===item.product && it.color===item.color && it.qty===item.qty && it.priceGBP===item.priceGBP);
   if (idx>=0){ cart[idx].count += 1; } else { item.count = 1; cart.push(item); }
   refreshCartFloat();
-  
-  // visual feedback: change button to ✅ В корзине for 1.5s
-  const oldText = event.target.textContent;
-  event.target.textContent = '✅ В корзине';
-  event.target.classList.add('in-cart');
-  setTimeout(()=>{
-    event.target.textContent = oldText;
-    event.target.classList.remove('in-cart');
-  }, 1500);
 }
 
 function refreshCartFloat(){
   const count = cart.reduce((s,i)=>s+i.count,0);
   const sum = cart.reduce((s,i)=>s + i.priceGBP * i.count, 0);
-  const cartCountEl = document.getElementById('cartCount');
-  const cartSumEl = document.getElementById('cartSum');
-  
-  // Bounce animation for cart count
-  if (parseInt(cartCountEl.textContent) < count) {
-    cartCountEl.style.animation = 'bounce 0.6s ease';
-    setTimeout(() => {
-      cartCountEl.style.animation = '';
-    }, 600);
-  }
-  
-  cartCountEl.textContent = count;
-  cartSumEl.textContent = sum.toFixed(2);
+  document.getElementById('cartCount').textContent = count;
+  document.getElementById('cartSum').textContent = sum.toFixed(2);
   const cf = document.getElementById('cartFloat');
-  
-  // Показывать плавающую корзину только если есть товары И мы НЕ на странице корзины
   const isCartPage = document.getElementById('page-cart').classList.contains('active');
-  if (count === 0 || isCartPage) {
-    cf.classList.add('hidden');
-  } else {
-    cf.classList.remove('hidden');
-    cf.style.animation = 'slideIn 0.4s ease';
-  }
+  cf.classList.toggle('hidden', count===0 || isCartPage);
 }
 
 function renderCart(){
@@ -697,17 +327,14 @@ function renderCart(){
   } else {
     document.getElementById('cartCity').textContent = 'Город доставки: ' + selectedCity;
   }
-  if (cart.length===0) {
-    list.innerHTML = '<div class="small" style="animation: fadeIn 0.4s ease;">Корзина пуста</div>';
-    document.getElementById('totalGBP').textContent = '0.00';
-    document.getElementById('totalConverted').textContent = '';
-    return;
+  if (cart.length===0) { 
+    list.innerHTML = '<div class="small">Корзина пуста</div>'; 
+    document.getElementById('totalGBP').textContent = '0.00'; 
+    document.getElementById('totalConverted').textContent = ''; 
+    return; 
   }
   cart.forEach((it, idx)=>{
-    const el = document.createElement('div');
-    el.className='cart-item';
-    el.style.animationDelay = `${idx * 0.1}s`;
-    
+    const el = document.createElement('div'); el.className='cart-item';
     const img = document.createElement('img'); img.className='thumb'; img.src = (category_images[it.product] && category_images[it.product][0]) || '';
     img.onerror = function() { this.style.display = 'none'; };
     const meta = document.createElement('div'); meta.className='meta';
@@ -715,56 +342,24 @@ function renderCart(){
     const controls = document.createElement('div');
     controls.innerHTML = `<div style="text-align:right;font-weight:800">${(it.priceGBP*it.count).toFixed(2)} £</div>
       <div style="margin-top:8px;display:flex;gap:6px;align-items:center;justify-content:flex-end">
-        <button class="step-btn" onclick="createRipple(event); setTimeout(() => decCartItem(${idx}), 200)">−</button>
+        <button class="step-btn" onclick="decCartItem(${idx})">−</button>
         <div style="min-width:24px;text-align:center">${it.count}</div>
-        <button class="step-btn" onclick="createRipple(event); setTimeout(() => incCartItem(${idx}), 200)">+</button>
-        <button class="step-btn" style="background:#cc3333" onclick="createRipple(event); setTimeout(() => removeCartItem(${idx}), 200)">✕</button>
+        <button class="step-btn" onclick="incCartItem(${idx})">+</button>
+        <button class="step-btn" style="background:#cc3333" onclick="removeCartItem(${idx})">✕</button>
       </div>`;
     el.appendChild(img); el.appendChild(meta); el.appendChild(controls);
     list.appendChild(el);
   });
   const total = cart.reduce((s,i)=>s + i.priceGBP * i.count,0);
   document.getElementById('totalGBP').textContent = total.toFixed(2);
-  document.getElementById('totalConverted').textContent = ''; // updated in modal when currency chosen
 }
 
 function incCartItem(i){ cart[i].count += 1; renderCart(); refreshCartFloat(); }
 function decCartItem(i){ cart[i].count = Math.max(1, cart[i].count - 1); renderCart(); refreshCartFloat(); }
-function removeCartItem(i){
-  // Add removal animation
-  const cartItem = document.querySelectorAll('.cart-item')[i];
-  if (cartItem) {
-    cartItem.style.transform = 'translateX(-100%)';
-    cartItem.style.opacity = '0';
-    setTimeout(() => {
-      cart.splice(i,1);
-      renderCart();
-      refreshCartFloat();
-    }, 300);
-  } else {
-    cart.splice(i,1);
-    renderCart();
-    refreshCartFloat();
-  }
-}
+function removeCartItem(i){ cart.splice(i,1); renderCart(); refreshCartFloat(); }
+function clearCart(){ cart = []; renderCart(); refreshCartFloat(); }
 
-function clearCart(){
-  // Animate clearing
-  const cartItems = document.querySelectorAll('.cart-item');
-  cartItems.forEach((item, index) => {
-    item.style.transform = 'translateX(-100%)';
-    item.style.opacity = '0';
-    item.style.transition = `all 0.3s ease ${index * 0.1}s`;
-  });
-  
-  setTimeout(() => {
-    cart = [];
-    renderCart();
-    refreshCartFloat();
-  }, 300 + cartItems.length * 100);
-}
-
-/* ===== Payment modal logic (show wallet after currency chosen) ===== */
+// Оплата
 const currencyListEl = document.getElementById('currencyList');
 const payModalEl = document.getElementById('payModal');
 const payDetailsEl = document.getElementById('payDetails');
@@ -773,26 +368,19 @@ const walletAddrEl = document.getElementById('walletAddr');
 
 function openPayModal(){
   if (cart.length===0){ alert('Корзина пуста'); return; }
-  // build currency buttons
   currencyListEl.innerHTML = '';
   Object.keys(currencies).forEach(c=>{
     const cc = document.createElement('div'); cc.className='currency-card'; cc.textContent = c;
-    cc.onclick = (e) => {
-      createRipple(e);
-      setTimeout(() => selectCurrency(c), 200);
-    };
+    cc.onclick = ()=>selectCurrency(c);
     currencyListEl.appendChild(cc);
   });
   payDetailsEl.style.display = 'none';
   payModalEl.style.display = 'block';
 }
 
-function closePayModal(){
-  payModalEl.style.display = 'none';
-}
+function closePayModal(){ payModalEl.style.display = 'none'; }
 
 function selectCurrency(cur){
-  // compute totals
   const rate = currencies[cur] || 1;
   const totalGBP = cart.reduce((s,i)=>s + i.priceGBP * i.count,0);
   const converted = totalGBP * rate;
@@ -800,33 +388,25 @@ function selectCurrency(cur){
   paySummaryEl.textContent = `${converted.toFixed(6)} ${cur}  —  (${totalGBP.toFixed(2)} £)`;
   walletAddrEl.textContent = wallet;
   payDetailsEl.style.display = 'block';
-  // store current selection
   payDetailsEl.dataset.cur = cur;
   payDetailsEl.dataset.wallet = wallet;
   payDetailsEl.dataset.converted = converted.toFixed(8);
-  // scroll into view
-  payDetailsEl.scrollIntoView({behavior:'smooth'});
 }
 
 function copyWallet(){
   const addr = walletAddrEl.textContent;
   if (!addr) return;
-  navigator.clipboard?.writeText(addr).then(()=>{
-    const btn = document.querySelector('.copy-btn');
-    const originalText = btn.textContent;
-    btn.textContent = '✅ Скопировано!';
-    setTimeout(() => {
-      btn.textContent = originalText;
-    }, 2000);
-  }).catch(()=>{ alert('Не удалось скопировать, скопируйте вручную') });
+  navigator.clipboard?.writeText(addr).then(()=>{ alert('Адрес скопирован в буфер') }).catch(()=>{ alert('Не удалось скопировать, скопируйте вручную') });
 }
 
+// ⭐⭐ ОБНОВЛЕННАЯ ФУНКЦИЯ - ОТПРАВКА ЗАКАЗА И ЗАКРЫТИЕ ПРИЛОЖЕНИЯ ⭐⭐
 function payConfirm(){
   const payButton = document.querySelector('#payDetails .btn.primary');
-  payButton.classList.add('loading');
+  payButton.textContent = 'Отправляем...';
+  payButton.disabled = true;
   
-  // Создаем детали заказа для отправки боту
-  const orderDetails = {
+  // Формируем данные заказа
+  const orderData = {
     city: selectedCity,
     currency: payDetailsEl.dataset.cur,
     totalGBP: cart.reduce((s,i)=>s + i.priceGBP * i.count,0).toFixed(2),
@@ -838,85 +418,42 @@ function payConfirm(){
       qty: item.qty,
       priceGBP: item.priceGBP,
       count: item.count
-    }))
+    })),
+    user_id: Telegram.WebApp.initDataUnsafe.user?.id,
+    first_name: Telegram.WebApp.initDataUnsafe.user?.first_name
   };
-  
-  // Отправляем данные в Telegram бот
-  setTimeout(() => {
-    payButton.classList.remove('loading');
-    
-    // Закрываем модальное окно
-    closePayModal();
-    
-    // Показываем уведомление
-    if (window.Telegram && Telegram.WebApp) {
-      Telegram.WebApp.showAlert('✅ Заказ подтвержден! Сейчас вы вернетесь в чат с ботом для получения инструкций.', () => {
-        // Отправляем данные в бота
-        sendOrderToBot(orderDetails);
-      });
-    } else {
-      // Для тестирования вне Telegram
-      alert('✅ Заказ подтвержден! В реальном приложении вы бы вернулись в чат с ботом.');
-      sendOrderToBot(orderDetails);
-    }
-  }, 2000);
-}
 
-/* ===== Integration with Telegram Bot ===== */
-function sendOrderToBot(orderDetails) {
-  // Формируем сообщение для бота
-  const message = `🛒 Новый заказ!\n\n` +
-                 `🏙 Город: ${orderDetails.city}\n` +
-                 `💰 Сумма: ${orderDetails.totalGBP} £ (${orderDetails.totalConverted} ${orderDetails.currency})\n` +
-                 `👤 Пользователь: ${Telegram.WebApp.initDataUnsafe.user?.first_name || 'Неизвестно'}\n` +
-                 `📦 Товары:\n${orderDetails.items.map(item => `• ${item.product} - ${item.color} - ${item.qty}g x${item.count}`).join('\n')}\n\n` +
-                 `💳 Кошелек: ${orderDetails.wallet}\n` +
-                 `⏰ Время: ${new Date().toLocaleString()}`;
+  // Отправляем данные в бота через Telegram WebApp
+  Telegram.WebApp.sendData(JSON.stringify(orderData));
   
-  // Вариант 1: Отправка через Telegram WebApp
-  if (window.Telegram && Telegram.WebApp) {
-    // Закрываем WebApp и возвращаемся в чат
+  // Показываем уведомление и закрываем приложение
+  Telegram.WebApp.showAlert('✅ Заказ подтвержден! Спасибо за покупку. Мы свяжемся с вами в ближайшее время.', () => {
+    // Закрываем Mini App
     Telegram.WebApp.close();
-    
-    // Альтернативно: можно открыть ссылку на бота с предзаполненным сообщением
-    // const botUsername = 'your_bot_username'; // Замените на username вашего бота
-    // const encodedMessage = encodeURIComponent(message);
-    // window.open(`https://t.me/${botUsername}?start=order_${Date.now()}`, '_blank');
-    
-  } else {
-    // Вариант 2: Для тестирования вне Telegram
-    console.log('Данные заказа для бота:', orderDetails);
-    console.log('Сообщение для бота:', message);
-    
-    // Имитация отправки в бота
-    alert('В реальном приложении сейчас бы открылся чат с ботом и отправилось сообщение:\n\n' + message);
-    
-    // Очищаем корзину после успешного заказа
-    cart = [];
-    refreshCartFloat();
-    openPage('page-home');
-  }
+  });
 }
 
-/* ===== Init & small helpers ===== */
-document.addEventListener('DOMContentLoaded', ()=>{
-  // init nav state
-  window.Telegram?.WebApp?.ready();
-  // default: show home page (already)
-  refreshCartFloat();
-  
-  // Add ripple to all buttons except nav items
-  document.addEventListener('click', function(e) {
-    if (e.target.matches('.btn, .step-btn, .add-btn, .city-card, .currency-card, .copy-btn, .change-city')) {
-      createRipple(e);
-    }
-  });
-});
+// Утилиты
+function normalizeKey(s){ return String(s||'').toLowerCase().replace(/[\s\._]/g,'').normalize('NFKD'); }
+function findPriceKey(color){
+  if (custom_quantity_prices[color]) return color;
+  const norm = normalizeKey(color);
+  for (const k of Object.keys(custom_quantity_prices)){
+    if (normalizeKey(k) === norm) return k;
+  }
+  const m = color.match(/^(\d)(.*)/);
+  if (m){
+    const try1 = m[1]+'.'+m[2];
+    if (custom_quantity_prices[try1]) return try1;
+  }
+  return null;
+}
 
-/* For debug: expose some functions */
-window.renderCategories = renderCategories;
-window.selectCity = selectCity;
-window.openPage = openPage;
+// Инициализация
+document.addEventListener('DOMContentLoaded', ()=>{
+  window.Telegram?.WebApp?.ready();
+  refreshCartFloat();
+});
 </script>
 </body>
 </html>
