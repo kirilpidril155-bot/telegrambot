@@ -292,7 +292,7 @@
         <div style="word-break:break-all;margin-top:6px;background:#f7f7f7;padding:8px;border-radius:8px" id="walletAddr"></div>
         <button class="copy-btn" onclick="copyWallet()">Копировать адрес</button>
         <div style="margin-top:10px;display:flex;gap:8px">
-          <button class="btn primary" onclick="payConfirm()">Я оплатил (пока заглушка)</button>
+          <button class="btn primary" onclick="payConfirm()">✅ Я оплатил</button>
           <button class="btn" onclick="closePayModal()">Закрыть</button>
         </div>
       </div>
@@ -795,12 +795,77 @@ function payConfirm(){
   const payButton = document.querySelector('#payDetails .btn.primary');
   payButton.classList.add('loading');
   
-  // placeholder: we do NOT send data yet. just show alert and close modal.
+  // Создаем детали заказа для отправки боту
+  const orderDetails = {
+    city: selectedCity,
+    currency: payDetailsEl.dataset.cur,
+    totalGBP: cart.reduce((s,i)=>s + i.priceGBP * i.count,0).toFixed(2),
+    totalConverted: payDetailsEl.dataset.converted,
+    wallet: payDetailsEl.dataset.wallet,
+    items: cart.map(item => ({
+      product: item.product,
+      color: item.color,
+      qty: item.qty,
+      priceGBP: item.priceGBP,
+      count: item.count
+    }))
+  };
+  
+  // Отправляем данные в Telegram бот
   setTimeout(() => {
     payButton.classList.remove('loading');
-    alert('Оплата — пока заглушка. Адрес можно скопировать и использовать в кошельке.');
+    
+    // Закрываем модальное окно
     closePayModal();
+    
+    // Показываем уведомление
+    if (window.Telegram && Telegram.WebApp) {
+      Telegram.WebApp.showAlert('✅ Заказ подтвержден! Сейчас вы вернетесь в чат с ботом для получения инструкций.', () => {
+        // Отправляем данные в бота
+        sendOrderToBot(orderDetails);
+      });
+    } else {
+      // Для тестирования вне Telegram
+      alert('✅ Заказ подтвержден! В реальном приложении вы бы вернулись в чат с ботом.');
+      sendOrderToBot(orderDetails);
+    }
   }, 2000);
+}
+
+/* ===== Integration with Telegram Bot ===== */
+function sendOrderToBot(orderDetails) {
+  // Формируем сообщение для бота
+  const message = `🛒 Новый заказ!\n\n` +
+                 `🏙 Город: ${orderDetails.city}\n` +
+                 `💰 Сумма: ${orderDetails.totalGBP} £ (${orderDetails.totalConverted} ${orderDetails.currency})\n` +
+                 `👤 Пользователь: ${Telegram.WebApp.initDataUnsafe.user?.first_name || 'Неизвестно'}\n` +
+                 `📦 Товары:\n${orderDetails.items.map(item => `• ${item.product} - ${item.color} - ${item.qty}g x${item.count}`).join('\n')}\n\n` +
+                 `💳 Кошелек: ${orderDetails.wallet}\n` +
+                 `⏰ Время: ${new Date().toLocaleString()}`;
+  
+  // Вариант 1: Отправка через Telegram WebApp
+  if (window.Telegram && Telegram.WebApp) {
+    // Закрываем WebApp и возвращаемся в чат
+    Telegram.WebApp.close();
+    
+    // Альтернативно: можно открыть ссылку на бота с предзаполненным сообщением
+    // const botUsername = 'your_bot_username'; // Замените на username вашего бота
+    // const encodedMessage = encodeURIComponent(message);
+    // window.open(`https://t.me/${botUsername}?start=order_${Date.now()}`, '_blank');
+    
+  } else {
+    // Вариант 2: Для тестирования вне Telegram
+    console.log('Данные заказа для бота:', orderDetails);
+    console.log('Сообщение для бота:', message);
+    
+    // Имитация отправки в бота
+    alert('В реальном приложении сейчас бы открылся чат с ботом и отправилось сообщение:\n\n' + message);
+    
+    // Очищаем корзину после успешного заказа
+    cart = [];
+    refreshCartFloat();
+    openPage('page-home');
+  }
 }
 
 /* ===== Init & small helpers ===== */
