@@ -12,141 +12,50 @@
   .container{padding:16px;max-width:980px;margin:0 auto}
   h1,h2{margin:6px 0 12px}
   /* Pages */
-  .page{display:none;animation: fadeIn 0.4s ease;}
+  .page{display:none}
   .page.active{display:block}
   /* City list */
   .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-  .city-card{background:var(--card);padding:14px;border-radius:10px;text-align:center;font-weight:700;color:#fff;background:var(--accent);cursor:pointer;border:0;transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);}
+  .city-card{background:var(--card);padding:14px;border-radius:10px;text-align:center;font-weight:700;color:#fff;background:var(--accent);cursor:pointer;border:0}
   /* Header */
   .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
   .current-city{font-weight:700;color:var(--accent)}
-  .change-city{background:#eee;border:0;padding:6px 10px;border-radius:8px;cursor:pointer;transition: all 0.2s ease;}
+  .change-city{background:#eee;border:0;padding:6px 10px;border-radius:8px;cursor:pointer}
   /* Categories */
   .category{background:var(--card);border-radius:10px;padding:8px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
   .category-head{display:flex;justify-content:space-between;align-items:center;padding:8px 6px;cursor:pointer}
-  .category-body{display:none;padding:8px 6px;transition: all 0.4s ease;max-height: 0;overflow: hidden;}
-  .category-body.open{max-height: 5000px;animation: expand 0.5s ease;}
-  .item-row{display:flex;align-items:center;gap:12px;padding:8px;border-radius:8px;animation: slideIn 0.5s ease;}
-  .thumb{width:80px;height:80px;border-radius:8px;object-fit:cover;background:#eee;border:1px solid rgba(0,0,0,0.03);flex-shrink:0;transition: all 0.3s ease;}
+  .category-body{display:none;padding:8px 6px}
+  .item-row{display:flex;align-items:center;gap:12px;padding:8px;border-radius:8px}
+  .thumb{width:80px;height:80px;border-radius:8px;object-fit:cover;background:#eee;border:1px solid rgba(0,0,0,0.03);flex-shrink:0}
   .item-meta{flex:1;min-width:0}
   .item-title{font-weight:700;word-break:break-word}
   .selector{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .step-btn{width:36px;height:36px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;flex-shrink:0;transition: all 0.2s ease;position: relative;overflow: hidden;}
-  .qty-display{min-width:48px;text-align:center;font-weight:800;flex-shrink:0;transition: all 0.3s ease;}
-  .add-btn{background:var(--accent);color:#fff;border:0;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;flex-shrink:0;white-space:nowrap;transition: all 0.3s ease;position: relative;overflow: hidden;}
+  .step-btn{width:36px;height:36px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;flex-shrink:0}
+  .qty-display{min-width:48px;text-align:center;font-weight:800;flex-shrink:0}
+  .add-btn{background:var(--accent);color:#fff;border:0;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;flex-shrink:0;white-space:nowrap}
   .in-cart{background:#2ea44f}
   /* Cart inline */
-  .cart-float{position:fixed;left:12px;right:12px;bottom:72px;background:var(--card);padding:10px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,0.12);z-index:200;transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);}
+  .cart-float{position:fixed;left:12px;right:12px;bottom:72px;background:var(--card);padding:10px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,0.12);z-index:200}
   .cart-float.hidden{display:none}
   /* Cart page */
   .cart-list{margin:8px 0}
-  .cart-item{display:flex;gap:12px;align-items:center;background:var(--card);padding:10px;border-radius:8px;margin-bottom:8px;animation: slideIn 0.4s ease;}
+  .cart-item{display:flex;gap:12px;align-items:center;background:var(--card);padding:10px;border-radius:8px;margin-bottom:8px}
   .cart-item .meta{flex:1;min-width:0}
   .cart-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-  .btn{padding:10px 12px;border-radius:8px;border:0;cursor:pointer;font-weight:700;transition: all 0.3s ease;position: relative;overflow: hidden;}
+  .btn{padding:10px 12px;border-radius:8px;border:0;cursor:pointer;font-weight:700}
   .btn.primary{background:var(--accent);color:#fff}
   .btn.danger{background:#e74c3c;color:#fff}
   .small{font-size:13px;color:var(--muted)}
   /* Modal */
-  .modal-back{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:400;animation: fadeIn 0.3s ease;}
-  .modal{background:var(--card);padding:16px;border-radius:12px;width:92%;max-width:420px;animation: modalSlideIn 0.3s ease;}
+  .modal-back{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:400}
+  .modal{background:var(--card);padding:16px;border-radius:12px;width:92%;max-width:420px}
   .currency-list{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
-  .currency-card{padding:8px 10px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);cursor:pointer;transition: all 0.2s ease;}
-  .copy-btn{background:#eee;border:0;padding:8px;border-radius:8px;cursor:pointer;margin-top:8px;transition: all 0.2s ease;}
+  .currency-card{padding:8px 10px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);cursor:pointer}
+  .copy-btn{background:#eee;border:0;padding:8px;border-radius:8px;cursor:pointer;margin-top:8px}
   /* Bottom nav */
   .bottom-nav{position:fixed;left:0;right:0;bottom:0;height:60px;background:#fff;border-top:1px solid #eee;display:flex;align-items:center;justify-content:space-around;z-index:300}
-  .nav-item{flex:1;text-align:center;padding-top:6px;cursor:pointer;color:var(--muted);transition: all 0.3s ease;}
+  .nav-item{flex:1;text-align:center;padding-top:6px;cursor:pointer;color:var(--muted)}
   .nav-item.active{color:var(--accent);font-weight:700}
-  
-  /* Animations */
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  @keyframes expand {
-    from { max-height: 0; opacity: 0; }
-    to { max-height: 5000px; opacity: 1; }
-  }
-  
-  @keyframes modalSlideIn {
-    from { opacity: 0; transform: scale(0.8) translateY(-20px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-  }
-  
-  @keyframes addToCart {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); background-color: #2ecc71; }
-    100% { transform: scale(1); }
-  }
-  
-  @keyframes bounce {
-    0%, 20%, 60%, 100% { transform: scale(1); }
-    40% { transform: scale(1.3); }
-    80% { transform: scale(1.1); }
-  }
-  
-  @keyframes flyToCart {
-    0% { transform: scale(1) translate(0, 0); opacity: 1; }
-    100% { transform: scale(0.3) translate(100px, -50px); opacity: 0; }
-  }
-  
-  @keyframes ripple {
-    0% { transform: scale(0); opacity: 1; }
-    100% { transform: scale(4); opacity: 0; }
-  }
-  
-  /* Ripple effect */
-  .ripple {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.6);
-    transform: scale(0);
-    animation: ripple 0.6s linear;
-    pointer-events: none;
-  }
-  
-  /* Flying icon */
-  .flying-icon {
-    position: fixed;
-    width: 20px;
-    height: 20px;
-    background: var(--accent);
-    border-radius: 50%;
-    animation: flyToCart 0.8s ease-in-out forwards;
-    z-index: 1000;
-    pointer-events: none;
-  }
-  
-  /* Loading states */
-  .btn.loading {
-    color: transparent;
-    pointer-events: none;
-  }
-  
-  .btn.loading::after {
-    content: "";
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    top: 50%;
-    left: 50%;
-    margin: -8px 0 0 -8px;
-    border: 2px solid #ffffff;
-    border-radius: 50%;
-    border-right-color: transparent;
-    animation: spin 0.8s linear infinite;
-  }
-  
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
   
   /* Mobile optimizations */
   @media (max-width: 480px) {
@@ -196,21 +105,6 @@
       width: 100px;
       height: 100px;
     }
-  }
-  
-  /* Interactive states */
-  .city-card:active, .btn:active, .step-btn:active, .add-btn:active {
-    transform: scale(0.95);
-  }
-  
-  .city-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 136, 204, 0.3);
-  }
-  
-  .currency-card:hover, .copy-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
   
   @media(min-width:700){.grid{grid-template-columns:repeat(3,1fr)}}
@@ -425,32 +319,9 @@ cityList.forEach(c=>{
   const b = document.createElement('button');
   b.className='city-card';
   b.textContent = c;
-  b.onclick = (e) => {
-    createRipple(e);
-    setTimeout(() => selectCity(c), 200);
-  };
+  b.onclick = ()=>selectCity(c);
   cityGrid.appendChild(b);
 });
-
-/* ===== Ripple Effect ===== */
-function createRipple(event) {
-  const button = event.currentTarget;
-  const circle = document.createElement("span");
-  const diameter = Math.max(button.clientWidth, button.clientHeight);
-  const radius = diameter / 2;
-
-  circle.style.width = circle.style.height = `${diameter}px`;
-  circle.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
-  circle.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
-  circle.classList.add("ripple");
-
-  const ripple = button.getElementsByClassName("ripple")[0];
-  if (ripple) {
-    ripple.remove();
-  }
-
-  button.appendChild(circle);
-}
 
 /* ===== Navigation helpers ===== */
 function navTo(e){
@@ -459,19 +330,9 @@ function navTo(e){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   e.currentTarget.classList.add('active');
 }
-
 function openPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  
-  // Скрывать плавающую корзину на странице корзины
-  const cartFloat = document.getElementById('cartFloat');
-  if (id === 'page-cart') {
-    cartFloat.classList.add('hidden');
-  } else if (cart.length > 0) {
-    cartFloat.classList.remove('hidden');
-  }
-  
   // when moving to products, ensure categories present
   if (id==='page-products'){ renderCategories() }
   if (id==='page-cart'){ renderCart() }
@@ -502,10 +363,8 @@ function renderCategories(){
     head.innerHTML = `<div style="font-weight:800">${prod}</div><div class="small">▾</div>`;
     const body = document.createElement('div'); body.className='category-body';
     // populate color rows
-    submenus[prod].forEach((color, index)=>{
+    submenus[prod].forEach(color=>{
       const row = document.createElement('div'); row.className='item-row';
-      row.style.animationDelay = `${index * 0.1}s`;
-      
       // choose image: first image of category if exists
       const img = document.createElement('img'); img.className='thumb'; img.src = (category_images[prod] && category_images[prod][0]) || '';
       img.onerror = function() { this.style.display = 'none'; };
@@ -528,32 +387,6 @@ function renderCategories(){
       const qtyDisplay = document.createElement('div'); qtyDisplay.className='qty-display'; qtyDisplay.textContent = grads[idx] + (String(grads[idx]).indexOf('.')>-1 ? ' g' : ' g');
       const priceSpan = document.createElement('div'); priceSpan.className='small'; priceSpan.style.marginLeft='8px';
       const addBtn = document.createElement('button'); addBtn.className='add-btn'; addBtn.textContent='Добавить в корзину';
-      
-      // Add ripple to buttons
-      [minus, plus, addBtn].forEach(btn => {
-        btn.onclick = (ev) => {
-          createRipple(ev);
-          // Call original handler after ripple
-          const originalHandler = btn.onclick;
-          setTimeout(() => {
-            if (btn === addBtn) {
-              const q = grads[idx];
-              const pKey = priceKey;
-              const price = pKey ? custom_quantity_prices[pKey][q] : 0;
-              addToCart({product:prod, color:color, qty:q, priceGBP:price}, ev);
-            } else if (btn === plus) {
-              ev.stopPropagation();
-              idx = Math.min(grads.length-1, idx+1);
-              updateDisplay();
-            } else if (btn === minus) {
-              ev.stopPropagation();
-              idx = Math.max(0, idx-1);
-              updateDisplay();
-            }
-          }, 200);
-        };
-      });
-      
       // update price function
       function updateDisplay(){
         const q = grads[idx];
@@ -562,101 +395,47 @@ function renderCategories(){
         const price = pKey ? custom_quantity_prices[pKey][q] : 0;
         priceSpan.textContent = price + ' £';
       }
-      
+      minus.onclick = (ev)=>{ ev.stopPropagation(); idx = Math.max(0, idx-1); updateDisplay(); };
+      plus.onclick = (ev)=>{ ev.stopPropagation(); idx = Math.min(grads.length-1, idx+1); updateDisplay(); };
+      // add to cart onclick
+      addBtn.onclick = (ev)=>{
+        ev.stopPropagation();
+        const q = grads[idx];
+        const pKey = priceKey;
+        const price = pKey ? custom_quantity_prices[pKey][q] : 0;
+        addToCart({product:prod, color:color, qty:q, priceGBP:price});
+        // visual feedback: change button to ✅ В корзине for 1.5s
+        const oldText = addBtn.textContent;
+        addBtn.textContent = '✅ В корзине';
+        addBtn.classList.add('in-cart');
+        setTimeout(()=>{ addBtn.textContent = oldText; addBtn.classList.remove('in-cart'); }, 1500);
+      };
       // assemble
       sel.appendChild(minus); sel.appendChild(qtyDisplay); sel.appendChild(plus); sel.appendChild(priceSpan); sel.appendChild(addBtn);
       updateDisplay();
       row.appendChild(img); row.appendChild(meta); row.appendChild(sel);
       body.appendChild(row);
     });
-    head.onclick = (e) => {
-      createRipple(e);
-      setTimeout(() => {
-        const open = body.style.display==='block';
-        document.querySelectorAll('.category-body').forEach(b=>{
-          b.style.display='none';
-          b.classList.remove('open');
-        });
-        if (!open) {
-          body.style.display = 'block';
-          setTimeout(() => body.classList.add('open'), 10);
-        }
-      }, 200);
-    };
+    head.onclick = ()=>{ const open = body.style.display==='block'; document.querySelectorAll('.category-body').forEach(b=>b.style.display='none'); body.style.display = open? 'none' : 'block'; };
     cat.appendChild(head); cat.appendChild(body); container.appendChild(cat);
   });
 }
 
-/* ===== Flying icon animation ===== */
-function createFlyingIcon(startX, startY) {
-  const icon = document.createElement('div');
-  icon.className = 'flying-icon';
-  icon.style.left = startX + 'px';
-  icon.style.top = startY + 'px';
-  document.body.appendChild(icon);
-  
-  setTimeout(() => {
-    icon.remove();
-  }, 800);
-}
-
 /* ===== Cart logic ===== */
-function addToCart(item, event){
-  // Flying icon animation
-  if (event) {
-    const rect = event.target.getBoundingClientRect();
-    const startX = rect.left + rect.width / 2;
-    const startY = rect.top + rect.height / 2;
-    createFlyingIcon(startX, startY);
-  }
-  
-  // Add to cart animation
-  event.target.style.animation = 'addToCart 0.6s ease';
-  setTimeout(() => {
-    event.target.style.animation = '';
-  }, 600);
-  
+function addToCart(item){
   // item: {product,color,qty,priceGBP}
   const idx = cart.findIndex(it => it.product===item.product && it.color===item.color && it.qty===item.qty && it.priceGBP===item.priceGBP);
   if (idx>=0){ cart[idx].count += 1; } else { item.count = 1; cart.push(item); }
   refreshCartFloat();
-  
-  // visual feedback: change button to ✅ В корзине for 1.5s
-  const oldText = event.target.textContent;
-  event.target.textContent = '✅ В корзине';
-  event.target.classList.add('in-cart');
-  setTimeout(()=>{
-    event.target.textContent = oldText;
-    event.target.classList.remove('in-cart');
-  }, 1500);
 }
 
 function refreshCartFloat(){
   const count = cart.reduce((s,i)=>s+i.count,0);
   const sum = cart.reduce((s,i)=>s + i.priceGBP * i.count, 0);
-  const cartCountEl = document.getElementById('cartCount');
-  const cartSumEl = document.getElementById('cartSum');
-  
-  // Bounce animation for cart count
-  if (parseInt(cartCountEl.textContent) < count) {
-    cartCountEl.style.animation = 'bounce 0.6s ease';
-    setTimeout(() => {
-      cartCountEl.style.animation = '';
-    }, 600);
-  }
-  
-  cartCountEl.textContent = count;
-  cartSumEl.textContent = sum.toFixed(2);
+  document.getElementById('cartCount').textContent = count;
+  document.getElementById('cartSum').textContent = sum.toFixed(2);
   const cf = document.getElementById('cartFloat');
-  
-  // Показывать плавающую корзину только если есть товары И мы НЕ на странице корзины
-  const isCartPage = document.getElementById('page-cart').classList.contains('active');
-  if (count === 0 || isCartPage) {
-    cf.classList.add('hidden');
-  } else {
-    cf.classList.remove('hidden');
-    cf.style.animation = 'slideIn 0.4s ease';
-  }
+  cf.classList.toggle('hidden', count===0);
 }
 
 function renderCart(){
@@ -667,17 +446,9 @@ function renderCart(){
   } else {
     document.getElementById('cartCity').textContent = 'Город доставки: ' + selectedCity;
   }
-  if (cart.length===0) {
-    list.innerHTML = '<div class="small" style="animation: fadeIn 0.4s ease;">Корзина пуста</div>';
-    document.getElementById('totalGBP').textContent = '0.00';
-    document.getElementById('totalConverted').textContent = '';
-    return;
-  }
+  if (cart.length===0) { list.innerHTML = '<div class="small">Корзина пуста</div>'; document.getElementById('totalGBP').textContent = '0.00'; document.getElementById('totalConverted').textContent = ''; return; }
   cart.forEach((it, idx)=>{
-    const el = document.createElement('div');
-    el.className='cart-item';
-    el.style.animationDelay = `${idx * 0.1}s`;
-    
+    const el = document.createElement('div'); el.className='cart-item';
     const img = document.createElement('img'); img.className='thumb'; img.src = (category_images[it.product] && category_images[it.product][0]) || '';
     img.onerror = function() { this.style.display = 'none'; };
     const meta = document.createElement('div'); meta.className='meta';
@@ -685,10 +456,10 @@ function renderCart(){
     const controls = document.createElement('div');
     controls.innerHTML = `<div style="text-align:right;font-weight:800">${(it.priceGBP*it.count).toFixed(2)} £</div>
       <div style="margin-top:8px;display:flex;gap:6px;align-items:center;justify-content:flex-end">
-        <button class="step-btn" onclick="createRipple(event); setTimeout(() => decCartItem(${idx}), 200)">−</button>
+        <button class="step-btn" onclick="decCartItem(${idx})">−</button>
         <div style="min-width:24px;text-align:center">${it.count}</div>
-        <button class="step-btn" onclick="createRipple(event); setTimeout(() => incCartItem(${idx}), 200)">+</button>
-        <button class="step-btn" style="background:#cc3333" onclick="createRipple(event); setTimeout(() => removeCartItem(${idx}), 200)">✕</button>
+        <button class="step-btn" onclick="incCartItem(${idx})">+</button>
+        <button class="step-btn" style="background:#cc3333" onclick="removeCartItem(${idx})">✕</button>
       </div>`;
     el.appendChild(img); el.appendChild(meta); el.appendChild(controls);
     list.appendChild(el);
@@ -700,39 +471,8 @@ function renderCart(){
 
 function incCartItem(i){ cart[i].count += 1; renderCart(); refreshCartFloat(); }
 function decCartItem(i){ cart[i].count = Math.max(1, cart[i].count - 1); renderCart(); refreshCartFloat(); }
-function removeCartItem(i){
-  // Add removal animation
-  const cartItem = document.querySelectorAll('.cart-item')[i];
-  if (cartItem) {
-    cartItem.style.transform = 'translateX(-100%)';
-    cartItem.style.opacity = '0';
-    setTimeout(() => {
-      cart.splice(i,1);
-      renderCart();
-      refreshCartFloat();
-    }, 300);
-  } else {
-    cart.splice(i,1);
-    renderCart();
-    refreshCartFloat();
-  }
-}
-
-function clearCart(){
-  // Animate clearing
-  const cartItems = document.querySelectorAll('.cart-item');
-  cartItems.forEach((item, index) => {
-    item.style.transform = 'translateX(-100%)';
-    item.style.opacity = '0';
-    item.style.transition = `all 0.3s ease ${index * 0.1}s`;
-  });
-  
-  setTimeout(() => {
-    cart = [];
-    renderCart();
-    refreshCartFloat();
-  }, 300 + cartItems.length * 100);
-}
+function removeCartItem(i){ cart.splice(i,1); renderCart(); refreshCartFloat(); }
+function clearCart(){ cart = []; renderCart(); refreshCartFloat(); }
 
 /* ===== Payment modal logic (show wallet after currency chosen) ===== */
 const currencyListEl = document.getElementById('currencyList');
@@ -747,19 +487,14 @@ function openPayModal(){
   currencyListEl.innerHTML = '';
   Object.keys(currencies).forEach(c=>{
     const cc = document.createElement('div'); cc.className='currency-card'; cc.textContent = c;
-    cc.onclick = (e) => {
-      createRipple(e);
-      setTimeout(() => selectCurrency(c), 200);
-    };
+    cc.onclick = ()=>selectCurrency(c);
     currencyListEl.appendChild(cc);
   });
   payDetailsEl.style.display = 'none';
   payModalEl.style.display = 'block';
 }
 
-function closePayModal(){
-  payModalEl.style.display = 'none';
-}
+function closePayModal(){ payModalEl.style.display = 'none'; }
 
 function selectCurrency(cur){
   // compute totals
@@ -781,26 +516,13 @@ function selectCurrency(cur){
 function copyWallet(){
   const addr = walletAddrEl.textContent;
   if (!addr) return;
-  navigator.clipboard?.writeText(addr).then(()=>{
-    const btn = document.querySelector('.copy-btn');
-    const originalText = btn.textContent;
-    btn.textContent = '✅ Скопировано!';
-    setTimeout(() => {
-      btn.textContent = originalText;
-    }, 2000);
-  }).catch(()=>{ alert('Не удалось скопировать, скопируйте вручную') });
+  navigator.clipboard?.writeText(addr).then(()=>{ alert('Адрес скопирован в буфер') }).catch(()=>{ alert('Не удалось скопировать, скопируйте вручную') });
 }
 
 function payConfirm(){
-  const payButton = document.querySelector('#payDetails .btn.primary');
-  payButton.classList.add('loading');
-  
   // placeholder: we do NOT send data yet. just show alert and close modal.
-  setTimeout(() => {
-    payButton.classList.remove('loading');
-    alert('Оплата — пока заглушка. Адрес можно скопировать и использовать в кошельке.');
-    closePayModal();
-  }, 2000);
+  alert('Оплата — пока заглушка. Адрес можно скопировать и использовать в кошельке.');
+  closePayModal();
 }
 
 /* ===== Init & small helpers ===== */
@@ -810,19 +532,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   // default: show home page (already)
   refreshCartFloat();
   // place nav handlers
-  document.querySelectorAll('.nav-item').forEach(n=>{
-    n.onclick = (e)=>{
-      createRipple(e);
-      setTimeout(() => navTo(e), 200);
-    }
-  });
-  
-  // Add ripple to all buttons
-  document.addEventListener('click', function(e) {
-    if (e.target.matches('.btn, .step-btn, .add-btn, .city-card, .currency-card, .copy-btn, .change-city')) {
-      createRipple(e);
-    }
-  });
+  document.querySelectorAll('.nav-item').forEach(n=>n.onclick = (e)=>{ navTo(e) });
 });
 
 /* For debug: expose some functions */
