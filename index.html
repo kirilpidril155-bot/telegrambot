@@ -423,11 +423,13 @@ function payConfirm(){
     first_name: Telegram.WebApp.initDataUnsafe.user?.first_name
   };
 
+  console.log("📦 Отправляем заказ:", orderData);
+  
   // Отправляем данные в бота через Telegram WebApp
   Telegram.WebApp.sendData(JSON.stringify(orderData));
   
   // Показываем уведомление и закрываем приложение
-  Telegram.WebApp.showAlert('✅ Заказ подтвержден! Спасибо за покупку. Мы свяжемся с вами в ближайшее время.', () => {
+  Telegram.WebApp.showAlert('✅ Заказ подтвержден! Ожидайте сообщение с реквизитами для оплаты.', () => {
     // Закрываем Mini App
     Telegram.WebApp.close();
   });
