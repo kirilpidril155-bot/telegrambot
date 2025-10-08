@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Mini App — Магазин</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
 <style>
   :root{--accent:#0088cc;--bg:#f5f5f5;--card:#fff;--muted:#666}
   *{box-sizing:border-box}
   body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);padding-bottom:80px}
   .container{padding:16px;max-width:980px;margin:0 auto}
-  h1,h2{margin:6px 0 12px}
   .page{display:none}
   .page.active{display:block}
   .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
@@ -39,12 +39,22 @@
   .btn{padding:10px 12px;border-radius:8px;border:0;cursor:pointer;font-weight:700}
   .btn.primary{background:var(--accent);color:#fff}
   .btn.danger{background:#e74c3c;color:#fff}
+  .btn.success{background:#2ea44f;color:#fff}
   .small{font-size:13px;color:var(--muted)}
   .modal-back{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:400}
   .modal{background:var(--card);padding:16px;border-radius:12px;width:92%;max-width:420px}
   .currency-list{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
   .currency-card{padding:8px 10px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);cursor:pointer}
   .copy-btn{background:#eee;border:0;padding:8px;border-radius:8px;cursor:pointer;margin-top:8px}
+  .network-selector{margin:10px 0}
+  .network-buttons{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .network-btn{padding:6px 10px;border-radius:6px;border:1px solid #ddd;background:#f9f9f9;cursor:pointer;font-size:12px}
+  .network-btn.active{background:var(--accent);color:white;border-color:var(--accent)}
+  .payment-method{margin:10px 0}
+  .payment-option{padding:10px;border:2px solid #eee;border-radius:8px;margin:8px 0;cursor:pointer}
+  .payment-option.active{border-color:var(--accent);background:#f0f8ff}
+  .metamask-section{display:none;margin-top:10px}
+  .status-waiting{background:#fff3cd;border:1px solid #ffeaa7;padding:10px;border-radius:8px;margin-top:10px;display:none}
   .bottom-nav{position:fixed;left:0;right:0;bottom:0;height:60px;background:#fff;border-top:1px solid #eee;display:flex;align-items:center;justify-content:space-around;z-index:300}
   .nav-item{flex:1;text-align:center;padding-top:6px;cursor:pointer;color:var(--muted)}
   .nav-item.active{color:var(--accent);font-weight:700}
@@ -113,21 +123,50 @@
   <div class="modal-back" id="modalBack">
     <div class="modal">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="font-weight:800">Оплата</div>
+        <div style="font-weight:800">Оплата криптовалютой</div>
         <button onclick="closePayModal()" style="background:none;border:0;font-size:18px;cursor:pointer">✕</button>
       </div>
+      
+      <div class="payment-method">
+        <div class="small">Способ оплаты:</div>
+        <div class="payment-option active" onclick="selectPaymentMethod('manual')">
+          💳 Ручной перевод (адрес)
+        </div>
+        <div class="payment-option" onclick="selectPaymentMethod('metamask')">
+          🦊 MetaMask (автоматически)
+        </div>
+      </div>
+      
       <div style="margin-top:10px">
-        <div class="small">Выберите валюту для оплаты</div>
+        <div class="small">Выберите валюту и сеть</div>
         <div class="currency-list" id="currencyList"></div>
       </div>
-      <div id="payDetails" style="margin-top:10px;display:none">
+      
+      <div class="network-selector">
+        <div class="small">Сеть:</div>
+        <div class="network-buttons" id="networkButtons"></div>
+      </div>
+      
+      <div id="manualPayment" style="margin-top:10px">
         <div style="font-weight:800" id="paySummary"></div>
         <div class="small" style="margin-top:6px">Адрес для перевода:</div>
         <div style="word-break:break-all;margin-top:6px;background:#f7f7f7;padding:8px;border-radius:8px" id="walletAddr"></div>
         <button class="copy-btn" onclick="copyWallet()">Копировать адрес</button>
         <div style="margin-top:10px;display:flex;gap:8px">
-          <button class="btn primary" onclick="payConfirm()">✅ Я оплатил</button>
+          <button class="btn primary" onclick="payConfirmManual()">✅ Я оплатил</button>
           <button class="btn" onclick="closePayModal()">Закрыть</button>
+        </div>
+      </div>
+      
+      <div id="metamaskSection" class="metamask-section">
+        <div style="font-weight:800" id="metamaskSummary"></div>
+        <div style="margin-top:10px">
+          <button class="btn success" onclick="connectAndPay()" id="connectMetamaskBtn">
+            🔗 Подключить MetaMask и оплатить
+          </button>
+        </div>
+        <div class="status-waiting" id="waitingStatus">
+          ⏳ Ожидаем подтверждения транзакции...
         </div>
       </div>
     </div>
@@ -141,7 +180,33 @@
 </div>
 
 <script>
-// Данные
+// 🔥 КОНФИГУРАЦИЯ КРИПТОПЛАТЕЖЕЙ
+const networkConfigs = {
+  "USDC": {
+    "Ethereum": { address: "0xF879a1050307C2E7272CF57A9a6AF6088A307d4B", chainId: "0x1", decimals: 6, type: "erc20" },
+    "Polygon": { address: "0xF879a1050307C2E7272CF57A9a6AF6088A307d4B", chainId: "0x89", decimals: 6, type: "erc20" },
+    "Arbitrum": { address: "0xF879a1050307C2E7272CF57A9a6AF6088A307d4B", chainId: "0xa4b1", decimals: 6, type: "erc20" }
+  },
+  "USDT": {
+    "Ethereum": { address: "0xF879a1050307C2E7272CF57A9a6AF6088A307d4B", chainId: "0x1", decimals: 6, type: "erc20" },
+    "TRON": { address: "TВашАдресTRON", chainId: "tron", decimals: 6, type: "tron" },
+    "Polygon": { address: "0xF879a1050307C2E7272CF57A9a6AF6088A307d4B", chainId: "0x89", decimals: 6, type: "erc20" }
+  },
+  "ETH": {
+    "Ethereum": { address: "0xF879a1050307C2E7272CF57A9a6AF6088A307d4B", chainId: "0x1", decimals: 18, type: "native" },
+    "Arbitrum": { address: "0xF879a1050307C2E7272CF57A9a6AF6088A307d4B", chainId: "0xa4b1", decimals: 18, type: "native" }
+  },
+  "BNB": {
+    "BSC": { address: "0xF879a1050307C2E7272CF57A9a6AF6088A307d4B", chainId: "0x38", decimals: 18, type: "native" }
+  },
+  "SOL": {
+    "Solana": { address: "9JfQ2UhDnBXkGSMceVjWEjAnfkGXFjQMkGmRkwZkBKK8", chainId: "solana", decimals: 9, type: "native" }
+  }
+};
+
+const currencies = {"USDC":1.34,"USDT":1.34,"ETH":0.0003,"BNB":0.0014,"SOL":0.0067};
+
+// 🔥 ОСТАЛЬНЫЕ ДАННЫЕ
 const submenus = {
   "Товар 1": ["1.🍍Цвет🍍","2.🍒Цвет🍒","3.💮Цвет💮","4.🍃Цвет🍃","5.♥️Цвет♥️","6.🐘Цвет🐘","7.🍫Цвет🍫","8.🧁Цвет🧁"],
   "Товар 2": ["1.🥥Цвет🥥","2.🧊Цвет🧊","3.❄️Цвет❄️"],
@@ -174,21 +239,15 @@ const category_images = {
   "Товар 6":["https://i.postimg.cc/yx8PtDWJ/fwgwtwtgwrg.jpg","https://i.postimg.cc/dVY7VzmX/image.png","https://i.postimg.cc/bwJT3DWm/234324.png"]
 };
 
-const currencies = {"BNB":0.0014,"ETH":0.0003,"USDT":1.34,"SOL":0.0067,"USDC":1.34};
-const wallet_addresses = {
-  "BNB":"0xF879a1050307C2E7272CF57A9a6AF6088A307d4B",
-  "ETH":"0xF879a1050307C2E7272CF57A9a6AF6088A307d4B", 
-  "USDT":"0xF879a1050307C2E7272CF57A9a6AF6088A307d4B",
-  "SOL":"9JfQ2UhDnBXkGSMceVjWEjAnfkGXFjQMkGmRkwZkBKK8",
-  "USDC":"0xF879a1050307C2E7272CF57A9a6AF6088A307d4B"
-};
-
-// Состояние приложения
+// 🔥 СОСТОЯНИЕ ПРИЛОЖЕНИЯ
 let selectedCity = null;
 let cart = [];
+let currentPaymentMethod = 'manual';
+let selectedCurrency = null;
+let selectedNetwork = null;
 const cityList = ["Москва","Санкт-Петербург","Казань","Екатеринбург","Новосибирск","Нижний Новгород","Ростов-на-Дону","Краснодар","Самара","Челябинск"];
 
-// Инициализация
+// 🔥 ИНИЦИАЛИЗАЦИЯ
 const cityGrid = document.getElementById('cityGrid');
 cityList.forEach(c=>{
   const b = document.createElement('button');
@@ -198,160 +257,476 @@ cityList.forEach(c=>{
   cityGrid.appendChild(b);
 });
 
-// Навигация
+// 🔥 КРИПТОПЛАТЕЖИ
+function selectPaymentMethod(method) {
+  currentPaymentMethod = method;
+  document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  if (method === 'manual') {
+    document.getElementById('manualPayment').style.display = 'block';
+    document.getElementById('metamaskSection').style.display = 'none';
+  } else {
+    document.getElementById('manualPayment').style.display = 'none';
+    document.getElementById('metamaskSection').style.display = 'block';
+    updateMetamaskSummary();
+  }
+}
+
+function selectCurrency(cur) {
+  selectedCurrency = cur;
+  updateNetworkButtons(cur);
+  updatePaymentSummary();
+}
+
+function selectNetwork(network) {
+  selectedNetwork = network;
+  document.querySelectorAll('.network-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  updatePaymentSummary();
+}
+
+function updateNetworkButtons(currency) {
+  const networkButtons = document.getElementById('networkButtons');
+  networkButtons.innerHTML = '';
+  
+  const networks = networkConfigs[currency];
+  if (networks) {
+    Object.keys(networks).forEach(network => {
+      const btn = document.createElement('button');
+      btn.className = 'network-btn';
+      btn.textContent = network;
+      btn.onclick = () => selectNetwork(network);
+      networkButtons.appendChild(btn);
+    });
+    
+    if (Object.keys(networks).length > 0) {
+      selectedNetwork = Object.keys(networks)[0];
+      networkButtons.firstChild.classList.add('active');
+    }
+  }
+  updatePaymentSummary();
+}
+
+function updatePaymentSummary() {
+  if (!selectedCurrency || !selectedNetwork) return;
+  
+  const totalGBP = cart.reduce((s,i)=>s + i.priceGBP * i.count,0);
+  const rate = currencies[selectedCurrency] || 1;
+  const converted = totalGBP * rate;
+  const config = networkConfigs[selectedCurrency][selectedNetwork];
+  
+  const summary = `${converted.toFixed(6)} ${selectedCurrency} (${totalGBP.toFixed(2)} £)`;
+  document.getElementById('paySummary').textContent = summary;
+  document.getElementById('walletAddr').textContent = config.address;
+  document.getElementById('metamaskSummary').textContent = summary;
+}
+
+function updateMetamaskSummary() {
+  if (selectedCurrency && selectedNetwork) updatePaymentSummary();
+}
+
+// 🔥 META MASK ИНТЕГРАЦИЯ
+async function connectAndPay() {
+    if (!selectedCurrency || !selectedNetwork) {
+        alert('Сначала выберите валюту и сеть');
+        return;
+    }
+
+    if (typeof window.ethereum === 'undefined') {
+        alert('MetaMask не установлен! Установите расширение или используйте ручной перевод.');
+        return;
+    }
+
+    const connectBtn = document.getElementById('connectMetamaskBtn');
+    connectBtn.textContent = '🔗 Подключаемся...';
+    connectBtn.disabled = true;
+
+    try {
+        // Подключаемся к MetaMask
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const web3 = new Web3(window.ethereum);
+        const accounts = await web3.eth.getAccounts();
+        const userAddress = accounts[0];
+
+        // Переключаем сеть если нужно
+        const targetChainId = networkConfigs[selectedCurrency][selectedNetwork].chainId;
+        await switchNetwork(targetChainId);
+
+        const totalGBP = cart.reduce((s,i)=>s + i.priceGBP * i.count,0);
+        const amount = totalGBP * currencies[selectedCurrency];
+        const config = networkConfigs[selectedCurrency][selectedNetwork];
+
+        let txHash;
+        
+        if (config.type === 'native') {
+            // Нативная валюта (ETH, BNB)
+            txHash = await sendNativeToken(web3, userAddress, config.address, amount, config.decimals);
+        } else if (config.type === 'erc20') {
+            // ERC-20 токены (USDC, USDT)
+            txHash = await sendERC20Token(web3, userAddress, config.address, amount, config.decimals);
+        }
+
+        if (txHash) {
+            document.getElementById('waitingStatus').style.display = 'block';
+            connectBtn.style.display = 'none';
+            
+            // Создаем заказ и отправляем данные
+            await createOrderAndNotify(txHash);
+        }
+
+    } catch (error) {
+        console.error('Payment error:', error);
+        alert('Ошибка оплаты: ' + error.message);
+        connectBtn.textContent = '🔗 Подключить MetaMask и оплатить';
+        connectBtn.disabled = false;
+    }
+}
+
+async function switchNetwork(chainId) {
+    try {
+        await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: chainId }],
+        });
+    } catch (switchError) {
+        if (switchError.code === 4902) {
+            // Сеть не добавлена, добавляем её
+            const networkParams = getNetworkParams(chainId);
+            if (networkParams) {
+                await window.ethereum.request({
+                    method: 'wallet_addEthereumChain',
+                    params: [networkParams],
+                });
+            }
+        }
+    }
+}
+
+function getNetworkParams(chainId) {
+    const networks = {
+        '0x89': { // Polygon
+            chainId: '0x89',
+            chainName: 'Polygon Mainnet',
+            rpcUrls: ['https://polygon-rpc.com/'],
+            blockExplorerUrls: ['https://polygonscan.com/'],
+            nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 }
+        },
+        '0x38': { // BSC
+            chainId: '0x38',
+            chainName: 'Binance Smart Chain',
+            rpcUrls: ['https://bsc-dataseed.binance.org/'],
+            blockExplorerUrls: ['https://bscscan.com/'],
+            nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 }
+        },
+        '0xa4b1': { // Arbitrum
+            chainId: '0xa4b1',
+            chainName: 'Arbitrum One',
+            rpcUrls: ['https://arb1.arbitrum.io/rpc'],
+            blockExplorerUrls: ['https://arbiscan.io/'],
+            nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 }
+        }
+    };
+    return networks[chainId];
+}
+
+async function sendNativeToken(web3, from, to, amount, decimals) {
+    const amountWei = web3.utils.toWei(amount.toString(), 'ether');
+    
+    const tx = {
+        from: from,
+        to: to,
+        value: amountWei,
+        gas: 21000
+    };
+    
+    const txHash = await web3.eth.sendTransaction(tx);
+    return txHash.transactionHash;
+}
+
+async function sendERC20Token(web3, from, to, amount, decimals) {
+    const tokenAddress = networkConfigs[selectedCurrency][selectedNetwork].address;
+    const amountWei = web3.utils.toWei(amount.toString(), decimals === 6 ? 'mwei' : 'ether');
+    
+    const abi = [{
+        "constant": false,
+        "inputs": [
+            {"name": "_to", "type": "address"},
+            {"name": "_value", "type": "uint256"}
+        ],
+        "name": "transfer",
+        "outputs": [{"name": "", "type": "bool"}],
+        "type": "function"
+    }];
+    
+    const contract = new web3.eth.Contract(abi, tokenAddress);
+    const data = contract.methods.transfer(to, amountWei).encodeABI();
+    
+    const tx = {
+        from: from,
+        to: tokenAddress,
+        data: data,
+        gas: 100000
+    };
+    
+    const txHash = await web3.eth.sendTransaction(tx);
+    return txHash.transactionHash;
+}
+
+async function createOrderAndNotify(txHash) {
+    const orderData = {
+        user_id: Telegram.WebApp.initDataUnsafe.user?.id,
+        amount: cart.reduce((s,i)=>s + i.priceGBP * i.count,0),
+        currency: selectedCurrency,
+        network: selectedNetwork,
+        city: selectedCity,
+        items: cart,
+        tx_hash: txHash
+    };
+
+    try {
+        // Отправляем заказ на бэкенд
+        const response = await fetch('/api/create-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+            Telegram.WebApp.showAlert('✅ Оплата прошла успешно! Ожидайте сообщение от оператора.', () => {
+                Telegram.WebApp.close();
+            });
+        }
+    } catch (error) {
+        console.error('Order creation error:', error);
+        Telegram.WebApp.showAlert('✅ Оплата прошла, но произошла ошибка при создании заказа. Сообщите оператору хэш транзакции: ' + txHash);
+    }
+}
+
+// 🔥 РУЧНОЙ ПЕРЕВОД
+function payConfirmManual() {
+    if (!selectedCurrency || !selectedNetwork) {
+        alert('Сначала выберите валюту и сеть');
+        return;
+    }
+
+    const orderData = {
+        city: selectedCity,
+        currency: selectedCurrency,
+        network: selectedNetwork,
+        totalGBP: cart.reduce((s,i)=>s + i.priceGBP * i.count,0).toFixed(2),
+        totalConverted: (cart.reduce((s,i)=>s + i.priceGBP * i.count,0) * currencies[selectedCurrency]).toFixed(6),
+        wallet: networkConfigs[selectedCurrency][selectedNetwork].address,
+        items: cart.map(item => ({
+            product: item.product,
+            color: item.color,
+            qty: item.qty,
+            priceGBP: item.priceGBP,
+            count: item.count
+        })),
+        user_id: Telegram.WebApp.initDataUnsafe.user?.id,
+        first_name: Telegram.WebApp.initDataUnsafe.user?.first_name
+    };
+
+    console.log("📦 Отправляем заказ:", orderData);
+    Telegram.WebApp.sendData(JSON.stringify(orderData));
+    
+    Telegram.WebApp.showAlert('✅ Заказ подтвержден! Оплатите по указанному адресу и ожидайте сообщение от оператора.', () => {
+        Telegram.WebApp.close();
+    });
+}
+
+// 🔥 ОСТАЛЬНЫЕ ФУНКЦИИ (без изменений)
+function openPayModal() {
+    if (cart.length===0){ alert('Корзина пуста'); return; }
+    if (!selectedCity){ alert('Сначала выберите город'); return; }
+    
+    currencyListEl.innerHTML = '';
+    Object.keys(currencies).forEach(c=>{
+        const cc = document.createElement('div'); 
+        cc.className='currency-card'; 
+        cc.textContent = c;
+        cc.onclick = ()=>selectCurrency(c);
+        currencyListEl.appendChild(cc);
+    });
+    
+    payDetailsEl.style.display = 'none';
+    payModalEl.style.display = 'block';
+    
+    // Выбираем первую валюту по умолчанию
+    if (Object.keys(currencies).length > 0) {
+        selectedCurrency = Object.keys(currencies)[0];
+        updateNetworkButtons(selectedCurrency);
+    }
+}
+
+function closePayModal(){ 
+    document.getElementById('payModal').style.display = 'none'; 
+}
+
+function copyWallet(){
+    const addr = document.getElementById('walletAddr').textContent;
+    if (!addr) return;
+    navigator.clipboard?.writeText(addr).then(()=>{ 
+        alert('Адрес скопирован в буфер') 
+    }).catch(()=>{ 
+        alert('Не удалось скопировать, скопируйте вручную') 
+    });
+}
+
+// 🔥 ОСТАВШИЕСЯ ФУНКЦИИ БЕЗ ИЗМЕНЕНИЙ
 function navTo(element){
-  const page = element.dataset.page;
-  openPage(page);
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  element.classList.add('active');
+    const page = element.dataset.page;
+    openPage(page);
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    element.classList.add('active');
 }
 
 function openPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  const cartFloat = document.getElementById('cartFloat');
-  if (id === 'page-cart') {
-    cartFloat.classList.add('hidden');
-  } else if (cart.length > 0) {
-    cartFloat.classList.remove('hidden');
-  }
-  if (id==='page-products') renderCategories();
-  if (id==='page-cart') renderCart();
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    const cartFloat = document.getElementById('cartFloat');
+    if (id === 'page-cart') {
+        cartFloat.classList.add('hidden');
+    } else if (cart.length > 0) {
+        cartFloat.classList.remove('hidden');
+    }
+    if (id==='page-products') renderCategories();
+    if (id==='page-cart') renderCart();
 }
 
-// Города
 function selectCity(city){
-  selectedCity = city;
-  document.getElementById('selectedCityText').textContent = '🏙 Город: ' + city;
-  document.getElementById('cartCity').textContent = 'Город доставки: ' + city;
-  openPage('page-products');
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.querySelector('.nav-item[data-page="page-products"]').classList.add('active');
-  renderCategories();
+    selectedCity = city;
+    document.getElementById('selectedCityText').textContent = '🏙 Город: ' + city;
+    document.getElementById('cartCity').textContent = 'Город доставки: ' + city;
+    openPage('page-products');
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.querySelector('.nav-item[data-page="page-products"]').classList.add('active');
+    renderCategories();
 }
 
 function goToHome(){ 
-  openPage('page-home'); 
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); 
-  document.querySelector('.nav-item[data-page="page-home"]').classList.add('active'); 
+    openPage('page-home'); 
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); 
+    document.querySelector('.nav-item[data-page="page-home"]').classList.add('active'); 
 }
 
-// Товары
 function renderCategories(){
-  const container = document.getElementById('categoriesContainer');
-  container.innerHTML = '';
-  Object.keys(submenus).forEach(prod=>{
-    const cat = document.createElement('div'); cat.className='category';
-    const head = document.createElement('div'); head.className='category-head';
-    head.innerHTML = `<div style="font-weight:800">${prod}</div><div class="small">▾</div>`;
-    const body = document.createElement('div'); body.className='category-body';
-    
-    submenus[prod].forEach(color=>{
-      const row = document.createElement('div'); row.className='item-row';
-      const img = document.createElement('img'); img.className='thumb'; img.src = (category_images[prod] && category_images[prod][0]) || '';
-      img.onerror = function() { this.style.display = 'none'; };
-      const meta = document.createElement('div'); meta.className='item-meta';
-      meta.innerHTML = `<div class="item-title">${color}</div><div class="small">Выберите количество и добавьте в корзину</div>`;
-      const sel = document.createElement('div'); sel.className='selector';
-      
-      const priceKey = findPriceKey(color);
-      let grads = priceKey ? Object.keys(custom_quantity_prices[priceKey]).map(x => parseFloat(x)).sort((a,b)=>a-b) : [1];
-      let idx = 0;
-      
-      const minus = document.createElement('button'); minus.className='step-btn'; minus.textContent='−';
-      const plus = document.createElement('button'); plus.className='step-btn'; plus.textContent='+';
-      const qtyDisplay = document.createElement('div'); qtyDisplay.className='qty-display'; 
-      const priceSpan = document.createElement('div'); priceSpan.className='small'; priceSpan.style.marginLeft='8px';
-      const addBtn = document.createElement('button'); addBtn.className='add-btn'; addBtn.textContent='Добавить в корзину';
-      
-      function updateDisplay(){
-        const q = grads[idx];
-        qtyDisplay.textContent = (Number.isInteger(q) ? q : q) + ' g';
-        const pKey = priceKey;
-        const price = pKey ? custom_quantity_prices[pKey][q] : 0;
-        priceSpan.textContent = price + ' £';
-      }
-      
-      minus.onclick = (ev)=>{ ev.stopPropagation(); idx = Math.max(0, idx-1); updateDisplay(); };
-      plus.onclick = (ev)=>{ ev.stopPropagation(); idx = Math.min(grads.length-1, idx+1); updateDisplay(); };
-      
-      addBtn.onclick = (ev)=>{
-        ev.stopPropagation();
-        const q = grads[idx];
-        const pKey = priceKey;
-        const price = pKey ? custom_quantity_prices[pKey][q] : 0;
-        addToCart({product:prod, color:color, qty:q, priceGBP:price});
-        const oldText = addBtn.textContent;
-        addBtn.textContent = '✅ В корзине';
-        addBtn.classList.add('in-cart');
-        setTimeout(()=>{ addBtn.textContent = oldText; addBtn.classList.remove('in-cart'); }, 1500);
-      };
-      
-      sel.appendChild(minus); sel.appendChild(qtyDisplay); sel.appendChild(plus); sel.appendChild(priceSpan); sel.appendChild(addBtn);
-      updateDisplay();
-      row.appendChild(img); row.appendChild(meta); row.appendChild(sel);
-      body.appendChild(row);
+    const container = document.getElementById('categoriesContainer');
+    container.innerHTML = '';
+    Object.keys(submenus).forEach(prod=>{
+        const cat = document.createElement('div'); cat.className='category';
+        const head = document.createElement('div'); head.className='category-head';
+        head.innerHTML = `<div style="font-weight:800">${prod}</div><div class="small">▾</div>`;
+        const body = document.createElement('div'); body.className='category-body';
+        
+        submenus[prod].forEach(color=>{
+            const row = document.createElement('div'); row.className='item-row';
+            const img = document.createElement('img'); img.className='thumb'; img.src = (category_images[prod] && category_images[prod][0]) || '';
+            img.onerror = function() { this.style.display = 'none'; };
+            const meta = document.createElement('div'); meta.className='item-meta';
+            meta.innerHTML = `<div class="item-title">${color}</div><div class="small">Выберите количество и добавьте в корзину</div>`;
+            const sel = document.createElement('div'); sel.className='selector';
+            
+            const priceKey = findPriceKey(color);
+            let grads = priceKey ? Object.keys(custom_quantity_prices[priceKey]).map(x => parseFloat(x)).sort((a,b)=>a-b) : [1];
+            let idx = 0;
+            
+            const minus = document.createElement('button'); minus.className='step-btn'; minus.textContent='−';
+            const plus = document.createElement('button'); plus.className='step-btn'; plus.textContent='+';
+            const qtyDisplay = document.createElement('div'); qtyDisplay.className='qty-display'; 
+            const priceSpan = document.createElement('div'); priceSpan.className='small'; priceSpan.style.marginLeft='8px';
+            const addBtn = document.createElement('button'); addBtn.className='add-btn'; addBtn.textContent='Добавить в корзину';
+            
+            function updateDisplay(){
+                const q = grads[idx];
+                qtyDisplay.textContent = (Number.isInteger(q) ? q : q) + ' g';
+                const pKey = priceKey;
+                const price = pKey ? custom_quantity_prices[pKey][q] : 0;
+                priceSpan.textContent = price + ' £';
+            }
+            
+            minus.onclick = (ev)=>{ ev.stopPropagation(); idx = Math.max(0, idx-1); updateDisplay(); };
+            plus.onclick = (ev)=>{ ev.stopPropagation(); idx = Math.min(grads.length-1, idx+1); updateDisplay(); };
+            
+            addBtn.onclick = (ev)=>{
+                ev.stopPropagation();
+                const q = grads[idx];
+                const pKey = priceKey;
+                const price = pKey ? custom_quantity_prices[pKey][q] : 0;
+                addToCart({product:prod, color:color, qty:q, priceGBP:price});
+                const oldText = addBtn.textContent;
+                addBtn.textContent = '✅ В корзине';
+                addBtn.classList.add('in-cart');
+                setTimeout(()=>{ addBtn.textContent = oldText; addBtn.classList.remove('in-cart'); }, 1500);
+            };
+            
+            sel.appendChild(minus); sel.appendChild(qtyDisplay); sel.appendChild(plus); sel.appendChild(priceSpan); sel.appendChild(addBtn);
+            updateDisplay();
+            row.appendChild(img); row.appendChild(meta); row.appendChild(sel);
+            body.appendChild(row);
+        });
+        
+        head.onclick = ()=>{ 
+            const open = body.style.display==='block'; 
+            document.querySelectorAll('.category-body').forEach(b=>b.style.display='none'); 
+            body.style.display = open? 'none' : 'block'; 
+        };
+        cat.appendChild(head); cat.appendChild(body); container.appendChild(cat);
     });
-    
-    head.onclick = ()=>{ 
-      const open = body.style.display==='block'; 
-      document.querySelectorAll('.category-body').forEach(b=>b.style.display='none'); 
-      body.style.display = open? 'none' : 'block'; 
-    };
-    cat.appendChild(head); cat.appendChild(body); container.appendChild(cat);
-  });
 }
 
-// Корзина
 function addToCart(item){
-  const idx = cart.findIndex(it => it.product===item.product && it.color===item.color && it.qty===item.qty && it.priceGBP===item.priceGBP);
-  if (idx>=0){ cart[idx].count += 1; } else { item.count = 1; cart.push(item); }
-  refreshCartFloat();
+    const idx = cart.findIndex(it => it.product===item.product && it.color===item.color && it.qty===item.qty && it.priceGBP===item.priceGBP);
+    if (idx>=0){ cart[idx].count += 1; } else { item.count = 1; cart.push(item); }
+    refreshCartFloat();
 }
 
 function refreshCartFloat(){
-  const count = cart.reduce((s,i)=>s+i.count,0);
-  const sum = cart.reduce((s,i)=>s + i.priceGBP * i.count, 0);
-  document.getElementById('cartCount').textContent = count;
-  document.getElementById('cartSum').textContent = sum.toFixed(2);
-  const cf = document.getElementById('cartFloat');
-  const isCartPage = document.getElementById('page-cart').classList.contains('active');
-  cf.classList.toggle('hidden', count===0 || isCartPage);
+    const count = cart.reduce((s,i)=>s+i.count,0);
+    const sum = cart.reduce((s,i)=>s + i.priceGBP * i.count,0);
+    document.getElementById('cartCount').textContent = count;
+    document.getElementById('cartSum').textContent = sum.toFixed(2);
+    const cf = document.getElementById('cartFloat');
+    const isCartPage = document.getElementById('page-cart').classList.contains('active');
+    cf.classList.toggle('hidden', count===0 || isCartPage);
 }
 
 function renderCart(){
-  const list = document.getElementById('cartList');
-  list.innerHTML = '';
-  if (!selectedCity){
-    document.getElementById('cartCity').textContent = 'Город доставки: —';
-  } else {
-    document.getElementById('cartCity').textContent = 'Город доставки: ' + selectedCity;
-  }
-  if (cart.length===0) { 
-    list.innerHTML = '<div class="small">Корзина пуста</div>'; 
-    document.getElementById('totalGBP').textContent = '0.00'; 
-    document.getElementById('totalConverted').textContent = ''; 
-    return; 
-  }
-  cart.forEach((it, idx)=>{
-    const el = document.createElement('div'); el.className='cart-item';
-    const img = document.createElement('img'); img.className='thumb'; img.src = (category_images[it.product] && category_images[it.product][0]) || '';
-    img.onerror = function() { this.style.display = 'none'; };
-    const meta = document.createElement('div'); meta.className='meta';
-    meta.innerHTML = `<div style="font-weight:800">${it.product}</div><div class="small">${it.color} • ${it.qty} g</div><div class="small">Цена: ${it.priceGBP} £ • Кол-во: ${it.count}</div>`;
-    const controls = document.createElement('div');
-    controls.innerHTML = `<div style="text-align:right;font-weight:800">${(it.priceGBP*it.count).toFixed(2)} £</div>
-      <div style="margin-top:8px;display:flex;gap:6px;align-items:center;justify-content:flex-end">
-        <button class="step-btn" onclick="decCartItem(${idx})">−</button>
-        <div style="min-width:24px;text-align:center">${it.count}</div>
-        <button class="step-btn" onclick="incCartItem(${idx})">+</button>
-        <button class="step-btn" style="background:#cc3333" onclick="removeCartItem(${idx})">✕</button>
-      </div>`;
-    el.appendChild(img); el.appendChild(meta); el.appendChild(controls);
-    list.appendChild(el);
-  });
-  const total = cart.reduce((s,i)=>s + i.priceGBP * i.count,0);
-  document.getElementById('totalGBP').textContent = total.toFixed(2);
+    const list = document.getElementById('cartList');
+    list.innerHTML = '';
+    if (!selectedCity){
+        document.getElementById('cartCity').textContent = 'Город доставки: —';
+    } else {
+        document.getElementById('cartCity').textContent = 'Город доставки: ' + selectedCity;
+    }
+    if (cart.length===0) { 
+        list.innerHTML = '<div class="small">Корзина пуста</div>'; 
+        document.getElementById('totalGBP').textContent = '0.00'; 
+        document.getElementById('totalConverted').textContent = ''; 
+        return; 
+    }
+    cart.forEach((it, idx)=>{
+        const el = document.createElement('div'); el.className='cart-item';
+        const img = document.createElement('img'); img.className='thumb'; img.src = (category_images[it.product] && category_images[it.product][0]) || '';
+        img.onerror = function() { this.style.display = 'none'; };
+        const meta = document.createElement('div'); meta.className='meta';
+        meta.innerHTML = `<div style="font-weight:800">${it.product}</div><div class="small">${it.color} • ${it.qty} g</div><div class="small">Цена: ${it.priceGBP} £ • Кол-во: ${it.count}</div>`;
+        const controls = document.createElement('div');
+        controls.innerHTML = `<div style="text-align:right;font-weight:800">${(it.priceGBP*it.count).toFixed(2)} £</div>
+          <div style="margin-top:8px;display:flex;gap:6px;align-items:center;justify-content:flex-end">
+            <button class="step-btn" onclick="decCartItem(${idx})">−</button>
+            <div style="min-width:24px;text-align:center">${it.count}</div>
+            <button class="step-btn" onclick="incCartItem(${idx})">+</button>
+            <button class="step-btn" style="background:#cc3333" onclick="removeCartItem(${idx})">✕</button>
+          </div>`;
+        el.appendChild(img); el.appendChild(meta); el.appendChild(controls);
+        list.appendChild(el);
+    });
+    const total = cart.reduce((s,i)=>s + i.priceGBP * i.count,0);
+    document.getElementById('totalGBP').textContent = total.toFixed(2);
 }
 
 function incCartItem(i){ cart[i].count += 1; renderCart(); refreshCartFloat(); }
@@ -359,102 +734,32 @@ function decCartItem(i){ cart[i].count = Math.max(1, cart[i].count - 1); renderC
 function removeCartItem(i){ cart.splice(i,1); renderCart(); refreshCartFloat(); }
 function clearCart(){ cart = []; renderCart(); refreshCartFloat(); }
 
-// Оплата
-const currencyListEl = document.getElementById('currencyList');
-const payModalEl = document.getElementById('payModal');
-const payDetailsEl = document.getElementById('payDetails');
-const paySummaryEl = document.getElementById('paySummary');
-const walletAddrEl = document.getElementById('walletAddr');
-
-function openPayModal(){
-  if (cart.length===0){ alert('Корзина пуста'); return; }
-  currencyListEl.innerHTML = '';
-  Object.keys(currencies).forEach(c=>{
-    const cc = document.createElement('div'); cc.className='currency-card'; cc.textContent = c;
-    cc.onclick = ()=>selectCurrency(c);
-    currencyListEl.appendChild(cc);
-  });
-  payDetailsEl.style.display = 'none';
-  payModalEl.style.display = 'block';
-}
-
-function closePayModal(){ payModalEl.style.display = 'none'; }
-
-function selectCurrency(cur){
-  const rate = currencies[cur] || 1;
-  const totalGBP = cart.reduce((s,i)=>s + i.priceGBP * i.count,0);
-  const converted = totalGBP * rate;
-  const wallet = wallet_addresses[cur] || 'No address set';
-  paySummaryEl.textContent = `${converted.toFixed(6)} ${cur}  —  (${totalGBP.toFixed(2)} £)`;
-  walletAddrEl.textContent = wallet;
-  payDetailsEl.style.display = 'block';
-  payDetailsEl.dataset.cur = cur;
-  payDetailsEl.dataset.wallet = wallet;
-  payDetailsEl.dataset.converted = converted.toFixed(8);
-}
-
-function copyWallet(){
-  const addr = walletAddrEl.textContent;
-  if (!addr) return;
-  navigator.clipboard?.writeText(addr).then(()=>{ alert('Адрес скопирован в буфер') }).catch(()=>{ alert('Не удалось скопировать, скопируйте вручную') });
-}
-
-// ⭐⭐ ОБНОВЛЕННАЯ ФУНКЦИЯ - ОТПРАВКА ЗАКАЗА И ЗАКРЫТИЕ ПРИЛОЖЕНИЯ ⭐⭐
-function payConfirm(){
-  const payButton = document.querySelector('#payDetails .btn.primary');
-  payButton.textContent = 'Отправляем...';
-  payButton.disabled = true;
-  
-  // Формируем данные заказа
-  const orderData = {
-    city: selectedCity,
-    currency: payDetailsEl.dataset.cur,
-    totalGBP: cart.reduce((s,i)=>s + i.priceGBP * i.count,0).toFixed(2),
-    totalConverted: payDetailsEl.dataset.converted,
-    wallet: payDetailsEl.dataset.wallet,
-    items: cart.map(item => ({
-      product: item.product,
-      color: item.color,
-      qty: item.qty,
-      priceGBP: item.priceGBP,
-      count: item.count
-    })),
-    user_id: Telegram.WebApp.initDataUnsafe.user?.id,
-    first_name: Telegram.WebApp.initDataUnsafe.user?.first_name
-  };
-
-  console.log("📦 Отправляем заказ:", orderData);
-  
-  // Отправляем данные в бота через Telegram WebApp
-  Telegram.WebApp.sendData(JSON.stringify(orderData));
-  
-  // Показываем уведомление и закрываем приложение
-  Telegram.WebApp.showAlert('✅ Заказ подтвержден! Ожидайте сообщение с реквизитами для оплаты.', () => {
-    // Закрываем Mini App
-    Telegram.WebApp.close();
-  });
-}
-
-// Утилиты
 function normalizeKey(s){ return String(s||'').toLowerCase().replace(/[\s\._]/g,'').normalize('NFKD'); }
 function findPriceKey(color){
-  if (custom_quantity_prices[color]) return color;
-  const norm = normalizeKey(color);
-  for (const k of Object.keys(custom_quantity_prices)){
-    if (normalizeKey(k) === norm) return k;
-  }
-  const m = color.match(/^(\d)(.*)/);
-  if (m){
-    const try1 = m[1]+'.'+m[2];
-    if (custom_quantity_prices[try1]) return try1;
-  }
-  return null;
+    if (custom_quantity_prices[color]) return color;
+    const norm = normalizeKey(color);
+    for (const k of Object.keys(custom_quantity_prices)){
+        if (normalizeKey(k) === norm) return k;
+    }
+    const m = color.match(/^(\d)(.*)/);
+    if (m){
+        const try1 = m[1]+'.'+m[2];
+        if (custom_quantity_prices[try1]) return try1;
+    }
+    return null;
 }
 
 // Инициализация
 document.addEventListener('DOMContentLoaded', ()=>{
-  window.Telegram?.WebApp?.ready();
-  refreshCartFloat();
+    window.Telegram?.WebApp?.ready();
+    refreshCartFloat();
+    
+    // Инициализируем элементы UI
+    currencyListEl = document.getElementById('currencyList');
+    payModalEl = document.getElementById('payModal');
+    payDetailsEl = document.getElementById('payDetails');
+    paySummaryEl = document.getElementById('paySummary');
+    walletAddrEl = document.getElementById('walletAddr');
 });
 </script>
 </body>
