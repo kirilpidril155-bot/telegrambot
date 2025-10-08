@@ -326,6 +326,57 @@ function updateMetamaskSummary() {
   if (selectedCurrency && selectedNetwork) updatePaymentSummary();
 }
 
+// 🔥 ФУНКЦИИ МОДАЛЬНОГО ОКНА ОПЛАТЫ
+function openPayModal() {
+    console.log("openPayModal called");
+    
+    if (cart.length === 0) { 
+        alert('Корзина пуста'); 
+        return; 
+    }
+    if (!selectedCity) { 
+        alert('Сначала выберите город'); 
+        return; 
+    }
+    
+    // Инициализация элементов UI
+    const currencyListEl = document.getElementById('currencyList');
+    currencyListEl.innerHTML = '';
+    
+    Object.keys(currencies).forEach(c => {
+        const cc = document.createElement('div'); 
+        cc.className = 'currency-card'; 
+        cc.textContent = c;
+        cc.onclick = () => selectCurrency(c);
+        currencyListEl.appendChild(cc);
+    });
+    
+    // Сбрасываем выбор валюты и сети
+    selectedCurrency = null;
+    selectedNetwork = null;
+    
+    // Показываем правильную секцию в зависимости от метода оплаты
+    if (currentPaymentMethod === 'manual') {
+        document.getElementById('manualPayment').style.display = 'block';
+        document.getElementById('metamaskSection').style.display = 'none';
+    } else {
+        document.getElementById('manualPayment').style.display = 'none';
+        document.getElementById('metamaskSection').style.display = 'block';
+    }
+    
+    document.getElementById('payModal').style.display = 'block';
+    
+    // Выбираем первую валюту по умолчанию
+    if (Object.keys(currencies).length > 0) {
+        selectedCurrency = Object.keys(currencies)[0];
+        updateNetworkButtons(selectedCurrency);
+    }
+}
+
+function closePayModal() { 
+    document.getElementById('payModal').style.display = 'none'; 
+}
+
 // 🔥 META MASK ИНТЕГРАЦИЯ
 async function connectAndPay() {
     if (!selectedCurrency || !selectedNetwork) {
