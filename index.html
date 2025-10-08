@@ -371,8 +371,8 @@ async function connectAndPay() {
             document.getElementById('waitingStatus').style.display = 'block';
             connectBtn.style.display = 'none';
             
-            // Создаем заказ и отправляем данные
-            await createOrderAndNotify(txHash);
+            // 🔥 АВТОМАТИЧЕСКАЯ ПРОВЕРКА - отправляем данные в бота
+            await sendOrderToBot(txHash, 'metamask');
         }
 
     } catch (error) {
@@ -473,45 +473,8 @@ async function sendERC20Token(web3, from, to, amount, decimals) {
     return txHash.transactionHash;
 }
 
-async function createOrderAndNotify(txHash) {
-    const orderData = {
-        user_id: Telegram.WebApp.initDataUnsafe.user?.id,
-        amount: cart.reduce((s,i)=>s + i.priceGBP * i.count,0),
-        currency: selectedCurrency,
-        network: selectedNetwork,
-        city: selectedCity,
-        items: cart,
-        tx_hash: txHash
-    };
-
-    try {
-        // Отправляем заказ на бэкенд
-        const response = await fetch('/api/create-order', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(orderData)
-        });
-
-        const result = await response.json();
-        
-        if (result.success) {
-            Telegram.WebApp.showAlert('✅ Оплата прошла успешно! Ожидайте сообщение от оператора.', () => {
-                Telegram.WebApp.close();
-            });
-        }
-    } catch (error) {
-        console.error('Order creation error:', error);
-        Telegram.WebApp.showAlert('✅ Оплата прошла, но произошла ошибка при создании заказа. Сообщите оператору хэш транзакции: ' + txHash);
-    }
-}
-
-// 🔥 РУЧНОЙ ПЕРЕВОД
-function payConfirmManual() {
-    if (!selectedCurrency || !selectedNetwork) {
-        alert('Сначала выберите валюту и сеть');
-        return;
-    }
-
+// 🔥 ОТПРАВКА ДАННЫХ В БОТ ДЛЯ АВТОМАТИЧЕСКОЙ ПРОВЕРКИ
+async function sendOrderToBot(txHash = null, paymentMethod) {
     const orderData = {
         city: selectedCity,
         currency: selectedCurrency,
@@ -527,43 +490,37 @@ function payConfirmManual() {
             count: item.count
         })),
         user_id: Telegram.WebApp.initDataUnsafe.user?.id,
-        first_name: Telegram.WebApp.initDataUnsafe.user?.first_name
+        first_name: Telegram.WebApp.initDataUnsafe.user?.first_name,
+        timestamp: new Date().toISOString(),
+        payment_method: paymentMethod,
+        tx_hash: txHash
     };
 
-    console.log("📦 Отправляем заказ:", orderData);
+    console.log("📦 Отправляем заказ в бот:", orderData);
+    
+    // 🔥 ОТПРАВКА ДАННЫХ В БОТ ЧЕРЕЗ TELEGRAM WEB APP
     Telegram.WebApp.sendData(JSON.stringify(orderData));
     
-    Telegram.WebApp.showAlert('✅ Заказ подтвержден! Оплатите по указанному адресу и ожидайте сообщение от оператора.', () => {
-        Telegram.WebApp.close();
-    });
-}
-
-// 🔥 ОСТАЛЬНЫЕ ФУНКЦИИ (без изменений)
-function openPayModal() {
-    if (cart.length===0){ alert('Корзина пуста'); return; }
-    if (!selectedCity){ alert('Сначала выберите город'); return; }
-    
-    currencyListEl.innerHTML = '';
-    Object.keys(currencies).forEach(c=>{
-        const cc = document.createElement('div'); 
-        cc.className='currency-card'; 
-        cc.textContent = c;
-        cc.onclick = ()=>selectCurrency(c);
-        currencyListEl.appendChild(cc);
-    });
-    
-    payDetailsEl.style.display = 'none';
-    payModalEl.style.display = 'block';
-    
-    // Выбираем первую валюту по умолчанию
-    if (Object.keys(currencies).length > 0) {
-        selectedCurrency = Object.keys(currencies)[0];
-        updateNetworkButtons(selectedCurrency);
+    if (paymentMethod === 'metamask') {
+        Telegram.WebApp.showAlert('✅ Транзакция отправлена! Система автоматически проверит оплату в течение 5-15 минут. Вы получите уведомление.', () => {
+            Telegram.WebApp.close();
+        });
     }
 }
 
-function closePayModal(){ 
-    document.getElementById('payModal').style.display = 'none'; 
+// 🔥 РУЧНОЙ ПЕРЕВОД
+function payConfirmManual() {
+    if (!selectedCurrency || !selectedNetwork) {
+        alert('Сначала выберите валюту и сеть');
+        return;
+    }
+
+    // Отправляем заказ без tx_hash для ручной оплаты
+    sendOrderToBot(null, 'manual');
+    
+    Telegram.WebApp.showAlert('✅ Заказ подтвержден! Оплатите по указанному адресу. Система автоматически проверит оплату. По вопросам пишите @testuser', () => {
+        Telegram.WebApp.close();
+    });
 }
 
 function copyWallet(){
@@ -753,13 +710,6 @@ function findPriceKey(color){
 document.addEventListener('DOMContentLoaded', ()=>{
     window.Telegram?.WebApp?.ready();
     refreshCartFloat();
-    
-    // Инициализируем элементы UI
-    currencyListEl = document.getElementById('currencyList');
-    payModalEl = document.getElementById('payModal');
-    payDetailsEl = document.getElementById('payDetails');
-    paySummaryEl = document.getElementById('paySummary');
-    walletAddrEl = document.getElementById('walletAddr');
 });
 </script>
 </body>
