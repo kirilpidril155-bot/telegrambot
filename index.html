@@ -424,9 +424,6 @@ async function connectAndPay() {
             
             // 🔥 АВТОМАТИЧЕСКАЯ ПРОВЕРКА - отправляем данные в бота
             await sendOrderToBot(txHash, 'metamask');
-            
-            // ЗАКРЫВАЕМ MINI APP ПОСЛЕ ОТПРАВКИ
-            Telegram.WebApp.close();
         }
 
     } catch (error) {
@@ -561,22 +558,31 @@ async function sendOrderToBot(txHash = null, paymentMethod) {
 
     console.log("📦 Отправляем заказ в бот:", orderData);
     
-    // 🔥 ОТПРАВКА ДАННЫХ В БОТ ЧЕРЕЗ TELEGRAM WEB APP
-    Telegram.WebApp.sendData(JSON.stringify(orderData));
+    try {
+        // 🔥 ОТПРАВКА ДАННЫХ В БОТ ЧЕРЕЗ TELEGRAM WEB APP
+        Telegram.WebApp.sendData(JSON.stringify(orderData));
+        console.log("✅ Данные отправлены в бота");
+        
+        // ЗАКРЫВАЕМ MINI APP ПОСЛЕ УСПЕШНОЙ ОТПРАВКИ
+        setTimeout(() => {
+            Telegram.WebApp.close();
+        }, 500);
+        
+    } catch (error) {
+        console.error("❌ Ошибка отправки данных:", error);
+        alert("Ошибка отправки заказа. Попробуйте еще раз.");
+    }
 }
 
-// 🔥 РУЧНОЙ ПЕРЕВОД - ЗАКРЫТИЕ APP ПРИ НАЖАТИИ "Я ОПЛАТИЛ"
+// 🔥 РУЧНОЙ ПЕРЕВОД - ИСПРАВЛЕННАЯ ФУНКЦИЯ
 function payConfirmManual() {
     if (!selectedCurrency || !selectedNetwork) {
         alert('Сначала выберите валюту и сеть');
         return;
     }
 
-    // Отправляем заказ без tx_hash для ручной оплаты
+    // СНАЧАЛА отправляем данные в бота
     sendOrderToBot(null, 'manual');
-    
-    // ЗАКРЫВАЕМ MINI APP СРАЗУ ПОСЛЕ НАЖАТИЯ "Я ОПЛАТИЛ"
-    Telegram.WebApp.close();
 }
 
 function copyWallet(){
