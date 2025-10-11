@@ -183,24 +183,24 @@
 // 🔥 КОНФИГУРАЦИЯ КРИПТОПЛАТЕЖЕЙ
 const networkConfigs = {
   "USDC": {
-    "Ethereum": { address: "0xF879a1050307C2E7272CF57A9a6AF6088A307d4B", chainId: "0x1", decimals: 6, type: "erc20" },
-    "Polygon": { address: "0xF879a1050307C2E7272CF57A9a6AF6088A307d4B", chainId: "0x89", decimals: 6, type: "erc20" },
-    "Arbitrum": { address: "0xF879a1050307C2E7272CF57A9a6AF6088A307d4B", chainId: "0xa4b1", decimals: 6, type: "erc20" }
+    "Ethereum": { address: "ВАШ_USDC_ETH_КОШЕЛЕК", chainId: "0x1", decimals: 6, type: "erc20" },
+    "Polygon": { address: "ВАШ_USDC_POLYGON_КОШЕЛЕК", chainId: "0x89", decimals: 6, type: "erc20" },
+    "Arbitrum": { address: "ВАШ_USDC_ARBITRUM_КОШЕЛЕК", chainId: "0xa4b1", decimals: 6, type: "erc20" }
   },
   "USDT": {
-    "Ethereum": { address: "0xF879a1050307C2E7272CF57A9a6AF6088A307d4B", chainId: "0x1", decimals: 6, type: "erc20" },
-    "TRON": { address: "TВашАдресTRON", chainId: "tron", decimals: 6, type: "tron" },
-    "Polygon": { address: "0xF879a1050307C2E7272CF57A9a6AF6088A307d4B", chainId: "0x89", decimals: 6, type: "erc20" }
+    "Ethereum": { address: "ВАШ_USDT_ETH_КОШЕЛЕК", chainId: "0x1", decimals: 6, type: "erc20" },
+    "TRON": { address: "ВАШ_TRON_КОШЕЛЕК", chainId: "tron", decimals: 6, type: "tron" },
+    "Polygon": { address: "ВАШ_USDT_POLYGON_КОШЕЛЕК", chainId: "0x89", decimals: 6, type: "erc20" }
   },
   "ETH": {
-    "Ethereum": { address: "0xF879a1050307C2E7272CF57A9a6AF6088A307d4B", chainId: "0x1", decimals: 18, type: "native" },
-    "Arbitrum": { address: "0xF879a1050307C2E7272CF57A9a6AF6088A307d4B", chainId: "0xa4b1", decimals: 18, type: "native" }
+    "Ethereum": { address: "ВАШ_ETH_КОШЕЛЕК", chainId: "0x1", decimals: 18, type: "native" },
+    "Arbitrum": { address: "ВАШ_ETH_ARBITRUM_КОШЕЛЕК", chainId: "0xa4b1", decimals: 18, type: "native" }
   },
   "BNB": {
-    "BSC": { address: "0xF879a1050307C2E7272CF57A9a6AF6088A307d4B", chainId: "0x38", decimals: 18, type: "native" }
+    "BSC": { address: "ВАШ_BNB_КОШЕЛЕК", chainId: "0x38", decimals: 18, type: "native" }
   },
   "SOL": {
-    "Solana": { address: "9JfQ2UhDnBXkGSMceVjWEjAnfkGXFjQMkGmRkwZkBKK8", chainId: "solana", decimals: 9, type: "native" }
+    "Solana": { address: "ВАШ_SOLANA_КОШЕЛЕК", chainId: "solana", decimals: 9, type: "native" }
   }
 };
 
@@ -424,11 +424,23 @@ async function connectAndPay() {
             
             // 🔥 АВТОМАТИЧЕСКАЯ ПРОВЕРКА - отправляем данные в бота
             await sendOrderToBot(txHash, 'metamask');
+            
+            // ЗАКРЫВАЕМ MINI APP ПОСЛЕ ОТПРАВКИ
+            Telegram.WebApp.close();
         }
 
     } catch (error) {
         console.error('Payment error:', error);
-        alert('Ошибка оплаты: ' + error.message);
+        
+        // Улучшенная обработка ошибок
+        if (error.code === 4001) {
+            alert('Вы отменили транзакцию в MetaMask');
+        } else if (error.message.includes('insufficient funds')) {
+            alert('Недостаточно средств на балансе');
+        } else {
+            alert('Ошибка оплаты: ' + error.message);
+        }
+        
         connectBtn.textContent = '🔗 Подключить MetaMask и оплатить';
         connectBtn.disabled = false;
     }
@@ -551,15 +563,9 @@ async function sendOrderToBot(txHash = null, paymentMethod) {
     
     // 🔥 ОТПРАВКА ДАННЫХ В БОТ ЧЕРЕЗ TELEGRAM WEB APP
     Telegram.WebApp.sendData(JSON.stringify(orderData));
-    
-    if (paymentMethod === 'metamask') {
-        Telegram.WebApp.showAlert('✅ Транзакция отправлена! Система автоматически проверит оплату в течение 5-15 минут. Вы получите уведомление.', () => {
-            Telegram.WebApp.close();
-        });
-    }
 }
 
-// 🔥 РУЧНОЙ ПЕРЕВОД
+// 🔥 РУЧНОЙ ПЕРЕВОД - ЗАКРЫТИЕ APP ПРИ НАЖАТИИ "Я ОПЛАТИЛ"
 function payConfirmManual() {
     if (!selectedCurrency || !selectedNetwork) {
         alert('Сначала выберите валюту и сеть');
@@ -569,9 +575,8 @@ function payConfirmManual() {
     // Отправляем заказ без tx_hash для ручной оплаты
     sendOrderToBot(null, 'manual');
     
-    Telegram.WebApp.showAlert('✅ Заказ подтвержден! Оплатите по указанному адресу. Система автоматически проверит оплату. По вопросам пишите @testuser', () => {
-        Telegram.WebApp.close();
-    });
+    // ЗАКРЫВАЕМ MINI APP СРАЗУ ПОСЛЕ НАЖАТИЯ "Я ОПЛАТИЛ"
+    Telegram.WebApp.close();
 }
 
 function copyWallet(){
