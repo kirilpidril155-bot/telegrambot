@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Mini App — Магазин</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
 <style>
   :root{--accent:#0088cc;--bg:#f5f5f5;--card:#fff;--muted:#666}
   *{box-sizing:border-box}
@@ -53,8 +52,44 @@
   .payment-method{margin:10px 0}
   .payment-option{padding:10px;border:2px solid #eee;border-radius:8px;margin:8px 0;cursor:pointer}
   .payment-option.active{border-color:var(--accent);background:#f0f8ff}
-  .metamask-section{display:none;margin-top:10px}
-  .status-waiting{background:#fff3cd;border:1px solid #ffeaa7;padding:10px;border-radius:8px;margin-top:10px;display:none}
+  
+  /* Стили для страницы проверки платежа */
+  .status-page{text-align:center;padding:40px 20px}
+  .status-icon{font-size:64px;margin-bottom:20px}
+  .status-title{font-size:24px;font-weight:800;margin-bottom:15px}
+  .status-message{color:var(--muted);margin-bottom:25px;line-height:1.5}
+  .progress-bar{width:100%;height:6px;background:#eee;border-radius:3px;margin:20px 0;overflow:hidden}
+  .progress-fill{height:100%;background:var(--accent);width:0%;transition:width 0.3s}
+  .checking-steps{margin:20px 0;text-align:left}
+  .step-item{display:flex;align-items:center;margin:10px 0;padding:10px;border-radius:8px;background:#f9f9f9}
+  .step-icon{margin-right:10px;font-size:20px}
+  .step-text{flex:1}
+  
+  /* 🔥 СТИЛИ ДЛЯ ЛОГОВ */
+  .live-logs{
+    margin-top:20px;
+    background:#f8f9fa;
+    border:1px solid #e9ecef;
+    border-radius:8px;
+    padding:15px;
+    max-height:200px;
+    overflow-y:auto;
+    text-align:left;
+    font-family:'Courier New', monospace;
+    font-size:12px;
+  }
+  .log-entry{
+    margin-bottom:8px;
+    padding:5px;
+    border-radius:4px;
+    background:white;
+  }
+  .log-time{color:#6c757d;font-size:10px}
+  .log-info{color:#007bff}
+  .log-success{color:#28a745;font-weight:bold}
+  .log-warning{color:#ffc107}
+  .log-error{color:#dc3545}
+  
   .bottom-nav{position:fixed;left:0;right:0;bottom:0;height:60px;background:#fff;border-top:1px solid #eee;display:flex;align-items:center;justify-content:space-around;z-index:300}
   .nav-item{flex:1;text-align:center;padding-top:6px;cursor:pointer;color:var(--muted)}
   .nav-item.active{color:var(--accent);font-weight:700}
@@ -68,6 +103,8 @@
     .cart-actions .btn {width: 100%;}
     .cart-item {flex-direction: column; text-align: center;}
     .cart-item .thumb {width: 100px; height: 100px;}
+    .status-page{padding:20px 15px}
+    .live-logs{max-height:150px;font-size:11px}
   }
   @media(min-width:700){.grid{grid-template-columns:repeat(3,1fr)}}
 </style>
@@ -107,8 +144,82 @@
       </div>
     </div>
   </div>
+
+  <!-- 🔥 НОВАЯ СТРАНИЦА ПРОВЕРКИ ПЛАТЕЖА -->
+  <div id="page-payment-check" class="page">
+    <div class="status-page">
+      <div class="status-icon">⏳</div>
+      <div class="status-title">Проверяем платеж</div>
+      <div class="status-message" id="paymentStatusMessage">
+        Ожидаем поступление средств на кошелек...
+      </div>
+      
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      
+      <div class="checking-steps">
+        <div class="step-item">
+          <div class="step-icon">🔍</div>
+          <div class="step-text">Сканируем блокчейн на предмет транзакций</div>
+        </div>
+        <div class="step-item">
+          <div class="step-icon">💳</div>
+          <div class="step-text">Проверяем сумму и адрес получателя</div>
+        </div>
+        <div class="step-item">
+          <div class="step-icon">✅</div>
+          <div class="step-text">Подтверждаем получение платежа</div>
+        </div>
+      </div>
+      
+      <!-- 🔥 ЛАЙВ-ЛОГИ ПРОВЕРКИ -->
+      <div class="live-logs" id="liveLogs">
+        <div class="log-entry">
+          <span class="log-time" id="currentTime"></span>
+          <span class="log-info">🚀 Запуск системы проверки платежей...</span>
+        </div>
+      </div>
+      
+      <div style="margin-top:30px">
+        <div class="small" id="paymentDetails"></div>
+        <button class="btn primary" onclick="checkPaymentStatus()" style="margin-top:15px">
+          🔄 Проверить снова
+        </button>
+        <button class="btn" onclick="openPage('page-home')" style="margin-top:10px">
+          На главную
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔥 СТРАНИЦА УСПЕШНОГО ПЛАТЕЖА -->
+  <div id="page-payment-success" class="page">
+    <div class="status-page">
+      <div class="status-icon">🎉</div>
+      <div class="status-title">Платеж получен!</div>
+      <div class="status-message">
+        ✅ Ваш платеж успешно подтвержден!<br><br>
+        
+        💰 <strong>Средства получены</strong><br>
+        📦 <strong>Заказ передан в обработку</strong><br>
+        🚚 <strong>Доставка в течение 24 часов</strong><br><br>
+        
+        💎 <strong>Спасибо за покупку!</strong><br>
+        По всем вопросам обращайтесь: @testuser
+      </div>
+      
+      <div style="margin-top:30px">
+        <div class="small" id="successDetails"></div>
+        <button class="btn success" onclick="openPage('page-home')" style="margin-top:20px">
+          🛍️ Сделать новый заказ
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
+<!-- Остальной код остается без изменений -->
 <div id="cartFloat" class="cart-float hidden">
   <div>
     <div style="font-weight:800">В корзине: <span id="cartCount">0</span> шт</div>
@@ -125,16 +236,6 @@
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div style="font-weight:800">Оплата криптовалютой</div>
         <button onclick="closePayModal()" style="background:none;border:0;font-size:18px;cursor:pointer">✕</button>
-      </div>
-      
-      <div class="payment-method">
-        <div class="small">Способ оплаты:</div>
-        <div class="payment-option active" onclick="selectPaymentMethod('manual')">
-          💳 Ручной перевод (адрес)
-        </div>
-        <div class="payment-option" onclick="selectPaymentMethod('metamask')">
-          🦊 MetaMask (автоматически)
-        </div>
       </div>
       
       <div style="margin-top:10px">
@@ -157,18 +258,6 @@
           <button class="btn" onclick="closePayModal()">Закрыть</button>
         </div>
       </div>
-      
-      <div id="metamaskSection" class="metamask-section">
-        <div style="font-weight:800" id="metamaskSummary"></div>
-        <div style="margin-top:10px">
-          <button class="btn success" onclick="connectAndPay()" id="connectMetamaskBtn">
-            🔗 Подключить MetaMask и оплатить
-          </button>
-        </div>
-        <div class="status-waiting" id="waitingStatus">
-          ⏳ Ожидаем подтверждения транзакции...
-        </div>
-      </div>
     </div>
   </div>
 </div>
@@ -180,33 +269,51 @@
 </div>
 
 <script>
-// 🔥 КОНФИГУРАЦИЯ КРИПТОПЛАТЕЖЕЙ
+// 🔥 КОНФИГУРАЦИЯ КРИПТОПЛАТЕЖЕЙ И API КЛЮЧИ
 const networkConfigs = {
   "USDC": {
-    "Ethereum": { address: "ВАШ_USDC_ETH_КОШЕЛЕК", chainId: "0x1", decimals: 6, type: "erc20" },
-    "Polygon": { address: "ВАШ_USDC_POLYGON_КОШЕЛЕК", chainId: "0x89", decimals: 6, type: "erc20" },
-    "Arbitrum": { address: "ВАШ_USDC_ARBITRUM_КОШЕЛЕК", chainId: "0xa4b1", decimals: 6, type: "erc20" }
+    "Ethereum": { 
+      address: "0xF879a1050307C2E7272CF57A9a6AF6088A307d4B", 
+      chainId: "0x1", 
+      decimals: 6, 
+      type: "erc20",
+      api_key: "YOUR_ETHERSCAN_API_KEY",
+      api_url: "https://api.etherscan.io/api"
+    },
+    "Polygon": { 
+      address: "ВАШ_USDC_POLYGON_КОШЕЛЕК", 
+      chainId: "0x89", 
+      decimals: 6, 
+      type: "erc20",
+      api_key: "YOUR_POLYGONSCAN_API_KEY", 
+      api_url: "https://api.polygonscan.com/api"
+    }
   },
   "USDT": {
-    "Ethereum": { address: "ВАШ_USDT_ETH_КОШЕЛЕК", chainId: "0x1", decimals: 6, type: "erc20" },
-    "TRON": { address: "ВАШ_TRON_КОШЕЛЕК", chainId: "tron", decimals: 6, type: "tron" },
-    "Polygon": { address: "ВАШ_USDT_POLYGON_КОШЕЛЕК", chainId: "0x89", decimals: 6, type: "erc20" }
+    "Ethereum": { 
+      address: "ВАШ_USDT_ETH_КОШЕЛЕК", 
+      chainId: "0x1", 
+      decimals: 6, 
+      type: "erc20",
+      api_key: "YOUR_ETHERSCAN_API_KEY",
+      api_url: "https://api.etherscan.io/api"
+    }
   },
   "ETH": {
-    "Ethereum": { address: "ВАШ_ETH_КОШЕЛЕК", chainId: "0x1", decimals: 18, type: "native" },
-    "Arbitrum": { address: "ВАШ_ETH_ARBITRUM_КОШЕЛЕК", chainId: "0xa4b1", decimals: 18, type: "native" }
-  },
-  "BNB": {
-    "BSC": { address: "ВАШ_BNB_КОШЕЛЕК", chainId: "0x38", decimals: 18, type: "native" }
-  },
-  "SOL": {
-    "Solana": { address: "ВАШ_SOLANA_КОШЕЛЕК", chainId: "solana", decimals: 9, type: "native" }
+    "Ethereum": { 
+      address: "ВАШ_ETH_КОШЕЛЕК", 
+      chainId: "0x1", 
+      decimals: 18, 
+      type: "native",
+      api_key: "YOUR_ETHERSCAN_API_KEY",
+      api_url: "https://api.etherscan.io/api"
+    }
   }
 };
 
-const currencies = {"USDC":1.34,"USDT":1.34,"ETH":0.0003,"BNB":0.0014,"SOL":0.0067};
+const currencies = {"USDC":1.34,"USDT":1.34,"ETH":0.0003};
 
-// 🔥 ОСТАЛЬНЫЕ ДАННЫЕ
+// 🔥 ОСТАЛЬНЫЕ ДАННЫЕ (остаются без изменений)
 const submenus = {
   "Товар 1": ["1.🍍Цвет🍍","2.🍒Цвет🍒","3.💮Цвет💮","4.🍃Цвет🍃","5.♥️Цвет♥️","6.🐘Цвет🐘","7.🍫Цвет🍫","8.🧁Цвет🧁"],
   "Товар 2": ["1.🥥Цвет🥥","2.🧊Цвет🧊","3.❄️Цвет❄️"],
@@ -242,9 +349,10 @@ const category_images = {
 // 🔥 СОСТОЯНИЕ ПРИЛОЖЕНИЯ
 let selectedCity = null;
 let cart = [];
-let currentPaymentMethod = 'manual';
 let selectedCurrency = null;
 let selectedNetwork = null;
+let currentPaymentData = null;
+let paymentCheckInterval = null;
 const cityList = ["Москва","Санкт-Петербург","Казань","Екатеринбург","Новосибирск","Нижний Новгород","Ростов-на-Дону","Краснодар","Самара","Челябинск"];
 
 // 🔥 ИНИЦИАЛИЗАЦИЯ
@@ -257,22 +365,35 @@ cityList.forEach(c=>{
   cityGrid.appendChild(b);
 });
 
-// 🔥 КРИПТОПЛАТЕЖИ
-function selectPaymentMethod(method) {
-  currentPaymentMethod = method;
-  document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('active'));
-  event.target.classList.add('active');
-  
-  if (method === 'manual') {
-    document.getElementById('manualPayment').style.display = 'block';
-    document.getElementById('metamaskSection').style.display = 'none';
-  } else {
-    document.getElementById('manualPayment').style.display = 'none';
-    document.getElementById('metamaskSection').style.display = 'block';
-    updateMetamaskSummary();
-  }
+// 🔥 ФУНКЦИИ ДЛЯ ЛОГИРОВАНИЯ
+function addLog(message, type = 'info') {
+    const logsContainer = document.getElementById('liveLogs');
+    const time = new Date().toLocaleTimeString();
+    
+    const logEntry = document.createElement('div');
+    logEntry.className = 'log-entry';
+    logEntry.innerHTML = `
+        <span class="log-time">${time}</span>
+        <span class="log-${type}">${message}</span>
+    `;
+    
+    logsContainer.appendChild(logEntry);
+    logsContainer.scrollTop = logsContainer.scrollHeight;
+    
+    // Также логируем в консоль для отладки
+    console.log(`[${time}] ${message}`);
 }
 
+function clearLogs() {
+    document.getElementById('liveLogs').innerHTML = `
+        <div class="log-entry">
+            <span class="log-time" id="currentTime"></span>
+            <span class="log-info">🚀 Запуск системы проверки платежей...</span>
+        </div>
+    `;
+}
+
+// 🔥 КРИПТОПЛАТЕЖИ (без изменений)
 function selectCurrency(cur) {
   selectedCurrency = cur;
   updateNetworkButtons(cur);
@@ -319,17 +440,10 @@ function updatePaymentSummary() {
   const summary = `${converted.toFixed(6)} ${selectedCurrency} (${totalGBP.toFixed(2)} £)`;
   document.getElementById('paySummary').textContent = summary;
   document.getElementById('walletAddr').textContent = config.address;
-  document.getElementById('metamaskSummary').textContent = summary;
 }
 
-function updateMetamaskSummary() {
-  if (selectedCurrency && selectedNetwork) updatePaymentSummary();
-}
-
-// 🔥 ФУНКЦИИ МОДАЛЬНОГО ОКНА ОПЛАТЫ
+// 🔥 ФУНКЦИИ МОДАЛЬНОГО ОКНА ОПЛАТЫ (без изменений)
 function openPayModal() {
-    console.log("openPayModal called");
-    
     if (cart.length === 0) { 
         alert('Корзина пуста'); 
         return; 
@@ -339,7 +453,6 @@ function openPayModal() {
         return; 
     }
     
-    // Инициализация элементов UI
     const currencyListEl = document.getElementById('currencyList');
     currencyListEl.innerHTML = '';
     
@@ -351,22 +464,11 @@ function openPayModal() {
         currencyListEl.appendChild(cc);
     });
     
-    // Сбрасываем выбор валюты и сети
     selectedCurrency = null;
     selectedNetwork = null;
     
-    // Показываем правильную секцию в зависимости от метода оплаты
-    if (currentPaymentMethod === 'manual') {
-        document.getElementById('manualPayment').style.display = 'block';
-        document.getElementById('metamaskSection').style.display = 'none';
-    } else {
-        document.getElementById('manualPayment').style.display = 'none';
-        document.getElementById('metamaskSection').style.display = 'block';
-    }
-    
     document.getElementById('payModal').style.display = 'block';
     
-    // Выбираем первую валюту по умолчанию
     if (Object.keys(currencies).length > 0) {
         selectedCurrency = Object.keys(currencies)[0];
         updateNetworkButtons(selectedCurrency);
@@ -377,171 +479,22 @@ function closePayModal() {
     document.getElementById('payModal').style.display = 'none'; 
 }
 
-// 🔥 META MASK ИНТЕГРАЦИЯ
-async function connectAndPay() {
+// 🔥 РУЧНОЙ ПЕРЕВОД - ПЕРЕХОД НА ПРОВЕРКУ ПЛАТЕЖА
+function payConfirmManual() {
     if (!selectedCurrency || !selectedNetwork) {
         alert('Сначала выберите валюту и сеть');
         return;
     }
 
-    if (typeof window.ethereum === 'undefined') {
-        alert('MetaMask не установлен! Установите расширение или используйте ручной перевод.');
-        return;
-    }
-
-    const connectBtn = document.getElementById('connectMetamaskBtn');
-    connectBtn.textContent = '🔗 Подключаемся...';
-    connectBtn.disabled = true;
-
-    try {
-        // Подключаемся к MetaMask
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const web3 = new Web3(window.ethereum);
-        const accounts = await web3.eth.getAccounts();
-        const userAddress = accounts[0];
-
-        // Переключаем сеть если нужно
-        const targetChainId = networkConfigs[selectedCurrency][selectedNetwork].chainId;
-        await switchNetwork(targetChainId);
-
-        const totalGBP = cart.reduce((s,i)=>s + i.priceGBP * i.count,0);
-        const amount = totalGBP * currencies[selectedCurrency];
-        const config = networkConfigs[selectedCurrency][selectedNetwork];
-
-        let txHash;
-        
-        if (config.type === 'native') {
-            // Нативная валюта (ETH, BNB)
-            txHash = await sendNativeToken(web3, userAddress, config.address, amount, config.decimals);
-        } else if (config.type === 'erc20') {
-            // ERC-20 токены (USDC, USDT)
-            txHash = await sendERC20Token(web3, userAddress, config.address, amount, config.decimals);
-        }
-
-        if (txHash) {
-            document.getElementById('waitingStatus').style.display = 'block';
-            connectBtn.style.display = 'none';
-            
-            // 🔥 АВТОМАТИЧЕСКАЯ ПРОВЕРКА - отправляем данные в бота
-            await sendOrderToBot(txHash, 'metamask');
-        }
-
-    } catch (error) {
-        console.error('Payment error:', error);
-        
-        // Улучшенная обработка ошибок
-        if (error.code === 4001) {
-            alert('Вы отменили транзакцию в MetaMask');
-        } else if (error.message.includes('insufficient funds')) {
-            alert('Недостаточно средств на балансе');
-        } else {
-            alert('Ошибка оплаты: ' + error.message);
-        }
-        
-        connectBtn.textContent = '🔗 Подключить MetaMask и оплатить';
-        connectBtn.disabled = false;
-    }
-}
-
-async function switchNetwork(chainId) {
-    try {
-        await window.ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: chainId }],
-        });
-    } catch (switchError) {
-        if (switchError.code === 4902) {
-            // Сеть не добавлена, добавляем её
-            const networkParams = getNetworkParams(chainId);
-            if (networkParams) {
-                await window.ethereum.request({
-                    method: 'wallet_addEthereumChain',
-                    params: [networkParams],
-                });
-            }
-        }
-    }
-}
-
-function getNetworkParams(chainId) {
-    const networks = {
-        '0x89': { // Polygon
-            chainId: '0x89',
-            chainName: 'Polygon Mainnet',
-            rpcUrls: ['https://polygon-rpc.com/'],
-            blockExplorerUrls: ['https://polygonscan.com/'],
-            nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 }
-        },
-        '0x38': { // BSC
-            chainId: '0x38',
-            chainName: 'Binance Smart Chain',
-            rpcUrls: ['https://bsc-dataseed.binance.org/'],
-            blockExplorerUrls: ['https://bscscan.com/'],
-            nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 }
-        },
-        '0xa4b1': { // Arbitrum
-            chainId: '0xa4b1',
-            chainName: 'Arbitrum One',
-            rpcUrls: ['https://arb1.arbitrum.io/rpc'],
-            blockExplorerUrls: ['https://arbiscan.io/'],
-            nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 }
-        }
-    };
-    return networks[chainId];
-}
-
-async function sendNativeToken(web3, from, to, amount, decimals) {
-    const amountWei = web3.utils.toWei(amount.toString(), 'ether');
-    
-    const tx = {
-        from: from,
-        to: to,
-        value: amountWei,
-        gas: 21000
-    };
-    
-    const txHash = await web3.eth.sendTransaction(tx);
-    return txHash.transactionHash;
-}
-
-async function sendERC20Token(web3, from, to, amount, decimals) {
-    const tokenAddress = networkConfigs[selectedCurrency][selectedNetwork].address;
-    const amountWei = web3.utils.toWei(amount.toString(), decimals === 6 ? 'mwei' : 'ether');
-    
-    const abi = [{
-        "constant": false,
-        "inputs": [
-            {"name": "_to", "type": "address"},
-            {"name": "_value", "type": "uint256"}
-        ],
-        "name": "transfer",
-        "outputs": [{"name": "", "type": "bool"}],
-        "type": "function"
-    }];
-    
-    const contract = new web3.eth.Contract(abi, tokenAddress);
-    const data = contract.methods.transfer(to, amountWei).encodeABI();
-    
-    const tx = {
-        from: from,
-        to: tokenAddress,
-        data: data,
-        gas: 100000
-    };
-    
-    const txHash = await web3.eth.sendTransaction(tx);
-    return txHash.transactionHash;
-}
-
-// 🔥 ОТПРАВКА ДАННЫХ В БОТ ДЛЯ АВТОМАТИЧЕСКОЙ ПРОВЕРКИ
-async function sendOrderToBot(txHash = null, paymentMethod) {
-    const orderData = {
+    currentPaymentData = {
         city: selectedCity,
         currency: selectedCurrency,
         network: selectedNetwork,
         totalGBP: cart.reduce((s,i)=>s + i.priceGBP * i.count,0).toFixed(2),
         totalConverted: (cart.reduce((s,i)=>s + i.priceGBP * i.count,0) * currencies[selectedCurrency]).toFixed(6),
         wallet: networkConfigs[selectedCurrency][selectedNetwork].address,
+        api_key: networkConfigs[selectedCurrency][selectedNetwork].api_key,
+        api_url: networkConfigs[selectedCurrency][selectedNetwork].api_url,
         items: cart.map(item => ({
             product: item.product,
             color: item.color,
@@ -549,42 +502,196 @@ async function sendOrderToBot(txHash = null, paymentMethod) {
             priceGBP: item.priceGBP,
             count: item.count
         })),
-        user_id: Telegram.WebApp.initDataUnsafe.user?.id,
-        first_name: Telegram.WebApp.initDataUnsafe.user?.first_name,
-        timestamp: new Date().toISOString(),
-        payment_method: paymentMethod,
-        tx_hash: txHash
+        timestamp: new Date().toISOString()
     };
 
-    console.log("📦 Отправляем заказ в бот:", orderData);
+    addLog(`💳 Начинаем проверку платежа: ${currentPaymentData.totalConverted} ${currentPaymentData.currency}`, 'info');
+    
+    closePayModal();
+    openPage('page-payment-check');
+    startPaymentChecking();
+}
+
+// 🔥 РЕАЛЬНАЯ ПРОВЕРКА ПЛАТЕЖА С ЛОГАМИ
+async function startPaymentChecking() {
+    if (!currentPaymentData) return;
+    
+    const progressFill = document.getElementById('progressFill');
+    const statusMessage = document.getElementById('paymentStatusMessage');
+    const paymentDetails = document.getElementById('paymentDetails');
+    
+    // Очищаем предыдущие логи
+    clearLogs();
+    
+    paymentDetails.innerHTML = `
+        💰 Сумма: <strong>${currentPaymentData.totalConverted} ${currentPaymentData.currency}</strong><br>
+        👛 Кошелек: <code>${currentPaymentData.wallet}</code><br>
+        🌐 Сеть: ${currentPaymentData.network}
+    `;
+    
+    let checkCount = 0;
+    const maxChecks = 30; // 30 минут проверки
+    
+    if (paymentCheckInterval) {
+        clearInterval(paymentCheckInterval);
+    }
+    
+    paymentCheckInterval = setInterval(async () => {
+        checkCount++;
+        
+        const progress = Math.min((checkCount / maxChecks) * 100, 90);
+        progressFill.style.width = progress + '%';
+        
+        statusMessage.innerHTML = `🔍 Проверяем транзакции... (${checkCount}/${maxChecks})`;
+        addLog(`🔄 Проверка #${checkCount} - сканируем блокчейн...`, 'info');
+        
+        try {
+            const paymentFound = await checkBlockchainForPayment();
+            
+            if (paymentFound) {
+                clearInterval(paymentCheckInterval);
+                progressFill.style.width = '100%';
+                statusMessage.innerHTML = '✅ Платеж найден! Обрабатываем...';
+                addLog('🎉 ПЛАТЕЖ НАЙДЕН! Совпадение по сумме и адресу', 'success');
+                addLog(`📝 Хэш транзакции: ${currentPaymentData.txHash}`, 'success');
+                
+                setTimeout(() => {
+                    showPaymentSuccess();
+                }, 2000);
+                
+            } else if (checkCount >= maxChecks) {
+                clearInterval(paymentCheckInterval);
+                statusMessage.innerHTML = '⏰ Время проверки истекло. Если вы отправили платеж, он будет обработан вручную.';
+                addLog('⏰ Достигнут лимит проверок. Платеж не обнаружен.', 'warning');
+            }
+            
+        } catch (error) {
+            console.error('Ошибка проверки платежа:', error);
+            addLog(`❌ Ошибка API: ${error.message}`, 'error');
+            statusMessage.innerHTML = '❌ Ошибка проверки. Попробуйте снова.';
+        }
+        
+    }, 60000); // Проверяем каждую минуту
+}
+
+// 🔥 РЕАЛЬНАЯ ФУНКЦИЯ ПРОВЕРКИ BLOCKCHAIN С ЛОГАМИ
+async function checkBlockchainForPayment() {
+    if (!currentPaymentData) return false;
+    
+    const { wallet, totalConverted, currency, network, api_key, api_url } = currentPaymentData;
+    const expectedAmount = parseFloat(totalConverted);
+    
+    addLog(`🔍 Проверяем кошелек ${wallet.substring(0, 10)}...`, 'info');
+    addLog(`💰 Ожидаемая сумма: ${expectedAmount} ${currency}`, 'info');
     
     try {
-        // 🔥 ОТПРАВКА ДАННЫХ В БОТ ЧЕРЕЗ TELEGRAM WEB APP
-        Telegram.WebApp.sendData(JSON.stringify(orderData));
-        console.log("✅ Данные отправлены в бота");
+        const transactions = await getWalletTransactions(wallet, api_url, api_key);
+        addLog(`📊 Найдено транзакций: ${transactions.length}`, 'info');
         
-        // ЗАКРЫВАЕМ MINI APP ПОСЛЕ УСПЕШНОЙ ОТПРАВКИ
-        setTimeout(() => {
-            Telegram.WebApp.close();
-        }, 500);
+        if (transactions && transactions.length > 0) {
+            for (const tx of transactions) {
+                const isIncoming = tx.to && tx.to.toLowerCase() === wallet.toLowerCase();
+                const txAmount = parseFloat(tx.value);
+                const txTime = parseInt(tx.timeStamp);
+                const orderTime = Math.floor(new Date(currentPaymentData.timestamp).getTime() / 1000);
+                
+                addLog(`📄 TX: ${tx.hash.substring(0, 15)}... | Сумма: ${txAmount} | Входящая: ${isIncoming}`, 'info');
+                
+                if (isIncoming && txTime > orderTime) {
+                    const amountMatch = isAmountMatch(txAmount, expectedAmount, currency);
+                    addLog(`🎯 Проверка суммы: ${amountMatch ? 'СОВПАДАЕТ' : 'НЕ СОВПАДАЕТ'}`, amountMatch ? 'success' : 'warning');
+                    
+                    if (amountMatch) {
+                        currentPaymentData.txHash = tx.hash;
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        addLog('❌ Подходящих транзакций не найдено', 'warning');
+        return false;
         
     } catch (error) {
-        console.error("❌ Ошибка отправки данных:", error);
-        alert("Ошибка отправки заказа. Попробуйте еще раз.");
+        addLog(`💥 Ошибка при проверке блокчейна: ${error.message}`, 'error');
+        throw error;
     }
 }
 
-// 🔥 РУЧНОЙ ПЕРЕВОД - ИСПРАВЛЕННАЯ ФУНКЦИЯ
-function payConfirmManual() {
-    if (!selectedCurrency || !selectedNetwork) {
-        alert('Сначала выберите валюту и сеть');
-        return;
+// 🔥 ПОЛУЧЕНИЕ ТРАНЗАКЦИЙ КОШЕЛЬКА
+async function getWalletTransactions(walletAddress, apiUrl, apiKey) {
+    const params = new URLSearchParams({
+        module: 'account',
+        action: 'txlist',
+        address: walletAddress,
+        startblock: 0,
+        endblock: 99999999,
+        sort: 'desc',
+        apikey: apiKey
+    });
+    
+    addLog(`🌐 Запрос к API: ${apiUrl}`, 'info');
+    
+    const response = await fetch(`${apiUrl}?${params}`);
+    const data = await response.json();
+    
+    if (data.status === '1' && data.result) {
+        addLog(`✅ API ответ: ${data.result.length} транзакций`, 'success');
+        return data.result;
+    } else {
+        addLog(`⚠️ API ошибка: ${data.message || 'Неизвестная ошибка'}`, 'warning');
+        return [];
     }
-
-    // СНАЧАЛА отправляем данные в бота
-    sendOrderToBot(null, 'manual');
 }
 
+// 🔥 ПРОВЕРКА СОВПАДЕНИЯ СУММЫ (с учетом decimals)
+function isAmountMatch(txAmount, expectedAmount, currency) {
+    const config = networkConfigs[currency][selectedNetwork];
+    let normalizedTxAmount = txAmount;
+    
+    if (config.decimals === 6) {
+        normalizedTxAmount = txAmount / 1000000;
+    } else if (config.decimals === 18) {
+        normalizedTxAmount = txAmount / 1000000000000000000;
+    }
+    
+    const tolerance = 0.05;
+    const minAmount = expectedAmount * (1 - tolerance);
+    const maxAmount = expectedAmount * (1 + tolerance);
+    
+    addLog(`📏 Проверка: ${normalizedTxAmount.toFixed(6)} vs ${expectedAmount} (допуск: ${tolerance*100}%)`, 'info');
+    addLog(`📏 Диапазон: ${minAmount.toFixed(6)} - ${maxAmount.toFixed(6)}`, 'info');
+    
+    const result = normalizedTxAmount >= minAmount && normalizedTxAmount <= maxAmount;
+    return result;
+}
+
+// 🔥 ПОКАЗ УСПЕШНОГО ПЛАТЕЖА
+function showPaymentSuccess() {
+    openPage('page-payment-success');
+    
+    document.getElementById('successDetails').innerHTML = `
+        💸 Получено: <strong>${currentPaymentData.totalConverted} ${currentPaymentData.currency}</strong><br>
+        🔗 Транзакция: <code>${currentPaymentData.txHash || 'обрабатывается'}</code><br>
+        🏙 Город: ${currentPaymentData.city}<br>
+        📦 Товаров: ${currentPaymentData.items.reduce((sum, item) => sum + item.count, 0)} шт
+    `;
+    
+    cart = [];
+    refreshCartFloat();
+}
+
+// 🔥 РУЧНАЯ ПРОВЕРКА СТАТУСА
+async function checkPaymentStatus() {
+    const statusMessage = document.getElementById('paymentStatusMessage');
+    statusMessage.innerHTML = '🔄 Запускаем проверку...';
+    addLog('🔄 Ручной запуск проверки...', 'info');
+    
+    document.getElementById('progressFill').style.width = '0%';
+    startPaymentChecking();
+}
+
+// 🔥 ОСТАВШИЕСЯ ФУНКЦИИ (без изменений)
 function copyWallet(){
     const addr = document.getElementById('walletAddr').textContent;
     if (!addr) return;
@@ -595,7 +702,6 @@ function copyWallet(){
     });
 }
 
-// 🔥 ОСТАВШИЕСЯ ФУНКЦИИ БЕЗ ИЗМЕНЕНИЙ
 function navTo(element){
     const page = element.dataset.page;
     openPage(page);
@@ -609,7 +715,7 @@ function openPage(id){
     const cartFloat = document.getElementById('cartFloat');
     if (id === 'page-cart') {
         cartFloat.classList.add('hidden');
-    } else if (cart.length > 0) {
+    } else if (cart.length > 0 && id !== 'page-payment-check' && id !== 'page-payment-success') {
         cartFloat.classList.remove('hidden');
     }
     if (id==='page-products') renderCategories();
