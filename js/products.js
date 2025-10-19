@@ -72,7 +72,7 @@ function renderCategories(){
                 qtyDisplay.textContent = (Number.isInteger(q) ? q : q) + ' g';
                 const pKey = priceKey;
                 const price = pKey ? custom_quantity_prices[pKey][q] : 0;
-                priceSpan.textContent = price + ' £';
+                priceSpan.textContent = price + ' ₽';
             }
             
             minus.onclick = (ev)=>{ ev.stopPropagation(); idx = Math.max(0, idx-1); updateDisplay(); };

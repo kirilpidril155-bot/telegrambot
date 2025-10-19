@@ -9,7 +9,7 @@ function refreshCartFloat(){
     const count = cart.reduce((s,i)=>s+i.count,0);
     const sum = cart.reduce((s,i)=>s + i.priceGBP * i.count,0);
     document.getElementById('cartCount').textContent = count;
-    document.getElementById('cartSum').textContent = sum.toFixed(2);
+    document.getElementById('cartSum').textContent = sum.toFixed(2) + ' ₽';
     const cf = document.getElementById('cartFloat');
     const isCartPage = document.getElementById('page-cart').classList.contains('active');
     cf.classList.toggle('hidden', count===0 || isCartPage);
@@ -43,13 +43,13 @@ function renderCart(){
         meta.innerHTML = `
             <div class="cart-item-name">${it.product}</div>
             <div class="cart-item-details">${it.color} • ${it.qty} g</div>
-            <div class="cart-item-details">Цена: ${it.priceGBP} £ • Кол-во: ${it.count}</div>
+            <div class="cart-item-details">Цена: ${it.priceGBP} ₽ • Кол-во: ${it.count}</div>
         `;
         
         const controls = document.createElement('div');
         controls.className = 'cart-item-controls';
         controls.innerHTML = `
-            <div style="text-align:right;font-weight:800;font-size:18px;margin-bottom:8px;">${(it.priceGBP*it.count).toFixed(2)} £</div>
+            <div style="text-align:right;font-weight:800;font-size:18px;margin-bottom:8px;">${(it.priceGBP*it.count).toFixed(2)} ₽</div>
             <div style="display:flex;gap:6px;align-items:center;justify-content:flex-end">
                 <button class="step-btn" onclick="decCartItem(${idx})">−</button>
                 <div style="min-width:24px;text-align:center;font-weight:700;">${it.count}</div>

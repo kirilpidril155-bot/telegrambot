@@ -44,7 +44,7 @@ function updatePaymentSummary() {
     const converted = totalGBP * rate;
     const config = networkConfigs[selectedCurrency][selectedNetwork];
     
-    const summary = `${converted.toFixed(6)} ${selectedCurrency} (${totalGBP.toFixed(2)} £)`;
+    const summary = `${converted.toFixed(6)} ${selectedCurrency} (${totalGBP.toFixed(2)} ₽)`;
     document.getElementById('paySummary').textContent = summary;
     document.getElementById('walletAddr').textContent = config.address;
 }
