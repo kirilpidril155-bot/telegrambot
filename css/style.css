@@ -759,4 +759,30 @@ body {
     .selector { justify-content: center; }
     .cart-item { flex-direction: column; text-align: center; }
     .cart-item-image { width: 80px; height: 80px; }
+
+    /* Мобильные стили для картинок товаров */
+@media (max-width: 480px) {
+    .product-image {
+        width: 100%;
+        height: 200px; /* Увеличиваем высоту */
+        object-fit: cover; /* Сохраняет пропорции, обрезая лишнее */
+        border-radius: 16px;
+        border: 2px solid var(--border);
+    }
+    
+    /* Дополнительно можно улучшить внешний вид */
+    .product-item {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .product-info {
+        margin-top: 12px;
+    }
+    
+    .selector {
+        justify-content: center;
+        margin-top: 12px;
+    }
 }
