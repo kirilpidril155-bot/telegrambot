@@ -35,7 +35,7 @@ function renderCart(){
         
         const img = document.createElement('img'); 
         img.className='cart-item-image'; 
-        img.src = (category_images[it.product] && category_images[it.product][0]) || '';
+        img.src = product_images[it.color] || '';
         img.onerror = function() { this.style.display = 'none'; };
         
         const meta = document.createElement('div'); 
