@@ -32,7 +32,7 @@ function renderCategories(){
             
             const img = document.createElement('img'); 
             img.className='product-image'; 
-            img.src = (category_images[prod] && category_images[prod][0]) || '';
+            img.src = product_images[color] || '';
             img.onerror = function() { this.style.display = 'none'; };
             
             const meta = document.createElement('div'); 
