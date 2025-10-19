@@ -573,12 +573,12 @@ function showPaymentSuccess() {
                 <strong>${item.product}</strong><br>
                 <small>${item.color} • ${item.qty}g × ${item.count} шт</small>
             </div>
-            <div>${(item.priceGBP * item.count).toFixed(2)} £</div>
+            <div>${(item.priceGBP * item.count).toFixed(2)} ₽</div>
         `;
         document.getElementById('orderItemsList').appendChild(orderItem);
     });
     
-    document.getElementById('orderTotalAmount').textContent = currentPaymentData.totalGBP + ' £';
+    document.getElementById('orderTotalAmount').textContent = currentPaymentData.totalGBP + ' ₽';
     document.getElementById('deliveryCity').textContent = currentPaymentData.city;
     
     const actualAmount = currentPaymentData.actualAmount ? 
