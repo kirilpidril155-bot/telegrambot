@@ -86,7 +86,7 @@ const custom_quantity_prices = {
 
 const product_images = {
     "🥦Шишки ИНДИКА ГИДРОПОН🥦": "https://i.postimg.cc/Hk8GxPQT/1.webp",
-    "🍫Ice-o-Lator “Mousse PREMIER “ гашиш🍫": "https://i.postimg.cc/HLSP9w0k/2.jpg", 
+    "🍫Ice-o-Lator “Mousse PREMIER “ гашиш🍫": "https://i.postimg.cc/KcdJnBp1/Dark-Maroccian-hash.jpg", 
     "🍌Banana Punch🍌": "https://i.postimg.cc/ncbyS1mR/4.jpg",
     "🥥Кокаин HD VHQ 98.5%🥥": "https://i.postimg.cc/SNfvTbkM/3.jpg",
     "🥥VHQ Кокаин (Колумбия)🥥": "https://i.postimg.cc/YqzsnBMC/11.webp",
