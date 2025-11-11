@@ -51,6 +51,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
     window.Telegram?.WebApp?.ready();
     refreshCartFloat();
     
+    // Инициализация автоматического обновления курсов
+    initializeExchangeRates();
+    
     // Обновление времени в логах
     setInterval(() => {
         document.getElementById('currentTime').textContent = new Date().toLocaleTimeString();

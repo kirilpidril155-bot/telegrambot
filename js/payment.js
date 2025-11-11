@@ -47,6 +47,23 @@ function updatePaymentSummary() {
     const summary = `${converted.toFixed(6)} ${selectedCurrency} (${totalGBP.toFixed(2)} ₽)`;
     document.getElementById('paySummary').textContent = summary;
     document.getElementById('walletAddr').textContent = config.address;
+    
+    // Добавляем информацию о времени обновления курса
+    const lastUpdate = localStorage.getItem('lastRateUpdate');
+    if (lastUpdate) {
+        const updateTime = new Date(parseInt(lastUpdate)).toLocaleTimeString();
+        const rateInfo = document.getElementById('rateInfo') || document.createElement('div');
+        rateInfo.id = 'rateInfo';
+        rateInfo.className = 'text-muted text-center';
+        rateInfo.style.fontSize = '12px';
+        rateInfo.style.marginTop = '8px';
+        rateInfo.textContent = `Курс обновлен: ${updateTime}`;
+        
+        const paySummary = document.getElementById('paySummary');
+        if (!paySummary.parentNode.querySelector('#rateInfo')) {
+            paySummary.parentNode.appendChild(rateInfo);
+        }
+    }
 }
 
 // 🔥 ФУНКЦИИ МОДАЛЬНОГО ОКНА ОПЛАТЫ
@@ -81,6 +98,9 @@ function openPayModal() {
         updateNetworkButtons(selectedCurrency);
         currencyListEl.firstChild.classList.add('selected');
     }
+    
+    // Обновляем курсы при открытии модального окна
+    updateExchangeRates();
 }
 
 function closePayModal() { 
