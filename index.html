@@ -25,23 +25,21 @@
         <!-- Districts Page -->
         <div id="page-districts" class="page">
             <div class="app-header">
-                <h1>📍 Выберите район</h1>
-                <div class="city-info-card">
-                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div class="city-badge">
-                                🏙️ Город: <span id="selectedCityDistricts">Москва</span>
-                            </div>
-                        </div>
-                    </div>
+                <h1>Выберите район</h1>
+            </div>
+            
+            <div class="selection-info">
+                <div class="selection-item">
+                    <div class="selection-label">Город:</div>
+                    <div class="selection-value" id="selectedCityDistricts">Москва</div>
                 </div>
+                <button class="change-btn" onclick="goToHome()">
+                    Сменить город
+                </button>
             </div>
             
             <div class="glass-card">
-                <button class="city-change-btn" onclick="goToHome()">
-                    🏙️ Сменить город
-                </button>
-                <h3 class="text-center mb-16">📍 Выберите район доставки</h3>
+                <h3 class="text-center mb-16">Выберите район доставки</h3>
                 <div class="districts-grid" id="districtsGrid"></div>
             </div>
         </div>
@@ -50,26 +48,22 @@
         <div id="page-products" class="page">
             <div class="app-header">
                 <h1>🛍️ Товары</h1>
-                <div class="city-info-card">
-                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                            <div class="city-badge">
-                                📍 Город: <span id="selectedCityText">Москва</span>
-                            </div>
-                            <div class="district-badge">
-                                🗺️ Район: <span id="selectedDistrictText">ЦАО</span>
-                            </div>
-                        </div>
+                <div class="selection-info">
+                    <div class="selection-item">
+                        <div class="selection-label">Город:</div>
+                        <div class="selection-value" id="selectedCityText">Москва</div>
                     </div>
+                    <div class="selection-item">
+                        <div class="selection-label">Район:</div>
+                        <div class="selection-value" id="selectedDistrictText">ЦАО</div>
+                    </div>
+                    <button class="change-btn" onclick="goToDistricts()">
+                        Сменить район
+                    </button>
                 </div>
             </div>
             
-            <div class="glass-card">
-                <button class="city-change-btn" onclick="goToDistricts()">
-                    🏙️ Сменить район
-                </button>
-                <div id="categoriesContainer"></div>
-            </div>
+            <div id="categoriesContainer"></div>
         </div>
 
         <!-- Cart Page -->
@@ -82,17 +76,17 @@
             <div class="glass-card">
                 <div id="cartList" class="cart-list"></div>
                 
-                <div class="mt-16">
-                    <div style="font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 8px;">
-                        Итого: <span id="totalGBP">0</span> ₽
+                <div class="total-section">
+                    <div class="total-amount">
+                        <span id="totalGBP">0</span> ₽
                     </div>
-                    <div class="text-muted text-center" id="totalConverted"></div>
+                    <div class="total-converted" id="totalConverted"></div>
                     
-                    <div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
-                        <button class="btn danger" onclick="clearCart()" style="flex: 1;">
+                    <div class="cart-actions">
+                        <button class="btn danger" onclick="clearCart()">
                             🗑 Очистить
                         </button>
-                        <button class="btn primary" onclick="openPayModal()" style="flex: 2;">
+                        <button class="btn primary" onclick="openPayModal()">
                             💳 Оплатить
                         </button>
                     </div>
@@ -174,9 +168,9 @@
 
     <!-- Floating Cart -->
     <div id="cartFloat" class="cart-float hidden">
-        <div>
-            <div style="font-weight: 800; font-size: 16px;">В корзине: <span id="cartCount">0</span> шт</div>
-            <div class="text-muted">Сумма: <span id="cartSum">0</span> ₽</div>
+        <div class="cart-float-info">
+            <div class="cart-float-count">В корзине: <span id="cartCount">0</span> шт</div>
+            <div class="cart-float-sum">Сумма: <span id="cartSum">0</span> ₽</div>
         </div>
         <button class="btn primary" onclick="openPage('page-cart')">
             Открыть

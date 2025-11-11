@@ -1,20 +1,3 @@
-// 🔥 ФУНКЦИИ КОРЗИНЫ
-function addToCart(item){
-    const idx = cart.findIndex(it => it.product===item.product && it.color===item.color && it.qty===item.qty && it.priceGBP===item.priceGBP);
-    if (idx>=0){ cart[idx].count += 1; } else { item.count = 1; cart.push(item); }
-    refreshCartFloat();
-}
-
-function refreshCartFloat(){
-    const count = cart.reduce((s,i)=>s+i.count,0);
-    const sum = cart.reduce((s,i)=>s + i.priceGBP * i.count,0);
-    document.getElementById('cartCount').textContent = count;
-    document.getElementById('cartSum').textContent = sum.toFixed(2) + ' ₽';
-    const cf = document.getElementById('cartFloat');
-    const isCartPage = document.getElementById('page-cart').classList.contains('active');
-    cf.classList.toggle('hidden', count===0 || isCartPage);
-}
-
 function renderCart(){
     const list = document.getElementById('cartList');
     list.innerHTML = '';
@@ -31,9 +14,13 @@ function renderCart(){
         document.getElementById('totalConverted').textContent = ''; 
         return; 
     }
+    
     cart.forEach((it, idx)=>{
         const el = document.createElement('div'); 
         el.className='cart-item';
+        
+        const header = document.createElement('div');
+        header.className = 'cart-item-header';
         
         const img = document.createElement('img'); 
         img.className='cart-item-image'; 
@@ -45,31 +32,29 @@ function renderCart(){
         meta.innerHTML = `
             <div class="cart-item-name">${it.product}</div>
             <div class="cart-item-details">${it.color} • ${it.qty} g</div>
-            <div class="cart-item-details">Цена: ${it.priceGBP} ₽ • Кол-во: ${it.count}</div>
+            <div class="cart-item-details">Цена: ${it.priceGBP} ₽</div>
         `;
+        
+        header.appendChild(img);
+        header.appendChild(meta);
         
         const controls = document.createElement('div');
         controls.className = 'cart-item-controls';
         controls.innerHTML = `
-            <div style="text-align:right;font-weight:800;font-size:16px;margin-bottom:8px;width:100%;">${(it.priceGBP*it.count).toFixed(2)} ₽</div>
-            <div style="display:flex;gap:6px;align-items:center;justify-content:flex-end;width:100%;">
+            <div class="cart-item-price">${(it.priceGBP*it.count).toFixed(2)} ₽</div>
+            <div class="cart-quantity-controls">
                 <button class="step-btn" onclick="decCartItem(${idx})">−</button>
-                <div style="min-width:24px;text-align:center;font-weight:700;font-size:14px;">${it.count}</div>
+                <div class="quantity-count">${it.count}</div>
                 <button class="step-btn" onclick="incCartItem(${idx})">+</button>
-                <button class="step-btn" style="background:var(--danger)" onclick="removeCartItem(${idx})">✕</button>
+                <button class="step-btn" onclick="removeCartItem(${idx})">✕</button>
             </div>
         `;
         
-        el.appendChild(img); 
-        el.appendChild(meta); 
+        el.appendChild(header);
         el.appendChild(controls);
         list.appendChild(el);
     });
+    
     const total = cart.reduce((s,i)=>s + i.priceGBP * i.count,0);
     document.getElementById('totalGBP').textContent = total.toFixed(2);
 }
-
-function incCartItem(i){ cart[i].count += 1; renderCart(); refreshCartFloat(); }
-function decCartItem(i){ cart[i].count = Math.max(1, cart[i].count - 1); renderCart(); refreshCartFloat(); }
-function removeCartItem(i){ cart.splice(i,1); renderCart(); refreshCartFloat(); }
-function clearCart(){ cart = []; renderCart(); refreshCartFloat(); }
