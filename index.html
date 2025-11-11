@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>DarkShop — Premium Store</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="css/style.css">
@@ -12,7 +12,7 @@
         <!-- Home Page -->
         <div id="page-home" class="page active">
             <div class="app-header">
-                <h1>Dark Shop</h1>
+                <h1> Dark Shop</h1>
                 <div class="subtitle">Premium delivery service</div>
             </div>
             
@@ -22,71 +22,53 @@
             </div>
         </div>
 
-        <!-- Districts Page -->
-        <div id="page-districts" class="page">
-            <div class="app-header">
-                <h1>Выберите район</h1>
-            </div>
-            
-            <div class="selection-info">
-                <div class="selection-item">
-                    <div class="selection-label">Город:</div>
-                    <div class="selection-value" id="selectedCityDistricts">Москва</div>
-                </div>
-                <button class="change-btn" onclick="goToHome()">
-                    Сменить город
-                </button>
-            </div>
-            
-            <div class="glass-card">
-                <h3 class="text-center mb-16">Выберите район доставки</h3>
-                <div class="districts-grid" id="districtsGrid"></div>
-            </div>
-        </div>
-
         <!-- Products Page -->
         <div id="page-products" class="page">
             <div class="app-header">
                 <h1>🛍️ Товары</h1>
-                <div class="selection-info">
-                    <div class="selection-item">
-                        <div class="selection-label">Город:</div>
-                        <div class="selection-value" id="selectedCityText">Москва</div>
+                <div class="city-info-card">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div class="city-badge">
+                                📍 Город: <span id="selectedCityText">Москва</span>
+                            </div>
+                        </div>
+                        <div style="color: var(--text-secondary); font-size: 14px;">
+                    
+                        </div>
                     </div>
-                    <div class="selection-item">
-                        <div class="selection-label">Район:</div>
-                        <div class="selection-value" id="selectedDistrictText">ЦАО</div>
-                    </div>
-                    <button class="change-btn" onclick="goToDistricts()">
-                        Сменить район
-                    </button>
                 </div>
             </div>
             
-            <div id="categoriesContainer"></div>
+            <div class="glass-card">
+                <button class="city-change-btn" onclick="goToHome()">
+                    🏙️ Сменить город
+                </button>
+                <div id="categoriesContainer"></div>
+            </div>
         </div>
 
         <!-- Cart Page -->
         <div id="page-cart" class="page">
             <div class="app-header">
                 <h1>🛒 Корзина</h1>
-                <div class="subtitle" id="cartCityDistrict">Город доставки: не выбран</div>
+                <div class="subtitle" id="cartCity">Город доставки: не выбран</div>
             </div>
             
             <div class="glass-card">
                 <div id="cartList" class="cart-list"></div>
                 
-                <div class="total-section">
-                    <div class="total-amount">
-                        <span id="totalGBP">0</span> ₽
+                <div class="mt-16">
+                    <div style="font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 8px;">
+                        Итого: <span id="totalGBP">0</span> ₽
                     </div>
-                    <div class="total-converted" id="totalConverted"></div>
+                    <div class="text-muted text-center" id="totalConverted"></div>
                     
-                    <div class="cart-actions">
-                        <button class="btn danger" onclick="clearCart()">
+                    <div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
+                        <button class="btn danger" onclick="clearCart()" style="flex: 1;">
                             🗑 Очистить
                         </button>
-                        <button class="btn primary" onclick="openPayModal()">
+                        <button class="btn primary" onclick="openPayModal()" style="flex: 2;">
                             💳 Оплатить
                         </button>
                     </div>
@@ -150,10 +132,6 @@
                         <span id="deliveryCity">—</span>
                     </div>
                     <div style="margin-bottom: 12px;">
-                        <strong>🗺️ Район доставки:</strong><br>
-                        <span id="deliveryDistrict">—</span>
-                    </div>
-                    <div style="margin-bottom: 12px;">
                         <strong>Теперь свяжитесь с поддержкой:</strong><br>
                         <span>Напишите в личные сообщения и приложите скриншот Вашей транзакции и скриншот успешной оплаты - @Alinkamimka223</span>
                     </div>
@@ -168,9 +146,9 @@
 
     <!-- Floating Cart -->
     <div id="cartFloat" class="cart-float hidden">
-        <div class="cart-float-info">
-            <div class="cart-float-count">В корзине: <span id="cartCount">0</span> шт</div>
-            <div class="cart-float-sum">Сумма: <span id="cartSum">0</span> ₽</div>
+        <div>
+            <div style="font-weight: 800; font-size: 16px;">В корзине: <span id="cartCount">0</span> шт</div>
+            <div class="text-muted">Сумма: <span id="cartSum">0</span> ₽</div>
         </div>
         <button class="btn primary" onclick="openPage('page-cart')">
             Открыть
@@ -179,77 +157,42 @@
 
     <!-- Payment Modal -->
     <div id="payModal" style="display: none;">
-        <div class="modal-back" id="modalBack" onclick="closePayModal()">
-            <div class="modal" onclick="event.stopPropagation()">
-                <!-- Заголовок -->
-                <div class="modal-header">
-                    <div class="modal-title">💳 Оплата заказа</div>
-                    <button class="modal-close" onclick="closePayModal()">✕</button>
+        <div class="modal-back" id="modalBack">
+            <div class="modal">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div style="font-weight: 800; font-size: 20px;">💳 Оплата</div>
+                    <button onclick="closePayModal()" style="background: none; border: none; color: var(--text-secondary); font-size: 20px; cursor: pointer; padding: 4px;">✕</button>
                 </div>
                 
-                <!-- Контент модалки -->
-                <div class="modal-content">
-                    <!-- Выбор валюты -->
-                    <div class="modal-section">
-                        <div class="section-title">Выберите валюту</div>
-                        <div class="currency-grid" id="currencyList"></div>
+                <div class="text-muted" style="margin-bottom: 16px;">Выберите валюту и сеть</div>
+                
+                <div class="currency-grid" id="currencyList"></div>
+                
+                <div style="margin: 20px 0;">
+                    <div class="text-muted" style="margin-bottom: 8px;">Сеть:</div>
+                    <div class="network-buttons" id="networkButtons"></div>
+                </div>
+                
+                <div id="manualPayment">
+                    <div style="background: var(--bg-secondary); padding: 16px; border-radius: 12px; margin-bottom: 16px;">
+                        <div class="text-muted">Сумма к оплате:</div>
+                        <div style="font-weight: 800; font-size: 18px;" id="paySummary"></div>
                     </div>
                     
-                    <!-- Актуальные курсы -->
-                    <div class="modal-section">
-                        <div class="rates-header">
-                            <div class="section-title">Актуальные курсы</div>
-                            <button class="refresh-btn" onclick="manualUpdateRates()">
-                                <span class="refresh-icon">🔄</span>
-                            </button>
-                        </div>
-                        <div id="exchangeRatesDisplay" class="exchange-rates">
-                            <!-- Курсы загружаются автоматически -->
-                        </div>
-                    </div>
+                    <div class="text-muted">Адрес для перевода:</div>
+                    <div style="word-break: break-all; margin: 8px 0; background: var(--bg-primary); padding: 12px; border-radius: 8px; font-size: 12px; border: 1px solid var(--border);" id="walletAddr"></div>
                     
-                    <!-- Выбор сети -->
-                    <div class="modal-section">
-                        <div class="section-title">Выберите сеть</div>
-                        <div class="network-buttons" id="networkButtons"></div>
-                    </div>
+                    <button class="btn secondary" onclick="copyWallet()" style="width: 100%; margin-bottom: 12px;">
+                        📋 Копировать адрес
+                    </button>
                     
-                    <!-- Детали оплаты -->
-                    <div class="payment-details">
-                        <div class="amount-card">
-                            <div class="amount-label">Сумма к оплате:</div>
-                            <div class="amount-value" id="paySummary">0.00 USDT (0.00 ₽)</div>
-                        </div>
-                        
-                        <div class="wallet-section">
-                            <div class="section-title">Адрес для перевода:</div>
-                            <div class="wallet-address" id="walletAddr">
-                                Загрузка...
-                            </div>
-                            <button class="copy-btn" onclick="copyWallet()">
-                                📋 Копировать адрес
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Кнопки действий -->
-                    <div class="modal-actions">
-                        <button class="btn success payment-confirm-btn" onclick="payConfirmManual()">
-                            <span class="btn-icon">✅</span>
-                            Я оплатил
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn success" onclick="payConfirmManual()" style="flex: 2;">
+                            ✅ Я оплатил
                         </button>
-                        <button class="btn secondary" onclick="closePayModal()">
-                            <span class="btn-icon">←</span>
-                            Назад
+                        <button class="btn" onclick="closePayModal()" style="flex: 1;">
+                            Закрыть
                         </button>
-                    </div>
-                    
-                    <!-- Подсказка -->
-                    <div class="payment-hint">
-                        <div class="hint-icon">💡</div>
-                        <div class="hint-text">
-                            После оплаты нажмите "Я оплатил" для автоматической проверки транзакции
-                        </div>
                     </div>
                 </div>
             </div>

@@ -1,21 +1,17 @@
 // 🔥 ФУНКЦИИ ДЛЯ ТОВАРОВ И КАТЕГОРИЙ
+function selectCity(city){
+    selectedCity = city;
+    document.getElementById('selectedCityText').textContent = city;
+    document.getElementById('cartCity').textContent = 'Город доставки: ' + city;
+    openPage('page-products');
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.querySelector('.nav-item[data-page="page-products"]').classList.add('active');
+    renderCategories();
+}
+
 function renderCategories(){
     const container = document.getElementById('categoriesContainer');
     container.innerHTML = '';
-    
-    if (!selectedCity || !selectedDistrict) {
-        container.innerHTML = `
-            <div class="text-center text-muted" style="padding: 40px;">
-                <div style="font-size: 48px; margin-bottom: 16px;">📍</div>
-                <div>Сначала выберите город и район</div>
-                <button class="btn primary" onclick="goToDistricts()" style="margin-top: 16px;">
-                    Выбрать район
-                </button>
-            </div>
-        `;
-        return;
-    }
-    
     Object.keys(submenus).forEach(prod=>{
         const cat = document.createElement('div'); 
         cat.className='category';
@@ -31,11 +27,8 @@ function renderCategories(){
         body.className='category-body';
         
         submenus[prod].forEach(color=>{
-            const productDiv = document.createElement('div'); 
-            productDiv.className='product-item';
-            
-            const productHeader = document.createElement('div');
-            productHeader.className = 'product-header';
+            const row = document.createElement('div'); 
+            row.className='product-item';
             
             const img = document.createElement('img'); 
             img.className='product-image'; 
@@ -49,18 +42,12 @@ function renderCategories(){
                 <div class="product-description">Выберите количество и добавьте в корзину</div>
             `;
             
-            productHeader.appendChild(img);
-            productHeader.appendChild(meta);
-            
             const sel = document.createElement('div'); 
             sel.className='selector';
             
             const priceKey = findPriceKey(color);
             let grads = priceKey ? Object.keys(custom_quantity_prices[priceKey]).map(x => parseFloat(x)).sort((a,b)=>a-b) : [1];
             let idx = 0;
-            
-            const quantitySelector = document.createElement('div');
-            quantitySelector.className = 'quantity-selector';
             
             const minus = document.createElement('button'); 
             minus.className='step-btn'; 
@@ -72,9 +59,6 @@ function renderCategories(){
             
             const qtyDisplay = document.createElement('div'); 
             qtyDisplay.className='qty-display'; 
-            
-            const priceSection = document.createElement('div');
-            priceSection.className = 'price-section';
             
             const priceSpan = document.createElement('div'); 
             priceSpan.className='price-display'; 
@@ -106,19 +90,18 @@ function renderCategories(){
                 setTimeout(()=>{ addBtn.innerHTML = oldText; addBtn.classList.remove('in-cart'); }, 1500);
             };
             
-            quantitySelector.appendChild(minus); 
-            quantitySelector.appendChild(qtyDisplay); 
-            quantitySelector.appendChild(plus);
+            sel.appendChild(minus); 
+            sel.appendChild(qtyDisplay); 
+            sel.appendChild(plus); 
+            sel.appendChild(priceSpan); 
+            sel.appendChild(addBtn);
             
-            priceSection.appendChild(priceSpan);
-            priceSection.appendChild(addBtn);
+            updateDisplay();
             
-            sel.appendChild(quantitySelector);
-            sel.appendChild(priceSection);
-            
-            productDiv.appendChild(productHeader);
-            productDiv.appendChild(sel);
-            body.appendChild(productDiv);
+            row.appendChild(img); 
+            row.appendChild(meta); 
+            row.appendChild(sel);
+            body.appendChild(row);
         });
         
         head.onclick = ()=>{ 
@@ -133,4 +116,22 @@ function renderCategories(){
         cat.appendChild(body); 
         container.appendChild(cat);
     });
+}
+
+function normalizeKey(s){ 
+    return String(s||'').toLowerCase().replace(/[\s\._]/g,'').normalize('NFKD'); 
+}
+
+function findPriceKey(color){
+    if (custom_quantity_prices[color]) return color;
+    const norm = normalizeKey(color);
+    for (const k of Object.keys(custom_quantity_prices)){
+        if (normalizeKey(k) === norm) return k;
+    }
+    const m = color.match(/^(\d)(.*)/);
+    if (m){
+        const try1 = m[1]+'.'+m[2];
+        if (custom_quantity_prices[try1]) return try1;
+    }
+    return null;
 }

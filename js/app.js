@@ -7,9 +7,6 @@ function navTo(element){
 }
 
 function openPage(id){
-    // 🔥 ФИКС СКРОЛЛА - всегда скроллим наверх при смене страницы
-    window.scrollTo(0, 0);
-    
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     const cartFloat = document.getElementById('cartFloat');
@@ -24,68 +21,31 @@ function openPage(id){
 
 function selectCity(city){
     selectedCity = city;
-    document.getElementById('selectedCityDistricts').textContent = city;
-    openPage('page-districts');
-    renderDistricts(city);
-}
-
-function selectDistrict(district){
-    selectedDistrict = district;
-    document.getElementById('selectedCityText').textContent = selectedCity;
-    document.getElementById('selectedDistrictText').textContent = district;
-    document.getElementById('cartCityDistrict').textContent = `Город: ${selectedCity}, Район: ${district}`;
+    document.getElementById('selectedCityText').textContent = 'Город: ' + city;
+    document.getElementById('cartCity').textContent = 'Город доставки: ' + city;
     openPage('page-products');
     document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
     document.querySelector('.nav-item[data-page="page-products"]').classList.add('active');
     renderCategories();
 }
 
-function renderDistricts(city){
-    const districtsGrid = document.getElementById('districtsGrid');
-    districtsGrid.innerHTML = '';
-    
-    const cityDistricts = districts[city] || [];
-    cityDistricts.forEach(district => {
-        const b = document.createElement('button');
-        b.className = 'district-card';
-        b.textContent = district;
-        b.onclick = () => selectDistrict(district);
-        districtsGrid.appendChild(b);
-    });
-}
-
 function goToHome(){ 
-    selectedCity = null;
-    selectedDistrict = null;
     openPage('page-home'); 
     document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); 
     document.querySelector('.nav-item[data-page="page-home"]').classList.add('active'); 
-}
-
-function goToDistricts(){ 
-    openPage('page-districts'); 
-    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); 
 }
 
 // 🔥 ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
 document.addEventListener('DOMContentLoaded', ()=>{
     // Инициализация сетки городов
     const cityGrid = document.getElementById('cityGrid');
-    cityGrid.innerHTML = '';
-    
-    cityList.forEach(city => {
-        const button = document.createElement('button');
-        button.className = 'city-card';
-        button.textContent = city;
-        button.onclick = () => selectCity(city);
-        cityGrid.appendChild(button);
+    cityList.forEach(c=>{
+        const b = document.createElement('button');
+        b.className='city-card';
+        b.textContent = c;
+        b.onclick = ()=>selectCity(c);
+        cityGrid.appendChild(b);
     });
-    
-    // 🔥 ЗАПУСКАЕМ АВТООБНОВЛЕНИЕ КУРСОВ
-    startAutoExchangeUpdates();
-    
-    // 🔥 ФИКС - скроллим наверх при загрузке
-    window.scrollTo(0, 0);
     
     // Инициализация Telegram Web App
     window.Telegram?.WebApp?.ready();

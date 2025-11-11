@@ -41,50 +41,25 @@ function updatePaymentSummary() {
     
     const totalGBP = cart.reduce((s,i)=>s + i.priceGBP * i.count,0);
     const rate = currencies[selectedCurrency] || 1;
-    
-    // 🔥 ПРАВИЛЬНЫЙ РАСЧЕТ: сумма в рублях / курс валюты
-    const converted = totalGBP / rate;
+    const converted = totalGBP * rate;
     const config = networkConfigs[selectedCurrency][selectedNetwork];
     
     const summary = `${converted.toFixed(6)} ${selectedCurrency} (${totalGBP.toFixed(2)} ₽)`;
     document.getElementById('paySummary').textContent = summary;
     document.getElementById('walletAddr').textContent = config.address;
-    
-    // 🔥 ОБНОВЛЯЕМ КУРСЫ В ИНТЕРФЕЙСЕ
-    displayExchangeRatesInModal();
 }
 
-// 🔥 ИСПРАВЛЯЕМ ОТОБРАЖЕНИЕ КУРСОВ
-function displayExchangeRatesInModal() {
-    const ratesElement = document.getElementById('exchangeRatesDisplay');
-    if (!ratesElement) return;
-    
-    const ratesHTML = Object.keys(currencies)
-        .map(currency => {
-            const rate = currencies[currency].toFixed(2);
-            const isSelected = currency === selectedCurrency;
-            return `<div class="rate-display ${isSelected ? 'selected-rate' : ''}">
-                <span>1 ${currency} =</span>
-                <span>${rate} ₽</span>
-            </div>`;
-        })
-        .join('');
-    
-    ratesElement.innerHTML = ratesHTML;
-}
-
-// 🔥 ОБНОВЛЕНИЕ КУРСОВ ПРИ ОТКРЫТИИ МОДАЛЬНОГО ОКНА
+// 🔥 ФУНКЦИИ МОДАЛЬНОГО ОКНА ОПЛАТЫ
 function openPayModal() {
     if (cart.length === 0) { 
         alert('Корзина пуста'); 
         return; 
     }
-    if (!selectedCity || !selectedDistrict) { 
-        alert('Сначала выберите город и район'); 
+    if (!selectedCity) { 
+        alert('Сначала выберите город'); 
         return; 
     }
     
-    // Инициализация валют
     const currencyListEl = document.getElementById('currencyList');
     currencyListEl.innerHTML = '';
     
@@ -99,13 +74,8 @@ function openPayModal() {
     selectedCurrency = null;
     selectedNetwork = null;
     
-    // Показываем модалку
     document.getElementById('payModal').style.display = 'block';
     
-    // Обновляем курсы при открытии
-    manualUpdateRates();
-    
-    // Выбираем первую валюту по умолчанию
     if (Object.keys(currencies).length > 0) {
         selectedCurrency = Object.keys(currencies)[0];
         updateNetworkButtons(selectedCurrency);
@@ -127,24 +97,19 @@ function copyWallet(){
     });
 }
 
-// 🔥 РУЧНЫЙ ПЕРЕВОД - ПЕРЕХОД НА ПРОВЕРКУ ПЛАТЕЖА
+// 🔥 РУЧНОЙ ПЕРЕВОД - ПЕРЕХОД НА ПРОВЕРКУ ПЛАТЕЖА
 function payConfirmManual() {
     if (!selectedCurrency || !selectedNetwork) {
         alert('Сначала выберите валюту и сеть');
         return;
     }
 
-    const totalGBP = cart.reduce((s,i)=>s + i.priceGBP * i.count,0);
-    const rate = currencies[selectedCurrency] || 1;
-    const converted = totalGBP / rate;
-
     currentPaymentData = {
         city: selectedCity,
-        district: selectedDistrict,
         currency: selectedCurrency,
         network: selectedNetwork,
-        totalGBP: totalGBP.toFixed(2),
-        totalConverted: converted.toFixed(6),
+        totalGBP: cart.reduce((s,i)=>s + i.priceGBP * i.count,0).toFixed(2),
+        totalConverted: (cart.reduce((s,i)=>s + i.priceGBP * i.count,0) * currencies[selectedCurrency]).toFixed(6),
         wallet: networkConfigs[selectedCurrency][selectedNetwork].address,
         api_key: networkConfigs[selectedCurrency][selectedNetwork].api_key,
         api_url: networkConfigs[selectedCurrency][selectedNetwork].api_url,
@@ -209,102 +174,6 @@ function clearLogs() {
             <span class="log-info">🚀 Запуск системы проверки платежей...</span>
         </div>
     `;
-}
-
-// 🔥 ФУНКЦИИ ДЛЯ ОБНОВЛЕНИЯ КУРСОВ ВАЛЮТ
-
-// Получение курса рубля к доллару
-async function getUSDRate() {
-    try {
-        const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-        const data = await response.json();
-        return data.rates.RUB || 90; // fallback к 90 если API не работает
-    } catch (error) {
-        console.error('Ошибка получения курса USD:', error);
-        return 90; // fallback значение
-    }
-}
-
-// Получение актуальных курсов криптовалют
-async function updateCryptoRates() {
-    try {
-        const usdRate = await getUSDRate();
-        const cryptoIds = Object.values(CURRENCY_IDS).join(',');
-        
-        const response = await fetch(`${EXCHANGE_API_URL}?ids=${cryptoIds}&vs_currencies=usd`);
-        const data = await response.json();
-        
-        // 🔥 ИСПРАВЛЯЕМ РАСЧЕТ КУРСОВ - теперь правильный курс
-        Object.keys(CURRENCY_IDS).forEach(currency => {
-            const cryptoId = CURRENCY_IDS[currency];
-            if (data[cryptoId] && data[cryptoId].usd) {
-                const rateInUSD = data[cryptoId].usd;
-                // 🔥 ПРАВИЛЬНЫЙ РАСЧЕТ: 1 единица крипты = X рублей
-                currencies[currency] = rateInUSD * usdRate;
-            }
-        });
-        
-        console.log('✅ Курсы обновлены:', currencies);
-        showExchangeRateNotification('✅ Курсы валют обновлены');
-        
-        // Обновляем отображение в модальном окне если оно открыто
-        if (document.getElementById('payModal').style.display !== 'none') {
-            updatePaymentSummary();
-        }
-        
-    } catch (error) {
-        console.error('❌ Ошибка обновления курсов:', error);
-        showExchangeRateNotification('❌ Ошибка обновления курсов, используем кэш');
-        
-        // 🔥 Fallback курсы (примерные реальные курсы)
-        currencies = {
-            "BNB": 35000,    // ~35000 руб за BNB
-            "ETH": 220000,   // ~220000 руб за ETH
-            "USDT": 90,      // ~90 руб за USDT
-            "SOL": 12000,    // ~12000 руб за SOL
-            "USDC": 90       // ~90 руб за USDC
-        };
-    }
-}
-
-// Уведомление об обновлении курсов
-function showExchangeRateNotification(message) {
-    // Создаем временное уведомление
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: var(--success);
-        color: white;
-        padding: 12px 20px;
-        border-radius: 10px;
-        font-weight: 600;
-        z-index: 10000;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        animation: slideInRight 0.3s ease;
-    `;
-    notification.textContent = message;
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.remove();
-    }, 3000);
-}
-
-// Ручное обновление курсов
-function manualUpdateRates() {
-    updateCryptoRates();
-    showExchangeRateNotification('🔄 Обновляем курсы...');
-}
-
-// Автоматическое обновление курсов каждые 5 минут
-function startAutoExchangeUpdates() {
-    // Первое обновление при загрузке
-    updateCryptoRates();
-    
-    // Обновление каждые 5 минут
-    currencyUpdateInterval = setInterval(updateCryptoRates, 5 * 60 * 1000);
 }
 
 // 🔥 УЛУЧШЕННАЯ ФУНКЦИЯ ДЛЯ ПОЛУЧЕНИЯ ТРАНЗАКЦИЙ
@@ -711,7 +580,6 @@ function showPaymentSuccess() {
     
     document.getElementById('orderTotalAmount').textContent = currentPaymentData.totalGBP + ' ₽';
     document.getElementById('deliveryCity').textContent = currentPaymentData.city;
-    document.getElementById('deliveryDistrict').textContent = currentPaymentData.district;
     
     const actualAmount = currentPaymentData.actualAmount ? 
         (currentPaymentData.actualAmount / Math.pow(10, networkConfigs[currentPaymentData.currency][currentPaymentData.network].decimals)).toFixed(6) : 
@@ -736,7 +604,6 @@ function saveOrderToHistory() {
         amount: currentPaymentData.totalConverted,
         txHash: currentPaymentData.txHash,
         city: currentPaymentData.city,
-        district: currentPaymentData.district,
         status: 'completed'
     };
     orders.unshift(orderData);
