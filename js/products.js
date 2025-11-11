@@ -1,17 +1,21 @@
 // 🔥 ФУНКЦИИ ДЛЯ ТОВАРОВ И КАТЕГОРИЙ
-function selectCity(city){
-    selectedCity = city;
-    document.getElementById('selectedCityText').textContent = city;
-    document.getElementById('cartCity').textContent = 'Город доставки: ' + city;
-    openPage('page-products');
-    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-    document.querySelector('.nav-item[data-page="page-products"]').classList.add('active');
-    renderCategories();
-}
-
 function renderCategories(){
     const container = document.getElementById('categoriesContainer');
     container.innerHTML = '';
+    
+    if (!selectedCity || !selectedDistrict) {
+        container.innerHTML = `
+            <div class="text-center text-muted" style="padding: 40px;">
+                <div style="font-size: 48px; margin-bottom: 16px;">📍</div>
+                <div>Сначала выберите город и район</div>
+                <button class="btn primary" onclick="goToDistricts()" style="margin-top: 16px;">
+                    🏙️ Выбрать район
+                </button>
+            </div>
+        `;
+        return;
+    }
+    
     Object.keys(submenus).forEach(prod=>{
         const cat = document.createElement('div'); 
         cat.className='category';

@@ -25,6 +25,12 @@
     padding: 0;
 }
 
+/* 🔥 ФИКС ДЛЯ СКРОЛЛА И ВЫСОТЫ */
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
 body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     background: var(--bg-primary);
@@ -32,17 +38,20 @@ body {
     line-height: 1.6;
     padding-bottom: 80px;
     min-height: 100vh;
+    position: relative;
 }
 
 .container {
     padding: 16px;
     max-width: 980px;
     margin: 0 auto;
+    min-height: calc(100vh - 120px);
 }
 
 .page {
     display: none;
     animation: fadeIn 0.5s ease-in-out;
+    min-height: 60vh;
 }
 
 .page.active {
@@ -61,7 +70,6 @@ body {
     position: relative;
 }
 
-/* Премиум заголовок для всех страниц */
 .app-header h1 {
     font-size: 32px;
     font-weight: 900;
@@ -94,86 +102,70 @@ body {
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
 }
 
-/* Стили для главной страницы */
-#page-home .app-header h1 {
-    font-size: 36px;
-    font-weight: 900;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-    margin-bottom: 8px;
+/* 🔥 УЛУЧШЕННАЯ СЕТКА ГОРОДОВ */
+.city-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 20px;
 }
 
-#page-home .app-header .subtitle {
-    color: var(--text-secondary);
-    font-size: 16px;
-    font-weight: 500;
-}
-
-/* Улучшенные карточки городов */
 .city-card {
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 24px 16px;
+    border-radius: 16px;
+    padding: 20px 12px;
     text-align: center;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--text-primary);
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    position: relative;
-    overflow: hidden;
-    font-size: 16px;
-}
-
-.city-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-    transition: left 0.6s ease;
-}
-
-.city-card:hover::before {
-    left: 100%;
+    transition: all 0.3s ease;
+    font-size: 15px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    outline: none;
 }
 
 .city-card:hover {
     border-color: rgba(99, 102, 241, 0.5);
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Заголовок выбора города */
-#page-home .glass-card h3 {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-/* Сетка городов */
-.city-grid {
+/* 🔥 УЛУЧШЕННАЯ СЕТКА РАЙОНОВ */
+.districts-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    grid-template-columns: 1fr;
+    gap: 12px;
     margin-top: 20px;
 }
 
-/* Стильная карточка города для страницы товаров */
-.city-info-card {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
-    border: 1px solid rgba(99, 102, 241, 0.3);
-    border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 24px;
-    backdrop-filter: blur(20px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+.district-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 16px 12px;
+    text-align: center;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    outline: none;
+}
+
+.district-card:hover {
+    border-color: rgba(99, 102, 241, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
 }
 
 /* Бейдж города */
@@ -189,7 +181,55 @@ body {
     gap: 6px;
 }
 
-/* Улучшенные карточки категорий */
+/* Бейдж района */
+.district-badge {
+    background: linear-gradient(135deg, #f59e0b 0%, #eab308 100%);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Кнопка смены города/района */
+.city-change-btn {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border: none;
+    color: white;
+    padding: 14px 20px;
+    border-radius: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 15px;
+}
+
+.city-change-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4);
+}
+
+/* Карточка информации о городе */
+.city-info-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Category Styles */
 .category {
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -222,42 +262,6 @@ body {
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
-/* Заголовки категорий с иконками */
-.category-title {
-    font-weight: 800;
-    font-size: 20px;
-    color: var(--text-primary);
-}
-
-.category-title::before {
-    content: '';
-    font-size: 24px;
-}
-
-/* Кнопка смены города */
-.city-change-btn {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    border: none;
-    color: white;
-    padding: 16px 24px;
-    border-radius: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    width: 100%;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.city-change-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 25px rgba(99, 102, 241, 0.4);
-}
-
-/* Category Styles */
 .category-head {
     display: flex;
     justify-content: space-between;
@@ -270,6 +274,12 @@ body {
 
 .category-head:hover {
     background: rgba(99, 102, 241, 0.2);
+}
+
+.category-title {
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--text-primary);
 }
 
 .category-arrow {
@@ -566,7 +576,9 @@ body {
     color: white;
 }
 
-/* Modal Styles */
+/* 🔥 ОПТИМИЗИРОВАННЫЕ СТИЛИ МОДАЛЬНОГО ОКНА */
+
+/* Модальное окно */
 .modal-back {
     position: fixed;
     left: 0;
@@ -580,23 +592,319 @@ body {
     justify-content: center;
     z-index: 2000;
     animation: fadeIn 0.3s ease;
+    padding: 20px;
+    overflow-y: auto;
 }
 
 .modal {
     background: var(--gradient-card);
     backdrop-filter: blur(20px);
-    padding: 24px;
     border-radius: 24px;
-    width: 90%;
-    max-width: 400px;
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
     animation: modalSlideIn 0.3s ease;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 @keyframes modalSlideIn {
     from { transform: scale(0.9); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
+}
+
+/* Заголовок модалки */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg-card);
+    border-radius: 24px 24px 0 0;
+    z-index: 10;
+}
+
+.modal-title {
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--text-primary);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--text-primary);
+}
+
+/* Контент модалки */
+.modal-content {
+    padding: 0 24px 24px;
+}
+
+.modal-section {
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+
+/* Сетка валют */
+.currency-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.currency-card {
+    background: var(--bg-secondary);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 12px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.currency-card.selected {
+    border-color: var(--primary);
+    background: rgba(99, 102, 241, 0.1);
+    transform: scale(1.05);
+}
+
+.currency-card:hover {
+    border-color: var(--primary);
+}
+
+/* Заголовок курсов */
+.rates-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.refresh-btn {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.refresh-btn:hover {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: var(--primary);
+}
+
+.refresh-icon {
+    font-size: 14px;
+}
+
+/* Отображение курсов */
+.exchange-rates {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.rate-display {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid transparent;
+}
+
+.rate-display.selected-rate {
+    background: rgba(99, 102, 241, 0.2);
+    color: var(--primary);
+    font-weight: 600;
+    border-color: var(--primary);
+}
+
+.rate-display:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Кнопки сети */
+.network-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.network-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.network-btn.active {
+    background: var(--gradient-primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.network-btn:hover {
+    border-color: var(--primary);
+}
+
+/* Детали оплаты */
+.payment-details {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 20px 0;
+}
+
+.amount-card {
+    text-align: center;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.amount-label {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.amount-value {
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--text-primary);
+}
+
+.wallet-section {
+    margin-top: 16px;
+}
+
+.wallet-address {
+    word-break: break-all;
+    background: var(--bg-primary);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    border: 1px solid var(--border);
+    margin: 8px 0;
+    font-family: 'Courier New', monospace;
+}
+
+.copy-btn {
+    background: var(--gradient-secondary);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.copy-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
+}
+
+/* Кнопки действий */
+.modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.payment-confirm-btn {
+    background: var(--gradient-success);
+    color: white;
+    border: none;
+    padding: 16px 20px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.payment-confirm-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}
+
+.btn-icon {
+    font-size: 18px;
+}
+
+/* Подсказка */
+.payment-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+}
+
+.hint-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.hint-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.4;
 }
 
 /* Status Pages */
@@ -669,58 +977,6 @@ body {
     background: var(--bg-primary);
 }
 
-/* Currency Cards */
-.currency-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin: 16px 0;
-}
-
-.currency-card {
-    background: var(--bg-secondary);
-    border: 2px solid transparent;
-    border-radius: 12px;
-    padding: 12px 8px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.currency-card.selected {
-    border-color: var(--primary);
-    background: rgba(99, 102, 241, 0.1);
-    transform: scale(1.05);
-}
-
-.currency-card:hover {
-    border-color: var(--primary);
-}
-
-/* Network Buttons */
-.network-buttons {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 12px;
-}
-
-.network-btn {
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.network-btn.active {
-    background: var(--gradient-primary);
-    color: white;
-    border-color: var(--primary);
-}
-
 /* Confetti */
 .confetti {
     position: fixed;
@@ -743,46 +999,149 @@ body {
 .mb-16 { margin-bottom: 16px; }
 .mt-16 { margin-top: 16px; }
 
-/* Responsive */
+/* Анимация для уведомлений */
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Адаптивность для десктопов */
 @media (min-width: 768px) {
     .city-grid {
         grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+    
+    .districts-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+    
+    .city-card {
+        padding: 24px 16px;
+        font-size: 16px;
+        min-height: 70px;
+    }
+    
+    .district-card {
+        padding: 18px 14px;
+        font-size: 15px;
+        min-height: 55px;
+    }
+    
+    .modal-actions {
+        flex-direction: row;
+    }
+    
+    .payment-confirm-btn {
+        flex: 2;
+    }
+    
+    .modal-actions .btn.secondary {
+        flex: 1;
     }
 }
 
+/* Адаптивность для мобильных */
 @media (max-width: 480px) {
-    .container { padding: 12px; }
-    .city-grid { grid-template-columns: 1fr; }
-    .city-card { padding: 20px 12px; font-size: 14px; }
-    .product-item { flex-direction: column; text-align: center; }
-    .product-image { width: 100%; height: 120px; }
-    .selector { justify-content: center; }
-    .cart-item { flex-direction: column; text-align: center; }
-    .cart-item-image { width: 80px; height: 80px; }
-
-    /* Мобильные стили для картинок товаров */
-@media (max-width: 480px) {
-    .product-image {
-        width: 100%;
-        height: 200px; /* Увеличиваем высоту */
-        object-fit: cover; /* Сохраняет пропорции, обрезая лишнее */
+    .city-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .districts-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .city-card {
+        padding: 16px 12px;
+        font-size: 14px;
+        min-height: 55px;
+    }
+    
+    .district-card {
+        padding: 14px 10px;
+        font-size: 13px;
+        min-height: 45px;
+    }
+    
+    .city-badge, .district-badge {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+    
+    .city-change-btn {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+    
+    .city-info-card {
+        padding: 16px;
         border-radius: 16px;
-        border: 2px solid var(--border);
     }
     
-    /* Дополнительно можно улучшить внешний вид */
-    .product-item {
-        flex-direction: column;
-        text-align: center;
-        padding: 20px;
+    .exchange-rates {
+        font-size: 11px;
     }
     
-    .product-info {
-        margin-top: 12px;
+    .modal {
+        max-height: 85vh;
     }
     
-    .selector {
-        justify-content: center;
-        margin-top: 12px;
+    .modal-content {
+        padding: 0 16px 16px;
     }
+    
+    .modal-header {
+        padding: 20px 16px 12px;
+    }
+    
+    .currency-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .amount-value {
+        font-size: 16px;
+    }
+}
+
+/* 🔥 ФИКС ДЛЯ КНОПОК - убираем стандартное поведение */
+button {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+button:focus {
+    outline: none;
+}
+
+/* Особые стили для очень маленьких экранов */
+@media (max-width: 360px) {
+    .city-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .city-card, .district-card {
+        padding: 12px 8px;
+        font-size: 13px;
+        min-height: 45px;
+    }
+    
+    .modal {
+        padding: 0;
+    }
+    
+    .currency-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Убедимся, что текст в карточках переносится правильно */
+.city-card, .district-card {
+    word-wrap: break-word;
+    white-space: normal;
+    line-height: 1.3;
 }

@@ -18,11 +18,13 @@ function refreshCartFloat(){
 function renderCart(){
     const list = document.getElementById('cartList');
     list.innerHTML = '';
-    if (!selectedCity){
-        document.getElementById('cartCity').textContent = 'Город доставки: —';
+    
+    if (!selectedCity || !selectedDistrict){
+        document.getElementById('cartCityDistrict').textContent = 'Город и район не выбраны';
     } else {
-        document.getElementById('cartCity').textContent = 'Город доставки: ' + selectedCity;
+        document.getElementById('cartCityDistrict').textContent = `Город: ${selectedCity}, Район: ${selectedDistrict}`;
     }
+    
     if (cart.length===0) { 
         list.innerHTML = '<div class="text-center text-muted" style="padding: 40px;">Корзина пуста</div>'; 
         document.getElementById('totalGBP').textContent = '0.00'; 
