@@ -307,17 +307,18 @@ body {
     to { opacity: 1; max-height: 1000px; }
 }
 
-/* Product Items */
+/* 🔥 ИСПРАВЛЕННЫЕ СТИЛИ ДЛЯ КАРТОЧЕК ТОВАРОВ */
 .product-item {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     padding: 16px;
     background: rgba(30, 41, 59, 0.5);
     border-radius: 12px;
     margin-bottom: 12px;
     border: 1px solid transparent;
     transition: all 0.3s ease;
+    flex-wrap: wrap; /* 🔥 ДОБАВЛЕНО: разрешаем перенос */
 }
 
 .product-item:hover {
@@ -326,12 +327,13 @@ body {
 }
 
 .product-image {
-    width: 80px;
-    height: 80px;
+    width: 70px; /* 🔥 УМЕНЬШЕНО: было 80px */
+    height: 70px; /* 🔥 УМЕНЬШЕНО: было 80px */
     border-radius: 12px;
     object-fit: cover;
     border: 2px solid var(--border);
     transition: all 0.3s ease;
+    flex-shrink: 0; /* 🔥 ДОБАВЛЕНО: запрещаем сжатие */
 }
 
 .product-item:hover .product-image {
@@ -342,33 +344,40 @@ body {
 .product-info {
     flex: 1;
     min-width: 0;
+    margin-bottom: 8px; /* 🔥 ДОБАВЛЕНО: отступ снизу */
 }
 
 .product-name {
     font-weight: 700;
-    font-size: 16px;
+    font-size: 15px; /* 🔥 УМЕНЬШЕНО: было 16px */
     margin-bottom: 4px;
     color: var(--text-primary);
+    line-height: 1.3; /* 🔥 ДОБАВЛЕНО: межстрочный интервал */
+    word-break: break-word; /* 🔥 ДОБАВЛЕНО: перенос длинных слов */
 }
 
 .product-description {
-    font-size: 13px;
+    font-size: 12px; /* 🔥 УМЕНЬШЕНО: было 13px */
     color: var(--text-secondary);
     margin-bottom: 8px;
+    line-height: 1.3; /* 🔥 ДОБАВЛЕНО: межстрочный интервал */
 }
 
-/* Selector Styles */
+/* 🔥 ИСПРАВЛЕННЫЕ СТИЛИ ДЛЯ СЕЛЕКТОРА */
 .selector {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px; /* 🔥 УМЕНЬШЕНО: было 8px */
     flex-wrap: wrap;
+    margin-top: 8px; /* 🔥 ДОБАВЛЕНО: отступ сверху */
+    width: 100%; /* 🔥 ДОБАВЛЕНО: занимает всю ширину */
+    justify-content: flex-start; /* 🔥 ДОБАВЛЕНО: выравнивание по левому краю */
 }
 
 .step-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
+    width: 32px; /* 🔥 УМЕНЬШЕНО: было 36px */
+    height: 32px; /* 🔥 УМЕНЬШЕНО: было 36px */
+    border-radius: 8px; /* 🔥 УМЕНЬШЕНО: было 10px */
     border: none;
     background: var(--gradient-primary);
     color: white;
@@ -378,6 +387,7 @@ body {
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
+    flex-shrink: 0; /* 🔥 ДОБАВЛЕНО: запрещаем сжатие */
 }
 
 .step-btn:hover {
@@ -386,30 +396,36 @@ body {
 }
 
 .qty-display {
-    min-width: 48px;
+    min-width: 40px; /* 🔥 УМЕНЬШЕНО: было 48px */
     text-align: center;
     font-weight: 800;
     color: var(--text-primary);
+    font-size: 14px; /* 🔥 ДОБАВЛЕНО: размер шрифта */
 }
 
 .price-display {
     color: var(--secondary);
     font-weight: 700;
-    margin-left: 8px;
+    margin-left: 4px; /* 🔥 УМЕНЬШЕНО: было 8px */
+    font-size: 14px; /* 🔥 ДОБАВЛЕНО: размер шрифта */
+    white-space: nowrap; /* 🔥 ДОБАВЛЕНО: запрет переноса */
 }
 
 .add-btn {
     background: var(--gradient-success);
     color: white;
     border: none;
-    padding: 10px 16px;
-    border-radius: 10px;
+    padding: 8px 12px; /* 🔥 УМЕНЬШЕНО: было 10px 16px */
+    border-radius: 8px; /* 🔥 УМЕНЬШЕНО: было 10px */
     cursor: pointer;
     font-weight: 700;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px; /* 🔥 УМЕНЬШЕНО: было 6px */
+    font-size: 13px; /* 🔥 ДОБАВЛЕНО: размер шрифта */
+    white-space: nowrap; /* 🔥 ДОБАВЛЕНО: запрет переноса */
+    flex-shrink: 0; /* 🔥 ДОБАВЛЕНО: запрещаем сжатие */
 }
 
 .add-btn:hover {
@@ -421,10 +437,10 @@ body {
     background: var(--gradient-secondary);
 }
 
-/* Cart Styles */
+/* 🔥 ИСПРАВЛЕННЫЕ СТИЛИ ДЛЯ КОРЗИНЫ */
 .cart-item {
     display: flex;
-    gap: 16px;
+    gap: 12px;
     align-items: center;
     background: var(--gradient-card);
     padding: 16px;
@@ -432,6 +448,7 @@ body {
     margin-bottom: 12px;
     border: 1px solid var(--border);
     transition: all 0.3s ease;
+    flex-wrap: wrap; /* 🔥 ДОБАВЛЕНО: разрешаем перенос */
 }
 
 .cart-item:hover {
@@ -445,26 +462,34 @@ body {
     border-radius: 10px;
     object-fit: cover;
     border: 2px solid var(--border);
+    flex-shrink: 0; /* 🔥 ДОБАВЛЕНО: запрещаем сжатие */
 }
 
 .cart-item-info {
     flex: 1;
+    min-width: 0;
 }
 
 .cart-item-name {
     font-weight: 700;
     margin-bottom: 4px;
+    font-size: 15px; /* 🔥 ДОБАВЛЕНО: размер шрифта */
+    line-height: 1.3; /* 🔥 ДОБАВЛЕНО: межстрочный интервал */
 }
 
 .cart-item-details {
     color: var(--text-secondary);
     font-size: 13px;
+    line-height: 1.3; /* 🔥 ДОБАВЛЕНО: межстрочный интервал */
 }
 
 .cart-item-controls {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    margin-top: 8px; /* 🔥 ДОБАВЛЕНО: отступ сверху */
+    width: 100%; /* 🔥 ДОБАВЛЕНО: занимает всю ширину */
+    justify-content: flex-end; /* 🔥 ДОБАВЛЕНО: выравнивание по правому краю */
 }
 
 /* Floating Cart */
@@ -1040,6 +1065,22 @@ body {
     .modal-actions .btn.secondary {
         flex: 1;
     }
+
+    /* 🔥 ДЕСКТОПНЫЕ ИСПРАВЛЕНИЯ */
+    .product-item {
+        flex-wrap: nowrap; /* 🔥 ИЗМЕНЕНО: на десктопе не переносим */
+    }
+
+    .selector {
+        margin-top: 0; /* 🔥 ИЗМЕНЕНО: убираем отступ сверху на десктопе */
+        width: auto; /* 🔥 ИЗМЕНЕНО: автоматическая ширина на десктопе */
+        justify-content: flex-end; /* 🔥 ИЗМЕНЕНО: выравнивание по правому краю */
+    }
+
+    .cart-item-controls {
+        margin-top: 0; /* 🔥 ИЗМЕНЕНО: убираем отступ сверху на десктопе */
+        width: auto; /* 🔥 ИЗМЕНЕНО: автоматическая ширина на десктопе */
+    }
 }
 
 /* Адаптивность для мобильных */
@@ -1104,6 +1145,31 @@ body {
     .amount-value {
         font-size: 16px;
     }
+
+    /* 🔥 МОБИЛЬНЫЕ ИСПРАВЛЕНИЯ */
+    .product-image {
+        width: 60px; /* 🔥 УМЕНЬШЕНО: для мобильных */
+        height: 60px; /* 🔥 УМЕНЬШЕНО: для мобильных */
+    }
+
+    .product-name {
+        font-size: 14px; /* 🔥 УМЕНЬШЕНО: для мобильных */
+    }
+
+    .step-btn {
+        width: 28px; /* 🔥 УМЕНЬШЕНО: для мобильных */
+        height: 28px; /* 🔥 УМЕНЬШЕНО: для мобильных */
+    }
+
+    .qty-display {
+        min-width: 35px; /* 🔥 УМЕНЬШЕНО: для мобильных */
+        font-size: 13px; /* 🔥 УМЕНЬШЕНО: для мобильных */
+    }
+
+    .add-btn {
+        padding: 6px 10px; /* 🔥 УМЕНЬШЕНО: для мобильных */
+        font-size: 12px; /* 🔥 УМЕНЬШЕНО: для мобильных */
+    }
 }
 
 /* 🔥 ФИКС ДЛЯ КНОПОК - убираем стандартное поведение */
@@ -1137,6 +1203,21 @@ button:focus {
     .currency-grid {
         grid-template-columns: 1fr;
     }
+
+    /* 🔥 ДОПОЛНИТЕЛЬНЫЕ ИСПРАВЛЕНИЯ ДЛЯ ОЧЕНЬ МАЛЕНЬКИХ ЭКРАНОВ */
+    .product-item {
+        gap: 8px; /* 🔥 УМЕНЬШЕНО: расстояние между элементами */
+        padding: 12px; /* 🔥 УМЕНЬШЕНО: внутренние отступы */
+    }
+
+    .product-image {
+        width: 50px; /* 🔥 УМЕНЬШЕНО: для очень маленьких экранов */
+        height: 50px; /* 🔥 УМЕНЬШЕНО: для очень маленьких экранов */
+    }
+
+    .selector {
+        gap: 4px; /* 🔥 УМЕНЬШЕНО: расстояние между элементами */
+    }
 }
 
 /* Убедимся, что текст в карточках переносится правильно */
@@ -1144,4 +1225,21 @@ button:focus {
     word-wrap: break-word;
     white-space: normal;
     line-height: 1.3;
+}
+
+/* 🔥 ДОПОЛНИТЕЛЬНЫЕ ИСПРАВЛЕНИЯ ДЛЯ КОРЗИНЫ */
+.cart-item-controls .step-btn {
+    width: 28px; /* 🔥 УМЕНЬШЕНО: для кнопок в корзине */
+    height: 28px; /* 🔥 УМЕНЬШЕНО: для кнопок в корзине */
+    font-size: 12px; /* 🔥 ДОБАВЛЕНО: размер шрифта */
+}
+
+.cart-item-controls .step-btn:last-child {
+    background: var(--danger); /* 🔥 ДОБАВЛЕНО: цвет для кнопки удаления */
+}
+
+.cart-item-controls .step-btn:last-child:hover {
+    background: var(--danger); /* 🔥 ДОБАВЛЕНО: цвет при наведении */
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
 }

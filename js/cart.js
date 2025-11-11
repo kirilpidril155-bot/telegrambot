@@ -51,10 +51,10 @@ function renderCart(){
         const controls = document.createElement('div');
         controls.className = 'cart-item-controls';
         controls.innerHTML = `
-            <div style="text-align:right;font-weight:800;font-size:18px;margin-bottom:8px;">${(it.priceGBP*it.count).toFixed(2)} ₽</div>
-            <div style="display:flex;gap:6px;align-items:center;justify-content:flex-end">
+            <div style="text-align:right;font-weight:800;font-size:16px;margin-bottom:8px;width:100%;">${(it.priceGBP*it.count).toFixed(2)} ₽</div>
+            <div style="display:flex;gap:6px;align-items:center;justify-content:flex-end;width:100%;">
                 <button class="step-btn" onclick="decCartItem(${idx})">−</button>
-                <div style="min-width:24px;text-align:center;font-weight:700;">${it.count}</div>
+                <div style="min-width:24px;text-align:center;font-weight:700;font-size:14px;">${it.count}</div>
                 <button class="step-btn" onclick="incCartItem(${idx})">+</button>
                 <button class="step-btn" style="background:var(--danger)" onclick="removeCartItem(${idx})">✕</button>
             </div>
