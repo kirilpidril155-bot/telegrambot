@@ -18,10 +18,10 @@ function refreshCartFloat(){
 function renderCart(){
     const list = document.getElementById('cartList');
     list.innerHTML = '';
-    if (!selectedCity){
+    if (!selectedCity || !selectedDistrict){
         document.getElementById('cartCity').textContent = 'Город доставки: —';
     } else {
-        document.getElementById('cartCity').textContent = 'Город доставки: ' + selectedCity;
+        document.getElementById('cartCity').textContent = 'Город доставки: ' + selectedCity + ', ' + selectedDistrict;
     }
     if (cart.length===0) { 
         list.innerHTML = '<div class="text-center text-muted" style="padding: 40px;">Корзина пуста</div>'; 

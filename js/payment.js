@@ -72,8 +72,8 @@ function openPayModal() {
         alert('Корзина пуста'); 
         return; 
     }
-    if (!selectedCity) { 
-        alert('Сначала выберите город'); 
+    if (!selectedCity || !selectedDistrict) { 
+        alert('Сначала выберите город и район'); 
         return; 
     }
     
@@ -126,6 +126,7 @@ function payConfirmManual() {
 
     currentPaymentData = {
         city: selectedCity,
+        district: selectedDistrict,
         currency: selectedCurrency,
         network: selectedNetwork,
         totalGBP: cart.reduce((s,i)=>s + i.priceGBP * i.count,0).toFixed(2),
@@ -599,7 +600,7 @@ function showPaymentSuccess() {
     });
     
     document.getElementById('orderTotalAmount').textContent = currentPaymentData.totalGBP + ' ₽';
-    document.getElementById('deliveryCity').textContent = currentPaymentData.city;
+    document.getElementById('deliveryCity').textContent = currentPaymentData.city + ', ' + currentPaymentData.district;
     
     const actualAmount = currentPaymentData.actualAmount ? 
         (currentPaymentData.actualAmount / Math.pow(10, networkConfigs[currentPaymentData.currency][currentPaymentData.network].decimals)).toFixed(6) : 
@@ -624,6 +625,7 @@ function saveOrderToHistory() {
         amount: currentPaymentData.totalConverted,
         txHash: currentPaymentData.txHash,
         city: currentPaymentData.city,
+        district: currentPaymentData.district,
         status: 'completed'
     };
     orders.unshift(orderData);

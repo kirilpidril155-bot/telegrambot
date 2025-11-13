@@ -21,18 +21,48 @@ function openPage(id){
 
 function selectCity(city){
     selectedCity = city;
-    document.getElementById('selectedCityText').textContent = 'Город: ' + city;
-    document.getElementById('cartCity').textContent = 'Город доставки: ' + city;
+    document.getElementById('selectedCityForDistrict').textContent = city;
+    openPage('page-districts');
+    renderDistricts(city);
+}
+
+function selectDistrict(district){
+    selectedDistrict = district;
+    document.getElementById('selectedCityText').textContent = selectedCity;
+    document.getElementById('selectedDistrictText').textContent = district;
+    document.getElementById('cartCity').textContent = 'Город доставки: ' + selectedCity + ', ' + district;
     openPage('page-products');
     document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
     document.querySelector('.nav-item[data-page="page-products"]').classList.add('active');
     renderCategories();
 }
 
+function renderDistricts(city){
+    const districtsGrid = document.getElementById('districtsGrid');
+    districtsGrid.innerHTML = '';
+    
+    const districts = cityDistricts[city];
+    if (districts) {
+        districts.forEach(district => {
+            const btn = document.createElement('button');
+            btn.className = 'district-card';
+            btn.textContent = district;
+            btn.onclick = () => selectDistrict(district);
+            districtsGrid.appendChild(btn);
+        });
+    }
+}
+
 function goToHome(){ 
     openPage('page-home'); 
     document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); 
     document.querySelector('.nav-item[data-page="page-home"]').classList.add('active'); 
+}
+
+function goToDistricts(){ 
+    openPage('page-districts'); 
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); 
+    document.querySelector('.nav-item[data-page="page-products"]').classList.add('active'); 
 }
 
 // 🔥 ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ

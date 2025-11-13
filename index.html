@@ -22,6 +22,29 @@
             </div>
         </div>
 
+        <!-- Districts Page -->
+        <div id="page-districts" class="page">
+            <div class="app-header">
+                <h1>📍 Выберите район</h1>
+                <div class="city-info-card">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div class="city-badge">
+                                🏙️ Город: <span id="selectedCityForDistrict">Москва</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glass-card">
+                <button class="city-change-btn" onclick="goToHome()">
+                    🏙️ Сменить город
+                </button>
+                <div class="districts-grid" id="districtsGrid"></div>
+            </div>
+        </div>
+
         <!-- Products Page -->
         <div id="page-products" class="page">
             <div class="app-header">
@@ -30,7 +53,7 @@
                     <div style="display: flex; align-items: center; justify-content: space-between;">
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <div class="city-badge">
-                                📍 Город: <span id="selectedCityText">Москва</span>
+                                📍 <span id="selectedCityText">Москва</span>, <span id="selectedDistrictText">Центральный</span>
                             </div>
                         </div>
                         <div style="color: var(--text-secondary); font-size: 14px;">
@@ -41,8 +64,8 @@
             </div>
             
             <div class="glass-card">
-                <button class="city-change-btn" onclick="goToHome()">
-                    🏙️ Сменить город
+                <button class="city-change-btn" onclick="goToDistricts()">
+                    🏙️ Сменить район
                 </button>
                 <div id="categoriesContainer"></div>
             </div>
