@@ -86,6 +86,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
     
     // Обновление времени в логах
     setInterval(() => {
-        document.getElementById('currentTime').textContent = new Date().toLocaleTimeString();
+        const timeElement = document.getElementById('currentTime');
+        if (timeElement) {
+            timeElement.textContent = new Date().toLocaleTimeString();
+        }
     }, 1000);
 });

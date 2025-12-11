@@ -61,7 +61,6 @@ body {
     position: relative;
 }
 
-/* Премиум заголовок для всех страниц */
 .app-header h1 {
     font-size: 32px;
     font-weight: 900;
@@ -111,7 +110,7 @@ body {
     font-weight: 500;
 }
 
-/* Улучшенные карточки городов */
+/* Карточки городов */
 .city-card {
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -192,7 +191,7 @@ body {
     margin-top: 20px;
 }
 
-/* Стильная карточка города для страницы товаров */
+/* Стильная карточка города */
 .city-info-card {
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
     border: 1px solid rgba(99, 102, 241, 0.3);
@@ -216,7 +215,7 @@ body {
     gap: 6px;
 }
 
-/* Улучшенные карточки категорий */
+/* Карточки категорий */
 .category {
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -249,16 +248,11 @@ body {
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
-/* Заголовки категорий с иконками */
+/* Заголовки категорий */
 .category-title {
     font-weight: 800;
     font-size: 20px;
     color: var(--text-primary);
-}
-
-.category-title::before {
-    content: '';
-    font-size: 24px;
 }
 
 /* Кнопка смены города */
@@ -675,26 +669,37 @@ body {
     border-radius: 3px;
 }
 
-/* Live Logs */
+/* Упрощенные Live Logs */
 .live-logs {
     margin-top: 20px;
     background: var(--bg-secondary);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 16px;
-    max-height: 200px;
+    max-height: 120px;
     overflow-y: auto;
     text-align: left;
-    font-family: 'Courier New', monospace;
+    font-family: 'Segoe UI', sans-serif;
     font-size: 12px;
 }
 
 .log-entry {
-    margin-bottom: 8px;
-    padding: 8px;
+    margin-bottom: 4px;
+    padding: 6px;
     border-radius: 6px;
     background: var(--bg-primary);
+    font-size: 11px;
 }
+
+.log-time {
+    color: var(--text-muted);
+    margin-right: 8px;
+}
+
+.log-info { color: var(--text-secondary); }
+.log-success { color: var(--success); }
+.log-warning { color: var(--warning); }
+.log-error { color: var(--danger); }
 
 /* Currency Cards */
 .currency-grid {
@@ -791,29 +796,4 @@ body {
     .selector { justify-content: center; }
     .cart-item { flex-direction: column; text-align: center; }
     .cart-item-image { width: 80px; height: 80px; }
-
-    /* Мобильные стили для картинок товаров */
-    .product-image {
-        width: 100%;
-        height: 200px; /* Увеличиваем высоту */
-        object-fit: cover; /* Сохраняет пропорции, обрезая лишнее */
-        border-radius: 16px;
-        border: 2px solid var(--border);
-    }
-    
-    /* Дополнительно можно улучшить внешний вид */
-    .product-item {
-        flex-direction: column;
-        text-align: center;
-        padding: 20px;
-    }
-    
-    .product-info {
-        margin-top: 12px;
-    }
-    
-    .selector {
-        justify-content: center;
-        margin-top: 12px;
-    }
 }
